@@ -113,7 +113,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/01/17/%E5%BC%80%E7%AF%87/" data-id="cld2onele0006l66c6boi313v" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/01/17/%E5%BC%80%E7%AF%87/" data-id="cld2opcqb0006q66c9iks9cfq" class="article-share-link">
         分享
       </a>
       
@@ -171,7 +171,7 @@
   <div class="article-gallery-photos">
     
       
-      <a class="article-gallery-img" href="/2023/01/19/RxJS%E9%81%93%E4%B8%8E%E6%9C%AF/" rel="gallery_cld2onel90003l66cgbc4hmwr">
+      <a class="article-gallery-img" href="/2023/01/19/RxJS%E9%81%93%E4%B8%8E%E6%9C%AF/" rel="gallery_cld2opcq70003q66ce5a18rs3">
         <img src="https://picx.zhimg.com/v2-84ed5c6eeadf810552b399cec474d1fe_1440w.jpg?source=d16d100b" itemprop="image">
       </a>
       
@@ -196,7 +196,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/01/19/RxJS%E9%81%93%E4%B8%8E%E6%9C%AF/" data-id="cld2onel90003l66cgbc4hmwr" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/01/19/RxJS%E9%81%93%E4%B8%8E%E6%9C%AF/" data-id="cld2opcq70003q66ce5a18rs3" class="article-share-link">
         分享
       </a>
       
@@ -252,35 +252,17 @@
 <p>年近将至，今天是壬寅年腊月廿八，公司上的工位已经陆陆续续空了许多，即使还有坚守在岗位上的人儿，其心也不知飞哪里去了，这个人儿也许恰是自己。</p>
 </blockquote>
 <h2 id="整体进化"><a href="#整体进化" class="headerlink" title="整体进化"></a>整体进化</h2><p>回顾2022，自己也算有些大体的“进化”：<br>✅ 晋升为“合格”前端<br>✅ 晋升为“Wiki”老成员<br>✅ 完成职级晋升</p>
-<h2 id="工作-x2F-业务内容"><a href="#工作-x2F-业务内容" class="headerlink" title="工作&#x2F;业务内容"></a>工作&#x2F;业务内容</h2><p>工作内容上大部分在做 Wiki 业务，编辑器方面<strong>独立</strong>完成了2个较大插件，第三季度参与完成了思维导图的底层开发，后端也参与了些许重构，有时等不及 API 自己也会忍不住整上那么一手。<br>具体的还是要列举几个让自己感觉到充实的功能，也许明年后年或者更久，不会回忆起2022具体做了哪些，希望那时回过头来看看功能是否还依旧“站”得住，可以反馈自己是否成长了。</p>
-<h3 id="重构页面权限计算逻辑"><a href="#重构页面权限计算逻辑" class="headerlink" title="重构页面权限计算逻辑"></a>重构页面权限计算逻辑</h3><p>想想 Wiki 的页面权限，内心五味杂陈，如果他能够说话，我定能与他彻夜长谈，因为他是我来 Wiki 的第一个独立负责的模块，当时最有冲劲儿的时刻和精力献给了他，这一路与他相伴，经历了非常的多的挫折，HR 和领导层是 Wiki 的重度用户，至少每个季度绩效考核 HR 都会给各层领导分配所属员工的述职报告，就像每年阿里服务器要面临淘宝的”双十一“，当然可能有点夸张😂 ，这过程产生了很多漏洞，有产品设计上的，也有代码逻辑处理上的，同时还因为其他功能带来的影响也背了黑锅，总的来说功能不小，涉及的点太多，也花费了不少的心思，最后产出了几篇文章和一些讨论（犹豫了下，有可能泄密，链接还是撤回了吧）：</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/465792249">《PingCode Wiki 权限设计之 ACL》</a></li>
-<li>《页面权限》</li>
-<li>《权限继承方案》</li>
-<li>《权限设置-权限点》</li>
-<li>《空间所属对权限的补充》</li>
-</ul>
-<p>这一年 Wiki 加入了空间所属和可见性相关特性，会对之前的权限计算细节有些冲击，加上原有的代码也不是那么好，所以这块是需要重构的，其实当时的现状是 2022 年组内基本不会给我分配服务端方面的工作了，但是最终还是由我负责重构，不为其他，只为遵从内心，保留仅有良心和内心的执着，本着对曾负责的任务励志做到最好。最终的结果还是比较满意，使用比原来更简单了，计算逻辑的细节更清晰了，大大提高了可读性和易用性，同时在部门内发布了一篇文章<a target="_blank" rel="noopener" href="https://rc.pcx.cc/g/FNhsAX">《Wiki 权限 v2.0》</a>。</p>
-<h3 id="两个插件：关联页面树和文本绘图"><a href="#两个插件：关联页面树和文本绘图" class="headerlink" title="两个插件：关联页面树和文本绘图"></a>两个插件：关联页面树和文本绘图</h3><blockquote>
-<p>我去，才回顾了一个功能已经写着么多了……已经下午 1 点了，还没吃饭。</p>
-</blockquote>
-<p>这两个插件算是较大的功能了，还都挺有成就感的，文本绘图起初说服自己用，自己写的功能自己不用还靠别人用吗？现在已经爱了爱了。当时也分享一篇文章《文本绘图实现》(<a target="_blank" rel="noopener" href="https://rc.pcx.cc/g/fqKr0x)%EF%BC%8C%E9%A1%B5%E9%9D%A2%E6%A0%91%E6%98%AF%E8%87%AA%E5%B7%B1%E4%BB%8E%E5%A4%B4%E5%88%B0%E5%B0%BE%E7%8B%AC%E7%AB%8B%E8%B4%9F%E8%B4%A3%E7%9A%84%E6%8F%92%E4%BB%B6%EF%BC%8C%E6%A0%87%E5%BF%97%E7%9D%80%E4%B8%80%E4%B8%AA%E9%87%8C%E7%A8%8B%E7%A2%91%EF%BC%8C%E4%BB%85%E6%AD%A4%E8%80%8C%E5%B7%B2%EF%BC%8C%E9%9A%BE%E7%82%B9%E5%8F%AA%E6%9C%89%E4%B8%80%E4%B8%AA%E8%BF%98%E6%98%AF%E6%B6%89%E5%8F%8A%E6%9D%83%E9%99%90%E7%9A%84%E4%B8%80%E4%BA%9B%E4%BA%A4%E4%BA%92%E3%80%82">https://rc.pcx.cc/g/fqKr0x)，页面树是自己从头到尾独立负责的插件，标志着一个里程碑，仅此而已，难点只有一个还是涉及权限的一些交互。</a></p>
-<h3 id="参与思维导图"><a href="#参与思维导图" class="headerlink" title="参与思维导图"></a>参与思维导图</h3><p>满足了一直憧憬着的编辑器底层技术，参与思维导图时有些许的激动，但这过程中是有些煎熬和烧脑的，每天都是超负荷，不得不吐槽一下：工期短，任务重，要求陌生的领域要像普通业务一样的开发进度，这谁能顶得住啊？底层还涉及到一些数学知识和算法。不过也都过去了，痛并快乐着，哦，值得一记的功能点是拖拽节点的占位显示，已经上线的方案很鸡肋，新方案已确定，只是还没有狠下心来花时间去落实。</p>
-<h2 id="阅读和知识分享"><a href="#阅读和知识分享" class="headerlink" title="阅读和知识分享"></a>阅读和知识分享</h2><p>✅ 每日一学 15 篇<br>✅ 向 WTC 供稿 2 篇<br>✅ 技术周刊 2 篇<br>✅ 技术分享 2 次<br>✅ 知乎发布《RxJS 全面解析》点赞至今 81 个，还挺激动的<br>✅ 《RxJS 深入浅出》—— 程墨<br>✅ 《沧浪之水》还挺有感触的<br>✅ 其他乱七八糟的书都翻一翻，都没读太完整…<br>总体上这方面还行，有些沉淀，也提升了一下写作能力。</p>
-<h2 id="沉淀技术"><a href="#沉淀技术" class="headerlink" title="沉淀技术"></a>沉淀技术</h2><p>✅ 使用 Angular 可以完成大多数业务<br>✅ 深度理解 RxJS，但对很多操作符还不够熟悉</p>
-<h2 id="心态"><a href="#心态" class="headerlink" title="心态"></a>心态</h2><p>整体来说，不再那么浮躁，沉稳了许多，可能是经历多了些，也有可能是多看了几本书，提升了认知，看明白了一些事情，对任务量做了减法，对完成度和质量做了加法，这点小组组长不一定认可，不过无所谓了。绩效上也不再过度追求，不再那么逼着自己上进学习或者说卷，这样反而内心少了许多焦虑，毕竟不在乎就不会难受了，这也可能是消极，随之快乐也减少了，想想也许有时糊涂比明白更好。</p>
-<h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><p>一个字，“懒”。自制力差一直是问题。<br>还有二个字，“胆怯”，对自己不擅长的东西和不太好把握的东西，还不是那么够勇敢，会想着退缩，不管是工作还是生活。</p>
-<h2 id="明年规划"><a href="#明年规划" class="headerlink" title="明年规划"></a>明年规划</h2><p>再沉淀一门前端技术，沉淀几篇有深度的文章，今年 RxJS 这块还是比较满意的，也许来年再加深一些！</p>
-<hr>
-<blockquote>
-<p>下午 1 点 55 了，终于写完了，这篇是个人总结也是一篇内心日记，下午说是要写对联，摸摸鱼，明日启程回家，来年再战🧨</p>
-</blockquote>
-
+        
+          <p>
+            <a class="article-more-link" href="/2023/01/19/2022%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/">
+              阅读全文...
+            </a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/01/19/2022%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" data-id="cld2onel60001l66c5jkjeu3b" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/01/19/2022%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" data-id="cld2opcq20001q66cdlne2h89" class="article-share-link">
         分享
       </a>
       
@@ -351,7 +333,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/01/18/%E7%BC%96%E7%A8%8B%E8%A7%92%E5%BA%A6%E8%B0%88%E6%8A%BD%E8%B1%A1/" data-id="cld2onelh000al66c838l4p7o" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/01/18/%E7%BC%96%E7%A8%8B%E8%A7%92%E5%BA%A6%E8%B0%88%E6%8A%BD%E8%B1%A1/" data-id="cld2opcqm000fq66c9iuna1a8" class="article-share-link">
         分享
       </a>
       
@@ -418,7 +400,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/01/17/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/" data-id="cld2onelf0008l66c00efc9g2" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/01/17/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/" data-id="cld2opcqd0008q66c9usldkze" class="article-share-link">
         分享
       </a>
       
