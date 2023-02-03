@@ -398,6 +398,41 @@
       </categories>
   </entry>
   <entry>
+    <title>批量删除本地分支</title>
+    <url>/2023/02/03/%E6%89%B9%E9%87%8F%E5%88%A0%E9%99%A4%E6%9C%AC%E5%9C%B0%E5%88%86%E6%94%AF/</url>
+    <content><![CDATA[<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git branch | grep -v &#x27;develop&#x27; | xargs git branch -D</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h2 id=""><a href="#" class="headerlink" title="|"></a>|</h2><p>管道命令，用于将一串命令串联起来。前面命令的输出可以作为后面命令的输入。</p>
+<h2 id="git-branch"><a href="#git-branch" class="headerlink" title="git branch"></a>git branch</h2><p>用于列出本地所有分支。</p>
+<h2 id="grep"><a href="#grep" class="headerlink" title="grep"></a>grep</h2><p>搜索过滤命令。使用正则表达式搜索文本，并把匹配的行打印出来。</p>
+<h2 id="xargs"><a href="#xargs" class="headerlink" title="xargs"></a>xargs</h2><p>参数传递命令。用于将标准输入作为命令的参数传给下一个命令。</p>
+<p>参考<br>grep： <a href="https://wangchujiang.com/linux-command/c/grep.html">https://wangchujiang.com/linux-command/c/grep.html</a> <br>xargs： <a href="https://wangchujiang.com/linux-command/c/xargs.html">https://wangchujiang.com/linux-command/c/xargs.html</a> </p>
+]]></content>
+      <categories>
+        <category>git</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Git 使用手册</title>
+    <url>/2023/02/03/git%E6%89%8B%E5%86%8C/</url>
+    <content><![CDATA[<h2 id="打-tag"><a href="#打-tag" class="headerlink" title="打 tag"></a>打 tag</h2><ul>
+<li>快速打标签: <code>git tag 名字</code></li>
+<li>推送至远程: <code>git push origin 标签名</code></li>
+</ul>
+]]></content>
+      <categories>
+        <category>git</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Mongodb 使用手册</title>
+    <url>/2023/02/01/mongodb%E6%89%8B%E5%86%8C/</url>
+    <content><![CDATA[]]></content>
+      <categories>
+        <category>Mongodb</category>
+      </categories>
+  </entry>
+  <entry>
     <title>2022年终总结</title>
     <url>/2023/01/19/2022%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</url>
     <content><![CDATA[<blockquote>
@@ -439,6 +474,8 @@
     <title>编程角度谈抽象</title>
     <url>/2023/01/18/%E7%BC%96%E7%A8%8B%E8%A7%92%E5%BA%A6%E8%B0%88%E6%8A%BD%E8%B1%A1/</url>
     <content><![CDATA[<h4 id="什么是抽象？"><a href="#什么是抽象？" class="headerlink" title="什么是抽象？"></a>什么是抽象？</h4><p>抽象就是从不同的事物之间抽取出相同点。往往能力越强，抽象能力就越强，认知的维度就越高。</p>
+<span id="more"></span>
+
 <h4 id="为什么要抽象？"><a href="#为什么要抽象？" class="headerlink" title="为什么要抽象？"></a>为什么要抽象？</h4><p>世间万物都在变化，如果具有了抽象能力，在变化中找到不变，那么在解决问题中只需要更改那些需要变化的元素，从而减少工作量。</p>
 <p>例如，软件开发中的需求不断变化。有人说，杀死一个程序员，不是给他一把刀，而只需要改3次需求。程序员设计程序时，能够把这些变化的需求和不变的本质分析出来，设计出相对抽象的程序，选择适当的数据结构和设计模式，来进行对可变的元素进行重写而不用改其他依赖，那么是否能避免一部分全部推倒重来的事情发生呢？</p>
 <h4 id="抽象的应用或表现"><a href="#抽象的应用或表现" class="headerlink" title="抽象的应用或表现"></a>抽象的应用或表现</h4><p>软件工程学中OOAD(objectorientanalysisdesign)，软件编程思想中的OOP(objectorientprogram)。<br>他们的第一要素都是抽象，抽象的维度越合适，设计的程序就越易用。</p>
