@@ -8,7 +8,7 @@
   
   
   <title>
-    Mongodb 常用 API |
+    centos7安装yum |
     
     阿杰
   </title>
@@ -32,7 +32,7 @@
 <body>
   <main class="content">
     <section class="outer">
-  <article id="post-mongodb手册" class="article article-type-post" itemscope
+  <article id="post-centos7安装yum" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -41,7 +41,7 @@
       
   
   <h1 class="article-title" itemprop="name">
-    Mongodb 常用 API
+    centos7安装yum
   </h1>
   
   
@@ -51,12 +51,12 @@
 
     
     <div class="article-meta">
-      <a href="/2023/02/01/mongodb%E6%89%8B%E5%86%8C/" class="article-date">
-  <time datetime="2023-02-01T02:25:21.000Z" itemprop="datePublished">2023-02-01</time>
+      <a href="/2023/02/03/centos7%E5%AE%89%E8%A3%85yum/" class="article-date">
+  <time datetime="2023-02-03T07:12:12.000Z" itemprop="datePublished">2023-02-03</time>
 </a>
       
 <div class="article-category">
-  <a class="article-category-link" href="/categories/Mongodb/">Mongodb</a>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
 </div>
 
     </div>
@@ -64,17 +64,39 @@
 
     
     
+<div class="tocbot"></div>
+
     
 
     <div class="article-entry" itemprop="articleBody">
       
       
       
-        
+        <p>一般购买的服务器都自带 yum，但恰好我买的这台就没有，WTF…</p>
+<h2 id="一、创建安装目录"><a href="#一、创建安装目录" class="headerlink" title="一、创建安装目录"></a>一、创建安装目录</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /usr</span><br><span class="line">mkdir yum-install</span><br><span class="line">cd yum-install</span><br></pre></td></tr></table></figure>
+
+<h2 id="二、wget-下载所有需要的-package"><a href="#二、wget-下载所有需要的-package" class="headerlink" title="二、wget 下载所有需要的 package"></a>二、wget 下载所有需要的 package</h2><p>在安装yum之前需要安装的依赖包</p>
+<ul>
+<li>python-iniparse-0.4-9.el7.noarch.rpm</li>
+<li>yum-metadata-parser-1.1.4-10.el7.x86_64.rpm</li>
+<li>yum-3.4.3-168.el7.centos.noarch.rpm</li>
+<li>yum-plugin-fastestmirror-1.1.31-54.el7_8.noarch.rpm</li>
+</ul>
+<p>具体package的仓储： <a target="_blank" rel="noopener" href="http://mirrors.163.com/centos/7/os/x86_64/Packages/">http://mirrors.163.com/centos/7/os/x86_64/Packages/</a> </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget http://mirrors.163.com/centos/7/os/x86_64/Packages/python-iniparse-0.4-9.el7.noarch.rpm</span><br><span class="line">wget http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-metadata-parser-1.1.4-10.el7.x86_64.rpm</span><br><span class="line">wget http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-3.4.3-168.el7.centos.noarch.rpm</span><br><span class="line">wget http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-plugin-fastestmirror-1.1.31-54.el7_8.noarch.rpm</span><br></pre></td></tr></table></figure>
+
+<h2 id="三、rpm-安装"><a href="#三、rpm-安装" class="headerlink" title="三、rpm 安装"></a>三、rpm 安装</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rpm -ivh --force --nodeps python-iniparse-0.4-9.el7.noarch.rpm</span><br><span class="line">rpm -ivh --force --nodeps yum-metadata-parser-1.1.4-10.el7.x86_64.rpm</span><br><span class="line">rpm -ivh --force --nodeps yum-3.4.3-168.el7.centos.noarch.rpm</span><br><span class="line">rpm -ivh --force --nodeps yum-plugin-fastestmirror-1.1.31-54.el7_8.noarch.rpm</span><br></pre></td></tr></table></figure>
+<h2 id="四、安装-yum"><a href="#四、安装-yum" class="headerlink" title="四、安装 yum"></a>四、安装 yum</h2><p>包地址： <a target="_blank" rel="noopener" href="http://yum.baseurl.org/wiki.html">http://yum.baseurl.org/wiki.html</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http://yum.baseurl.org/download/3.4/yum-3.4.3.tar.gz</span><br></pre></td></tr></table></figure>
+
+<h2 id="五、测试"><a href="#五、测试" class="headerlink" title="五、测试"></a>五、测试</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum --help</span><br></pre></td></tr></table></figure>
+<p>能出来命令，说明安装成功！</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p> <a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1720868">https://cloud.tencent.com/developer/article/1720868</a> <br>⚠️ 注意：上面博客里面的有些包已经升级了，推荐使用本文的链接或官方的链接寻找资源</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/02/01/mongodb%E6%89%8B%E5%86%8C/" data-id="cldsh3ma50008zo6chkmfdhr2" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/02/03/centos7%E5%AE%89%E8%A3%85yum/" data-id="cldsh3ma8000czo6chn5u4ejy" class="article-share-link">
         分享
       </a>
       
@@ -86,19 +108,19 @@
   
 <nav class="article-nav">
   
-  <a href="/2023/02/03/git%E6%89%8B%E5%86%8C/" class="article-nav-link">
+  <a href="/2023/02/06/%E9%9D%A2%E5%AF%B9%E7%96%BE%E9%A3%8E%E5%90%A7/" class="article-nav-link">
     <strong class="article-nav-caption">前一篇</strong>
     <div class="article-nav-title">
       
-      Git 常用命令
+      一剑，一念
       
     </div>
   </a>
   
   
-  <a href="/2023/01/19/RxJS%E9%81%93%E4%B8%8E%E6%9C%AF/" class="article-nav-link">
+  <a href="/2023/02/03/%E6%89%B9%E9%87%8F%E5%88%A0%E9%99%A4%E6%9C%AC%E5%9C%B0%E5%88%86%E6%94%AF/" class="article-nav-link">
     <strong class="article-nav-caption">后一篇</strong>
-    <div class="article-nav-title">RxJS “道” 与 “术”</div>
+    <div class="article-nav-title">批量删除本地分支</div>
   </a>
   
 </nav>
