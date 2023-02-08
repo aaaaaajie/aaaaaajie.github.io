@@ -403,7 +403,7 @@
     <content><![CDATA[<p>mermaid 是一款可以使用文本来绘图的工具，支持流程图、时序图、类图、饼状图等等，更多看<a href="https://mermaid.js.org/intro/">这里</a>。它可以支持在 markdown 中使用，这对于我这种程序员非常的好用，可以代替一些插图，hexo 对插图是一大痛点（上传图片，然后在 markdown 中插入链接，重要的是要考虑储存位置、空间和后期的维护），本人习惯使用代码块或文字的方式代替，所以这是一篇 hexo ocean 集成 mermaid 的文档。</p>
 <span id="more"></span>
 <p>先做个展示如下</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">    id1[This is the text in the box]</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">id1[This is the text in the box]</span><br></pre></td></tr></table></figure>
 
 <h2 id="方式一：远程加载-mermaid"><a href="#方式一：远程加载-mermaid" class="headerlink" title="方式一：远程加载 mermaid"></a>方式一：远程加载 mermaid</h2><ol>
 <li>添加配置<br>到 themes&#x2F;ocean 的 _config.yml 文件中添加以下配置<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mermaid: </span><br><span class="line">  enable: true</span><br><span class="line">  version: &quot;9.0.0&quot; # 远程加载</span><br></pre></td></tr></table></figure></li>
@@ -423,7 +423,9 @@
 </ol>
 <p> OK，到此配置结束。</p>
 <p>参考：<a href="https://github.com/webappdevelp/hexo-filter-mermaid-diagrams">https://github.com/webappdevelp/hexo-filter-mermaid-diagrams</a></p>
-<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">语法</span></span><br><span class="line">```mermaid</span><br><span class="line">flowchart TD</span><br><span class="line">    A[Start] --&gt; B&#123;Is it?&#125;</span><br><span class="line">    B --&gt;|Yes| C[OK]</span><br><span class="line">    C --&gt; D[Rethink]</span><br><span class="line">    D --&gt; B</span><br><span class="line">    B ----&gt;|No| E[End]</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">```</span></span><br></pre></td></tr></table></figure>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">语法</span></span><br><span class="line">```mermaid</span><br><span class="line">flowchart TD</span><br><span class="line">    A[Start] --&gt; B&#123;Is it?&#125;</span><br><span class="line">    B --&gt;|Yes| C[OK]</span><br><span class="line">    C --&gt; D[Rethink]</span><br><span class="line">    D --&gt; B</span><br><span class="line">    B ----&gt;|No| E[End]</span><br></pre></td></tr></table></figure>
+<pre><code>
+</code></pre>
 ]]></content>
       <categories>
         <category>hexo</category>
