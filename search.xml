@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>新启程——开篇</title>
+    <url>/2023/01/17/%E5%BC%80%E7%AF%87/</url>
+    <content><![CDATA[<blockquote>
+<p>今天是 2023-01-18，农历壬寅年腊月廿七（2022 年 12 月 27），此时是年前的摸鱼时刻 😂 </p>
+</blockquote>
+<p>有人说，一个人的成长就是趋于稳定，比如，不再频繁的换手机号码、换工作、换房子……那写作的博客平台何尝不是呢？回头看下，自己已经用了许许多多的博客平台：CSDN、简书、语雀、掘金、知乎、思否、InfoQ、还有我们的 PingCode Wiki，还使用过 Hexo 搭了一套博客，甚至还用 Vue + NodeJS 原生写了一个博客系统，最终还一直在用&#x2F;维护的只剩下了知乎和 Wiki 吧，至于其它的都是以这样或那样的原因最终放弃。</p>
+<p>有了这么多平台为什么还要再整一个 github pages 的个人博客呢？</p>
+<p>一个重要的原因是，前段时间服务器到期了，几百篇笔记都没有备份上，妈蛋！所以不想自己维护了，github pages 倒不用担心这点，就是访问稍慢，还算是可以接受吧。为啥不用 gitee pages？因为要备案，上传身份证和手持，当天没有带身份证，也懒得再操心这事了。</p>
+<p>这个博客作为自己的思源地，同时也记录一些有深度的文章，也可能转载一些之前在其他平台写过的笔记&#x2F;文章，无论怎样，开启新篇章吧，希望自己多做些笔记，多些思考，多些沉淀！</p>
+]]></content>
+  </entry>
+  <entry>
     <title>RxJS “道” 与 “术”</title>
     <url>/2023/01/19/RxJS%E9%81%93%E4%B8%8E%E6%9C%AF/</url>
     <content><![CDATA[<blockquote>
@@ -386,84 +398,6 @@
       </categories>
   </entry>
   <entry>
-    <title>centos7安装yum</title>
-    <url>/2023/02/03/centos7%E5%AE%89%E8%A3%85yum/</url>
-    <content><![CDATA[<p>一般购买的服务器都自带 yum，但恰好我买的这台就没有，WTF…</p>
-<h2 id="一、创建安装目录"><a href="#一、创建安装目录" class="headerlink" title="一、创建安装目录"></a>一、创建安装目录</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /usr</span><br><span class="line">mkdir yum-install</span><br><span class="line">cd yum-install</span><br></pre></td></tr></table></figure>
-
-<h2 id="二、wget-下载所有需要的-package"><a href="#二、wget-下载所有需要的-package" class="headerlink" title="二、wget 下载所有需要的 package"></a>二、wget 下载所有需要的 package</h2><p>在安装yum之前需要安装的依赖包</p>
-<ul>
-<li>python-iniparse-0.4-9.el7.noarch.rpm</li>
-<li>yum-metadata-parser-1.1.4-10.el7.x86_64.rpm</li>
-<li>yum-3.4.3-168.el7.centos.noarch.rpm</li>
-<li>yum-plugin-fastestmirror-1.1.31-54.el7_8.noarch.rpm</li>
-</ul>
-<p>具体package的仓储： <a href="http://mirrors.163.com/centos/7/os/x86_64/Packages/">http://mirrors.163.com/centos/7/os/x86_64/Packages/</a> </p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">wget http://mirrors.163.com/centos/7/os/x86_64/Packages/python-iniparse-0.4-9.el7.noarch.rpm</span><br><span class="line">wget http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-metadata-parser-1.1.4-10.el7.x86_64.rpm</span><br><span class="line">wget http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-3.4.3-168.el7.centos.noarch.rpm</span><br><span class="line">wget http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-plugin-fastestmirror-1.1.31-54.el7_8.noarch.rpm</span><br></pre></td></tr></table></figure>
-
-<h2 id="三、rpm-安装"><a href="#三、rpm-安装" class="headerlink" title="三、rpm 安装"></a>三、rpm 安装</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rpm -ivh --force --nodeps python-iniparse-0.4-9.el7.noarch.rpm</span><br><span class="line">rpm -ivh --force --nodeps yum-metadata-parser-1.1.4-10.el7.x86_64.rpm</span><br><span class="line">rpm -ivh --force --nodeps yum-3.4.3-168.el7.centos.noarch.rpm</span><br><span class="line">rpm -ivh --force --nodeps yum-plugin-fastestmirror-1.1.31-54.el7_8.noarch.rpm</span><br></pre></td></tr></table></figure>
-<h2 id="四、安装-yum"><a href="#四、安装-yum" class="headerlink" title="四、安装 yum"></a>四、安装 yum</h2><p>包地址： <a href="http://yum.baseurl.org/wiki.html">http://yum.baseurl.org/wiki.html</a></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">wget http://yum.baseurl.org/download/3.4/yum-3.4.3.tar.gz</span><br></pre></td></tr></table></figure>
-
-<h2 id="五、测试"><a href="#五、测试" class="headerlink" title="五、测试"></a>五、测试</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">yum --help</span><br></pre></td></tr></table></figure>
-<p>能出来命令，说明安装成功！</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p> <a href="https://cloud.tencent.com/developer/article/1720868">https://cloud.tencent.com/developer/article/1720868</a> <br>⚠️ 注意：上面博客里面的有些包已经升级了，推荐使用本文的链接或官方的链接寻找资源</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>2022年终总结</title>
-    <url>/2023/01/19/2022%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</url>
-    <content><![CDATA[<blockquote>
-<p>年近将至，今天是壬寅年腊月廿八，公司上的工位已经陆陆续续空了许多，即使还有坚守在岗位上的人儿，其心也不知飞哪里去了，这个人儿也许恰是自己。</p>
-</blockquote>
-<h2 id="整体进化"><a href="#整体进化" class="headerlink" title="整体进化"></a>整体进化</h2><p>回顾2022，自己也算有些大体的“进化”：<br>✅ 晋升为“合格”前端<br>✅ 晋升为“Wiki”老成员<br>✅ 完成职级晋升</p>
-<span id="more"></span>
-
-<h2 id="工作-x2F-业务内容"><a href="#工作-x2F-业务内容" class="headerlink" title="工作&#x2F;业务内容"></a>工作&#x2F;业务内容</h2><p>工作内容上大部分在做 Wiki 业务，编辑器方面<strong>独立</strong>完成了2个较大插件，第三季度参与完成了思维导图的底层开发，后端也参与了些许重构，有时等不及 API 自己也会忍不住整上那么一手。<br>具体的还是要列举几个让自己感觉到充实的功能，也许明年后年或者更久，不会回忆起2022具体做了哪些，希望那时回过头来看看功能是否还依旧“站”得住，可以反馈自己是否成长了。</p>
-<h3 id="重构页面权限计算逻辑"><a href="#重构页面权限计算逻辑" class="headerlink" title="重构页面权限计算逻辑"></a>重构页面权限计算逻辑</h3><p>想想 Wiki 的页面权限，内心五味杂陈，如果他能够说话，我定能与他彻夜长谈，因为他是我来 Wiki 的第一个独立负责的模块，当时最有冲劲儿的时刻和精力献给了他，这一路与他相伴，经历了非常的多的挫折，HR 和领导层是 Wiki 的重度用户，至少每个季度绩效考核 HR 都会给各层领导分配所属员工的述职报告，就像每年阿里服务器要面临淘宝的”双十一“，当然可能有点夸张😂 ，这过程产生了很多漏洞，有产品设计上的，也有代码逻辑处理上的，同时还因为其他功能带来的影响也背了黑锅，总的来说功能不小，涉及的点太多，也花费了不少的心思，最后产出了几篇文章和一些讨论（犹豫了下，有可能泄密，链接还是撤回了吧）：</p>
-<ul>
-<li><a href="https://zhuanlan.zhihu.com/p/465792249">《PingCode Wiki 权限设计之 ACL》</a></li>
-<li>《页面权限》</li>
-<li>《权限继承方案》</li>
-<li>《权限设置-权限点》</li>
-<li>《空间所属对权限的补充》</li>
-</ul>
-<p>这一年 Wiki 加入了空间所属和可见性相关特性，会对之前的权限计算细节有些冲击，加上原有的代码也不是那么好，所以这块是需要重构的，其实当时的现状是 2022 年组内基本不会给我分配服务端方面的工作了，但是最终还是由我负责重构，不为其他，只为遵从内心，保留仅有良心和内心的执着，本着对曾负责的任务励志做到最好。最终的结果还是比较满意，使用比原来更简单了，计算逻辑的细节更清晰了，大大提高了可读性和易用性，同时在部门内发布了一篇文章<a href="https://rc.pcx.cc/g/FNhsAX">《Wiki 权限 v2.0》</a>。</p>
-<h3 id="两个插件：关联页面树和文本绘图"><a href="#两个插件：关联页面树和文本绘图" class="headerlink" title="两个插件：关联页面树和文本绘图"></a>两个插件：关联页面树和文本绘图</h3><blockquote>
-<p>我去，才回顾了一个功能已经写着么多了……已经下午 1 点了，还没吃饭。</p>
-</blockquote>
-<p>这两个插件算是较大的功能了，还都挺有成就感的，文本绘图起初说服自己用，自己写的功能自己不用还靠别人用吗？现在已经爱了爱了。当时也分享一篇文章<a href="https://rc.pcx.cc/g/fqKr0x">《文本绘图实现》</a>，页面树是自己从头到尾独立负责的插件，标志着一个里程碑，仅此而已，难点只有一个还是涉及权限的一些交互。</p>
-<h3 id="参与思维导图"><a href="#参与思维导图" class="headerlink" title="参与思维导图"></a>参与思维导图</h3><p>满足了一直憧憬着的编辑器底层技术，参与思维导图时有些许的激动，但这过程中是有些煎熬和烧脑的，每天都是超负荷，不得不吐槽一下：工期短，任务重，要求陌生的领域要像普通业务一样的开发进度，这谁能顶得住啊？底层还涉及到一些数学知识和算法。不过也都过去了，痛并快乐着，哦，值得一记的功能点是拖拽节点的占位显示，已经上线的方案很鸡肋，新方案已确定，只是还没有狠下心来花时间去落实。</p>
-<h2 id="阅读和知识分享"><a href="#阅读和知识分享" class="headerlink" title="阅读和知识分享"></a>阅读和知识分享</h2><p>✅ 每日一学 15 篇<br>✅ 向 WTC 供稿 2 篇<br>✅ 技术周刊 2 篇<br>✅ 技术分享 2 次<br>✅ 知乎发布《RxJS 全面解析》点赞至今 81 个，还挺激动的<br>✅ 《RxJS 深入浅出》—— 程墨<br>✅ 《沧浪之水》还挺有感触的<br>✅ 其他乱七八糟的书都翻一翻，都没读太完整…<br>总体上这方面还行，有些沉淀，也提升了一下写作能力。</p>
-<h2 id="沉淀技术"><a href="#沉淀技术" class="headerlink" title="沉淀技术"></a>沉淀技术</h2><p>✅ 使用 Angular 可以完成大多数业务<br>✅ 深度理解 RxJS，但对很多操作符还不够熟悉</p>
-<h2 id="心态"><a href="#心态" class="headerlink" title="心态"></a>心态</h2><p>整体来说，不再那么浮躁，沉稳了许多，可能是经历多了些，也有可能是多看了几本书，提升了认知，看明白了一些事情，对任务量做了减法，对完成度和质量做了加法，这点小组组长不一定认可，不过无所谓了。绩效上也不再过度追求，不再那么逼着自己上进学习或者说卷，这样反而内心少了许多焦虑，毕竟不在乎就不会难受了，这也可能是消极，随之快乐也减少了，想想也许有时糊涂比明白更好。</p>
-<h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><p>一个字，“懒”。自制力差一直是问题。<br>还有二个字，“胆怯”，对自己不擅长的东西和不太好把握的东西，还不是那么够勇敢，会想着退缩，不管是工作还是生活。</p>
-<h2 id="明年规划"><a href="#明年规划" class="headerlink" title="明年规划"></a>明年规划</h2><p>再沉淀一门前端技术，沉淀几篇有深度的文章，今年 RxJS 这块还是比较满意的，也许来年再加深一些！</p>
-<hr>
-<blockquote>
-<p>下午 1 点 55 了，终于写完了，这篇是个人总结也是一篇内心日记，下午说是要写对联，摸摸鱼，明日启程回家，来年再战🧨</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>年终总结</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Git 常用命令</title>
-    <url>/2023/02/03/git%E6%89%8B%E5%86%8C/</url>
-    <content><![CDATA[<h2 id="打-tag"><a href="#打-tag" class="headerlink" title="打 tag"></a>打 tag</h2><ul>
-<li>快速打标签: <code>git tag 名字</code></li>
-<li>推送至远程: <code>git push origin 标签名</code></li>
-</ul>
-]]></content>
-      <categories>
-        <category>git</category>
-      </categories>
-  </entry>
-  <entry>
     <title>hexo ocean 主题集成 mermaid</title>
     <url>/2023/02/08/mermaid/</url>
     <content><![CDATA[<p>mermaid 是一款可以使用文本来绘图的工具，支持流程图、时序图、类图、饼状图等等，更多看<a href="https://mermaid.js.org/intro/">这里</a>。它可以支持在 markdown 中使用，这对于我这种程序员非常的好用，可以代替一些插图，hexo 对插图是一大痛点（上传图片，然后在 markdown 中插入链接，重要的是要考虑储存位置、空间和后期的维护），本人习惯使用代码块或文字的方式代替，所以这是一篇 hexo ocean 集成 mermaid 的文档。</p>
@@ -496,14 +430,6 @@
 ]]></content>
       <categories>
         <category>hexo</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Mongodb 常用 API</title>
-    <url>/2023/02/01/mongodb%E6%89%8B%E5%86%8C/</url>
-    <content><![CDATA[]]></content>
-      <categories>
-        <category>Mongodb</category>
       </categories>
   </entry>
   <entry>
@@ -577,16 +503,157 @@
       </categories>
   </entry>
   <entry>
-    <title>新启程——开篇</title>
-    <url>/2023/01/17/%E5%BC%80%E7%AF%87/</url>
-    <content><![CDATA[<blockquote>
-<p>今天是 2023-01-18，农历壬寅年腊月廿七（2022 年 12 月 27），此时是年前的摸鱼时刻 😂 </p>
-</blockquote>
-<p>有人说，一个人的成长就是趋于稳定，比如，不再频繁的换手机号码、换工作、换房子……那写作的博客平台何尝不是呢？回头看下，自己已经用了许许多多的博客平台：CSDN、简书、语雀、掘金、知乎、思否、InfoQ、还有我们的 PingCode Wiki，还使用过 Hexo 搭了一套博客，甚至还用 Vue + NodeJS 原生写了一个博客系统，最终还一直在用&#x2F;维护的只剩下了知乎和 Wiki 吧，至于其它的都是以这样或那样的原因最终放弃。</p>
-<p>有了这么多平台为什么还要再整一个 github pages 的个人博客呢？</p>
-<p>一个重要的原因是，前段时间服务器到期了，几百篇笔记都没有备份上，妈蛋！所以不想自己维护了，github pages 倒不用担心这点，就是访问稍慢，还算是可以接受吧。为啥不用 gitee pages？因为要备案，上传身份证和手持，当天没有带身份证，也懒得再操心这事了。</p>
-<p>这个博客作为自己的思源地，同时也记录一些有深度的文章，也可能转载一些之前在其他平台写过的笔记&#x2F;文章，无论怎样，开启新篇章吧，希望自己多做些笔记，多些思考，多些沉淀！</p>
+    <title>一剑，一念</title>
+    <url>/2023/02/06/%E9%9D%A2%E5%AF%B9%E7%96%BE%E9%A3%8E%E5%90%A7/</url>
+    <content><![CDATA[<p>个人优势：</p>
+<ul>
+<li>善于总结和独立思考</li>
+<li>对技术保持持续热情</li>
+<li>敢于挑战和突破自己</li>
+</ul>
+<p>专业技能：</p>
+<ul>
+<li>掌握并灵活运用常用编程思想及设计模式解决问题：面向对象编程（OOP）、切面编程（AOP）、响应式编程（RX）、函数式编程（FP）、代理（Proxy）</li>
+<li>灵活运用 TypeScript 类型及相关技术：装饰器实现依赖注入、面向接口约束行为</li>
+<li>掌握 NodeJS 框架 Express、KOA、Chaos（公司自研，类似于 Next），并看过其源码，深刻理解中间件机制</li>
+<li>掌握前端框架 Angular 及相关生态：RxJS、CDK 等</li>
+<li>熟练使用 MongoDB、Redis、MySQL 等缓存技术</li>
+<li>了解微前端、后端微服务、分布式集群</li>
+</ul>
+<p>工作职责：</p>
+<ul>
+<li>负责 Wiki 架构设计及核心功能模块开发</li>
+<li>与产品经理，设计师配合探讨、设计、实现产品的核心功能迭代及改进</li>
+<li>负责核心模块代码编写，并对功能模块进行单元测试的编写</li>
+<li>对前后端代码结构和性能进行持续优化</li>
+</ul>
 ]]></content>
+  </entry>
+  <entry>
+    <title>centos7安装yum</title>
+    <url>/2023/02/03/centos7%E5%AE%89%E8%A3%85yum/</url>
+    <content><![CDATA[<p>一般购买的服务器都自带 yum，但恰好我买的这台就没有，WTF…</p>
+<h2 id="一、创建安装目录"><a href="#一、创建安装目录" class="headerlink" title="一、创建安装目录"></a>一、创建安装目录</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /usr</span><br><span class="line">mkdir yum-install</span><br><span class="line">cd yum-install</span><br></pre></td></tr></table></figure>
+
+<h2 id="二、wget-下载所有需要的-package"><a href="#二、wget-下载所有需要的-package" class="headerlink" title="二、wget 下载所有需要的 package"></a>二、wget 下载所有需要的 package</h2><p>在安装yum之前需要安装的依赖包</p>
+<ul>
+<li>python-iniparse-0.4-9.el7.noarch.rpm</li>
+<li>yum-metadata-parser-1.1.4-10.el7.x86_64.rpm</li>
+<li>yum-3.4.3-168.el7.centos.noarch.rpm</li>
+<li>yum-plugin-fastestmirror-1.1.31-54.el7_8.noarch.rpm</li>
+</ul>
+<p>具体package的仓储： <a href="http://mirrors.163.com/centos/7/os/x86_64/Packages/">http://mirrors.163.com/centos/7/os/x86_64/Packages/</a> </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">wget http://mirrors.163.com/centos/7/os/x86_64/Packages/python-iniparse-0.4-9.el7.noarch.rpm</span><br><span class="line">wget http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-metadata-parser-1.1.4-10.el7.x86_64.rpm</span><br><span class="line">wget http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-3.4.3-168.el7.centos.noarch.rpm</span><br><span class="line">wget http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-plugin-fastestmirror-1.1.31-54.el7_8.noarch.rpm</span><br></pre></td></tr></table></figure>
+
+<h2 id="三、rpm-安装"><a href="#三、rpm-安装" class="headerlink" title="三、rpm 安装"></a>三、rpm 安装</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rpm -ivh --force --nodeps python-iniparse-0.4-9.el7.noarch.rpm</span><br><span class="line">rpm -ivh --force --nodeps yum-metadata-parser-1.1.4-10.el7.x86_64.rpm</span><br><span class="line">rpm -ivh --force --nodeps yum-3.4.3-168.el7.centos.noarch.rpm</span><br><span class="line">rpm -ivh --force --nodeps yum-plugin-fastestmirror-1.1.31-54.el7_8.noarch.rpm</span><br></pre></td></tr></table></figure>
+<h2 id="四、安装-yum"><a href="#四、安装-yum" class="headerlink" title="四、安装 yum"></a>四、安装 yum</h2><p>包地址： <a href="http://yum.baseurl.org/wiki.html">http://yum.baseurl.org/wiki.html</a></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">wget http://yum.baseurl.org/download/3.4/yum-3.4.3.tar.gz</span><br></pre></td></tr></table></figure>
+
+<h2 id="五、测试"><a href="#五、测试" class="headerlink" title="五、测试"></a>五、测试</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">yum --help</span><br></pre></td></tr></table></figure>
+<p>能出来命令，说明安装成功！</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p> <a href="https://cloud.tencent.com/developer/article/1720868">https://cloud.tencent.com/developer/article/1720868</a> <br>⚠️ 注意：上面博客里面的有些包已经升级了，推荐使用本文的链接或官方的链接寻找资源</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>批量删除本地分支</title>
+    <url>/2023/02/03/%E6%89%B9%E9%87%8F%E5%88%A0%E9%99%A4%E6%9C%AC%E5%9C%B0%E5%88%86%E6%94%AF/</url>
+    <content><![CDATA[<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git branch | grep -v &#x27;develop&#x27; | xargs git branch -D</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h2 id=""><a href="#" class="headerlink" title="|"></a>|</h2><p>管道命令，用于将一串命令串联起来。前面命令的输出可以作为后面命令的输入。</p>
+<h2 id="git-branch"><a href="#git-branch" class="headerlink" title="git branch"></a>git branch</h2><p>用于列出本地所有分支。</p>
+<h2 id="grep"><a href="#grep" class="headerlink" title="grep"></a>grep</h2><p>搜索过滤命令。使用正则表达式搜索文本，并把匹配的行打印出来。</p>
+<h2 id="xargs"><a href="#xargs" class="headerlink" title="xargs"></a>xargs</h2><p>参数传递命令。用于将标准输入作为命令的参数传给下一个命令。</p>
+<p>参考<br>grep： <a href="https://wangchujiang.com/linux-command/c/grep.html">https://wangchujiang.com/linux-command/c/grep.html</a> <br>xargs： <a href="https://wangchujiang.com/linux-command/c/xargs.html">https://wangchujiang.com/linux-command/c/xargs.html</a> </p>
+]]></content>
+      <categories>
+        <category>git</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Git 常用命令</title>
+    <url>/2023/02/03/git%E6%89%8B%E5%86%8C/</url>
+    <content><![CDATA[<h2 id="打-tag"><a href="#打-tag" class="headerlink" title="打 tag"></a>打 tag</h2><ul>
+<li>快速打标签: <code>git tag 名字</code></li>
+<li>推送至远程: <code>git push origin 标签名</code></li>
+</ul>
+]]></content>
+      <categories>
+        <category>git</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Mongodb 常用 API</title>
+    <url>/2023/02/01/mongodb%E6%89%8B%E5%86%8C/</url>
+    <content><![CDATA[]]></content>
+      <categories>
+        <category>Mongodb</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>2022年终总结</title>
+    <url>/2023/01/19/2022%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<blockquote>
+<p>年近将至，今天是壬寅年腊月廿八，公司上的工位已经陆陆续续空了许多，即使还有坚守在岗位上的人儿，其心也不知飞哪里去了，这个人儿也许恰是自己。</p>
+</blockquote>
+<h2 id="整体进化"><a href="#整体进化" class="headerlink" title="整体进化"></a>整体进化</h2><p>回顾2022，自己也算有些大体的“进化”：<br>✅ 晋升为“合格”前端<br>✅ 晋升为“Wiki”老成员<br>✅ 完成职级晋升</p>
+<span id="more"></span>
+
+<h2 id="工作-x2F-业务内容"><a href="#工作-x2F-业务内容" class="headerlink" title="工作&#x2F;业务内容"></a>工作&#x2F;业务内容</h2><p>工作内容上大部分在做 Wiki 业务，编辑器方面<strong>独立</strong>完成了2个较大插件，第三季度参与完成了思维导图的底层开发，后端也参与了些许重构，有时等不及 API 自己也会忍不住整上那么一手。<br>具体的还是要列举几个让自己感觉到充实的功能，也许明年后年或者更久，不会回忆起2022具体做了哪些，希望那时回过头来看看功能是否还依旧“站”得住，可以反馈自己是否成长了。</p>
+<h3 id="重构页面权限计算逻辑"><a href="#重构页面权限计算逻辑" class="headerlink" title="重构页面权限计算逻辑"></a>重构页面权限计算逻辑</h3><p>想想 Wiki 的页面权限，内心五味杂陈，如果他能够说话，我定能与他彻夜长谈，因为他是我来 Wiki 的第一个独立负责的模块，当时最有冲劲儿的时刻和精力献给了他，这一路与他相伴，经历了非常的多的挫折，HR 和领导层是 Wiki 的重度用户，至少每个季度绩效考核 HR 都会给各层领导分配所属员工的述职报告，就像每年阿里服务器要面临淘宝的”双十一“，当然可能有点夸张😂 ，这过程产生了很多漏洞，有产品设计上的，也有代码逻辑处理上的，同时还因为其他功能带来的影响也背了黑锅，总的来说功能不小，涉及的点太多，也花费了不少的心思，最后产出了几篇文章和一些讨论（犹豫了下，有可能泄密，链接还是撤回了吧）：</p>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/465792249">《PingCode Wiki 权限设计之 ACL》</a></li>
+<li>《页面权限》</li>
+<li>《权限继承方案》</li>
+<li>《权限设置-权限点》</li>
+<li>《空间所属对权限的补充》</li>
+</ul>
+<p>这一年 Wiki 加入了空间所属和可见性相关特性，会对之前的权限计算细节有些冲击，加上原有的代码也不是那么好，所以这块是需要重构的，其实当时的现状是 2022 年组内基本不会给我分配服务端方面的工作了，但是最终还是由我负责重构，不为其他，只为遵从内心，保留仅有良心和内心的执着，本着对曾负责的任务励志做到最好。最终的结果还是比较满意，使用比原来更简单了，计算逻辑的细节更清晰了，大大提高了可读性和易用性，同时在部门内发布了一篇文章<a href="https://rc.pcx.cc/g/FNhsAX">《Wiki 权限 v2.0》</a>。</p>
+<h3 id="两个插件：关联页面树和文本绘图"><a href="#两个插件：关联页面树和文本绘图" class="headerlink" title="两个插件：关联页面树和文本绘图"></a>两个插件：关联页面树和文本绘图</h3><blockquote>
+<p>我去，才回顾了一个功能已经写着么多了……已经下午 1 点了，还没吃饭。</p>
+</blockquote>
+<p>这两个插件算是较大的功能了，还都挺有成就感的，文本绘图起初说服自己用，自己写的功能自己不用还靠别人用吗？现在已经爱了爱了。当时也分享一篇文章<a href="https://rc.pcx.cc/g/fqKr0x">《文本绘图实现》</a>，页面树是自己从头到尾独立负责的插件，标志着一个里程碑，仅此而已，难点只有一个还是涉及权限的一些交互。</p>
+<h3 id="参与思维导图"><a href="#参与思维导图" class="headerlink" title="参与思维导图"></a>参与思维导图</h3><p>满足了一直憧憬着的编辑器底层技术，参与思维导图时有些许的激动，但这过程中是有些煎熬和烧脑的，每天都是超负荷，不得不吐槽一下：工期短，任务重，要求陌生的领域要像普通业务一样的开发进度，这谁能顶得住啊？底层还涉及到一些数学知识和算法。不过也都过去了，痛并快乐着，哦，值得一记的功能点是拖拽节点的占位显示，已经上线的方案很鸡肋，新方案已确定，只是还没有狠下心来花时间去落实。</p>
+<h2 id="阅读和知识分享"><a href="#阅读和知识分享" class="headerlink" title="阅读和知识分享"></a>阅读和知识分享</h2><p>✅ 每日一学 15 篇<br>✅ 向 WTC 供稿 2 篇<br>✅ 技术周刊 2 篇<br>✅ 技术分享 2 次<br>✅ 知乎发布《RxJS 全面解析》点赞至今 81 个，还挺激动的<br>✅ 《RxJS 深入浅出》—— 程墨<br>✅ 《沧浪之水》还挺有感触的<br>✅ 其他乱七八糟的书都翻一翻，都没读太完整…<br>总体上这方面还行，有些沉淀，也提升了一下写作能力。</p>
+<h2 id="沉淀技术"><a href="#沉淀技术" class="headerlink" title="沉淀技术"></a>沉淀技术</h2><p>✅ 使用 Angular 可以完成大多数业务<br>✅ 深度理解 RxJS，但对很多操作符还不够熟悉</p>
+<h2 id="心态"><a href="#心态" class="headerlink" title="心态"></a>心态</h2><p>整体来说，不再那么浮躁，沉稳了许多，可能是经历多了些，也有可能是多看了几本书，提升了认知，看明白了一些事情，对任务量做了减法，对完成度和质量做了加法，这点小组组长不一定认可，不过无所谓了。绩效上也不再过度追求，不再那么逼着自己上进学习或者说卷，这样反而内心少了许多焦虑，毕竟不在乎就不会难受了，这也可能是消极，随之快乐也减少了，想想也许有时糊涂比明白更好。</p>
+<h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><p>一个字，“懒”。自制力差一直是问题。<br>还有二个字，“胆怯”，对自己不擅长的东西和不太好把握的东西，还不是那么够勇敢，会想着退缩，不管是工作还是生活。</p>
+<h2 id="明年规划"><a href="#明年规划" class="headerlink" title="明年规划"></a>明年规划</h2><p>再沉淀一门前端技术，沉淀几篇有深度的文章，今年 RxJS 这块还是比较满意的，也许来年再加深一些！</p>
+<hr>
+<blockquote>
+<p>下午 1 点 55 了，终于写完了，这篇是个人总结也是一篇内心日记，下午说是要写对联，摸摸鱼，明日启程回家，来年再战🧨</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>年终总结</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>编程角度谈抽象</title>
+    <url>/2023/01/18/%E7%BC%96%E7%A8%8B%E8%A7%92%E5%BA%A6%E8%B0%88%E6%8A%BD%E8%B1%A1/</url>
+    <content><![CDATA[<h4 id="什么是抽象？"><a href="#什么是抽象？" class="headerlink" title="什么是抽象？"></a>什么是抽象？</h4><p>抽象就是从不同的事物之间抽取出相同点。往往能力越强，抽象能力就越强，认知的维度就越高。</p>
+<span id="more"></span>
+
+<h4 id="为什么要抽象？"><a href="#为什么要抽象？" class="headerlink" title="为什么要抽象？"></a>为什么要抽象？</h4><p>世间万物都在变化，如果具有了抽象能力，在变化中找到不变，那么在解决问题中只需要更改那些需要变化的元素，从而减少工作量。</p>
+<p>例如，软件开发中的需求不断变化。有人说，杀死一个程序员，不是给他一把刀，而只需要改3次需求。程序员设计程序时，能够把这些变化的需求和不变的本质分析出来，设计出相对抽象的程序，选择适当的数据结构和设计模式，来进行对可变的元素进行重写而不用改其他依赖，那么是否能避免一部分全部推倒重来的事情发生呢？</p>
+<h4 id="抽象的应用或表现"><a href="#抽象的应用或表现" class="headerlink" title="抽象的应用或表现"></a>抽象的应用或表现</h4><p>软件工程学中OOAD(objectorientanalysisdesign)，软件编程思想中的OOP(objectorientprogram)。<br>他们的第一要素都是抽象，抽象的维度越合适，设计的程序就越易用。</p>
+<p>例如，一个小超市要做一款对商品的管理系统，商品暂时只有白酒。</p>
+<p>程序员A针对<strong>白酒</strong>进行分析了属性并设计了一个白酒类</p>
+<p>程序员B针对<strong>酒</strong>分析属性设计了一个酒类并加入了<strong>type</strong>属性来区分白酒或其他类型的酒。</p>
+<p>程序员C针对<strong>饮品</strong>分析属性设计了一个饮品类加入了<strong>type</strong>区分是酒还是其他饮品，并将原来的type变为<strong>color，</strong>只有是type是酒的时候才拥有color属性。</p>
+<p>程序员D针对<strong>商品</strong>分析了属性设计了商品类加入了商品类型<strong>type</strong>区分是饮品还是其他商品，将C的type变为drinkType，只有type是饮品的时候才拥有drinkType属性。</p>
+<p>later……，超市挣钱了变成了大超市，不仅卖白酒也开始卖啤酒和红酒了，那么程序员A的程序设计的程序很遗憾的就被淘汰了！</p>
+<p>又later……，超市继续扩大，不仅卖酒，而且开始卖奶，矿泉水，饮料等饮品，程序员B设计的程序淘汰！<br>又又later……，不仅卖饮品，还卖起了水果，日用品，程序员C设计的程序淘汰！</p>
+<p>从上面的例子中就可以看到，程序员D的程序最棒，因为他抽象的层级比其他三个都要高，所以面对变化也可以从容应对，调整不会太大！</p>
+<h4 id="抽象的维度越高越好吗？"><a href="#抽象的维度越高越好吗？" class="headerlink" title="抽象的维度越高越好吗？"></a>抽象的维度越高越好吗？</h4><p>这个要根据场景选择合适的抽象维度，并不完全是越抽象越好，因为抽象最终要应用到使用，使用必然要具体，要找具体，步骤就会<strong>繁琐</strong>，会<strong>增加复杂度。</strong></p>
+<p>从上面的例子中来说，超市老板的需求最大就是超市可以满足的特征，衣食、日用等商品，他不可能超市卖所有种类东西，不然世界就是这个老板的了，如果程序员的抽象维度是商品(非上面商品)，那么他就要包括其他类型商品：飞机、大炮、汽车、绣花针等，程序员就要分n种类型，那么他这个程序要操作一个商品需要检查n个层级才能找到对应的商品，程序会很慢甚至超出等待，过几天老板就不用这个系统了，因为还没有自己找的快呢！</p>
+<p>所以，抽象能力是必不可少的，抽象能力越高说明你站的角度越高，思考的就越高，这在你的生活和工作当中很有帮助！不然孔子，老子这样的人能够成为大智者呢，老子的道你又是否懂呢？</p>
+]]></content>
+      <categories>
+        <category>思源地</category>
+      </categories>
   </entry>
   <entry>
     <title>论读书</title>
@@ -619,72 +686,5 @@
       <categories>
         <category>读书感悟</category>
       </categories>
-  </entry>
-  <entry>
-    <title>批量删除本地分支</title>
-    <url>/2023/02/03/%E6%89%B9%E9%87%8F%E5%88%A0%E9%99%A4%E6%9C%AC%E5%9C%B0%E5%88%86%E6%94%AF/</url>
-    <content><![CDATA[<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git branch | grep -v &#x27;develop&#x27; | xargs git branch -D</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<h2 id=""><a href="#" class="headerlink" title="|"></a>|</h2><p>管道命令，用于将一串命令串联起来。前面命令的输出可以作为后面命令的输入。</p>
-<h2 id="git-branch"><a href="#git-branch" class="headerlink" title="git branch"></a>git branch</h2><p>用于列出本地所有分支。</p>
-<h2 id="grep"><a href="#grep" class="headerlink" title="grep"></a>grep</h2><p>搜索过滤命令。使用正则表达式搜索文本，并把匹配的行打印出来。</p>
-<h2 id="xargs"><a href="#xargs" class="headerlink" title="xargs"></a>xargs</h2><p>参数传递命令。用于将标准输入作为命令的参数传给下一个命令。</p>
-<p>参考<br>grep： <a href="https://wangchujiang.com/linux-command/c/grep.html">https://wangchujiang.com/linux-command/c/grep.html</a> <br>xargs： <a href="https://wangchujiang.com/linux-command/c/xargs.html">https://wangchujiang.com/linux-command/c/xargs.html</a> </p>
-]]></content>
-      <categories>
-        <category>git</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>编程角度谈抽象</title>
-    <url>/2023/01/18/%E7%BC%96%E7%A8%8B%E8%A7%92%E5%BA%A6%E8%B0%88%E6%8A%BD%E8%B1%A1/</url>
-    <content><![CDATA[<h4 id="什么是抽象？"><a href="#什么是抽象？" class="headerlink" title="什么是抽象？"></a>什么是抽象？</h4><p>抽象就是从不同的事物之间抽取出相同点。往往能力越强，抽象能力就越强，认知的维度就越高。</p>
-<span id="more"></span>
-
-<h4 id="为什么要抽象？"><a href="#为什么要抽象？" class="headerlink" title="为什么要抽象？"></a>为什么要抽象？</h4><p>世间万物都在变化，如果具有了抽象能力，在变化中找到不变，那么在解决问题中只需要更改那些需要变化的元素，从而减少工作量。</p>
-<p>例如，软件开发中的需求不断变化。有人说，杀死一个程序员，不是给他一把刀，而只需要改3次需求。程序员设计程序时，能够把这些变化的需求和不变的本质分析出来，设计出相对抽象的程序，选择适当的数据结构和设计模式，来进行对可变的元素进行重写而不用改其他依赖，那么是否能避免一部分全部推倒重来的事情发生呢？</p>
-<h4 id="抽象的应用或表现"><a href="#抽象的应用或表现" class="headerlink" title="抽象的应用或表现"></a>抽象的应用或表现</h4><p>软件工程学中OOAD(objectorientanalysisdesign)，软件编程思想中的OOP(objectorientprogram)。<br>他们的第一要素都是抽象，抽象的维度越合适，设计的程序就越易用。</p>
-<p>例如，一个小超市要做一款对商品的管理系统，商品暂时只有白酒。</p>
-<p>程序员A针对<strong>白酒</strong>进行分析了属性并设计了一个白酒类</p>
-<p>程序员B针对<strong>酒</strong>分析属性设计了一个酒类并加入了<strong>type</strong>属性来区分白酒或其他类型的酒。</p>
-<p>程序员C针对<strong>饮品</strong>分析属性设计了一个饮品类加入了<strong>type</strong>区分是酒还是其他饮品，并将原来的type变为<strong>color，</strong>只有是type是酒的时候才拥有color属性。</p>
-<p>程序员D针对<strong>商品</strong>分析了属性设计了商品类加入了商品类型<strong>type</strong>区分是饮品还是其他商品，将C的type变为drinkType，只有type是饮品的时候才拥有drinkType属性。</p>
-<p>later……，超市挣钱了变成了大超市，不仅卖白酒也开始卖啤酒和红酒了，那么程序员A的程序设计的程序很遗憾的就被淘汰了！</p>
-<p>又later……，超市继续扩大，不仅卖酒，而且开始卖奶，矿泉水，饮料等饮品，程序员B设计的程序淘汰！<br>又又later……，不仅卖饮品，还卖起了水果，日用品，程序员C设计的程序淘汰！</p>
-<p>从上面的例子中就可以看到，程序员D的程序最棒，因为他抽象的层级比其他三个都要高，所以面对变化也可以从容应对，调整不会太大！</p>
-<h4 id="抽象的维度越高越好吗？"><a href="#抽象的维度越高越好吗？" class="headerlink" title="抽象的维度越高越好吗？"></a>抽象的维度越高越好吗？</h4><p>这个要根据场景选择合适的抽象维度，并不完全是越抽象越好，因为抽象最终要应用到使用，使用必然要具体，要找具体，步骤就会<strong>繁琐</strong>，会<strong>增加复杂度。</strong></p>
-<p>从上面的例子中来说，超市老板的需求最大就是超市可以满足的特征，衣食、日用等商品，他不可能超市卖所有种类东西，不然世界就是这个老板的了，如果程序员的抽象维度是商品(非上面商品)，那么他就要包括其他类型商品：飞机、大炮、汽车、绣花针等，程序员就要分n种类型，那么他这个程序要操作一个商品需要检查n个层级才能找到对应的商品，程序会很慢甚至超出等待，过几天老板就不用这个系统了，因为还没有自己找的快呢！</p>
-<p>所以，抽象能力是必不可少的，抽象能力越高说明你站的角度越高，思考的就越高，这在你的生活和工作当中很有帮助！不然孔子，老子这样的人能够成为大智者呢，老子的道你又是否懂呢？</p>
-]]></content>
-      <categories>
-        <category>思源地</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>一剑，一念</title>
-    <url>/2023/02/06/%E9%9D%A2%E5%AF%B9%E7%96%BE%E9%A3%8E%E5%90%A7/</url>
-    <content><![CDATA[<p>个人优势：</p>
-<ul>
-<li>善于总结和独立思考</li>
-<li>对技术保持持续热情</li>
-<li>敢于挑战和突破自己</li>
-</ul>
-<p>专业技能：</p>
-<ul>
-<li>掌握并灵活运用常用编程思想及设计模式解决问题：面向对象编程（OOP）、切面编程（AOP）、响应式编程（RX）、函数式编程（FP）、代理（Proxy）</li>
-<li>灵活运用 TypeScript 类型及相关技术：装饰器实现依赖注入、面向接口约束行为</li>
-<li>掌握 NodeJS 框架 Express、KOA、Chaos（公司自研，类似于 Next），并看过其源码，深刻理解中间件机制</li>
-<li>掌握前端框架 Angular 及相关生态：RxJS、CDK 等</li>
-<li>熟练使用 MongoDB、Redis、MySQL 等缓存技术</li>
-<li>了解微前端、后端微服务、分布式集群</li>
-</ul>
-<p>工作职责：</p>
-<ul>
-<li>负责 Wiki 架构设计及核心功能模块开发</li>
-<li>与产品经理，设计师配合探讨、设计、实现产品的核心功能迭代及改进</li>
-<li>负责核心模块代码编写，并对功能模块进行单元测试的编写</li>
-<li>对前后端代码结构和性能进行持续优化</li>
-</ul>
-]]></content>
   </entry>
 </search>
