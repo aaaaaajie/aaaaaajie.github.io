@@ -56,6 +56,34 @@
       
   
   <h2 class="archive-article-title" itemprop="name">
+    <a href="/2023/02/08/mermaid/">hexo ocean 主题集成 mermaid</a>
+  </h2>
+  
+  
+
+      <a href="/2023/02/08/mermaid/" class="archive-article-date">
+  <time datetime="2023-02-08T08:14:18.000Z" itemprop="datePublished">02/08</time>
+</a>
+    </header>
+    
+      <p>mermaid 是一款可以使用文本来绘图的工具，支持流程图、时序图、类图、饼状图等等，更多看<a target="_blank" rel="noopener" href="https://mermaid.js.org/intro/">这里</a>。它可以支持在 markdown 中使用，这对于我这种程序员非常的好用，可以代替一些插图，hexo 对插图是一大痛点（上传图片，然后在 markdown 中插入链接，重要的是要考虑储存位置、空间和后期的维护），本人习惯使用代码块或文字的方式代替，所以这是一篇 hexo ocean 集成 mermaid 的文档。</p>
+    
+    
+    
+  </div>
+
+</article>
+      
+  
+  
+      <article class="archive-article archive-type-post">
+  
+  
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      
+  
+  <h2 class="archive-article-title" itemprop="name">
     <a href="/2023/02/07/%E5%88%87%E9%9D%A2%E7%BC%96%E7%A8%8B/">谈面向切面编程—AOP</a>
   </h2>
   
@@ -94,7 +122,7 @@
 </a>
     </header>
     
-      长路漫漫，唯剑作伴
+      
     
     
     
@@ -221,7 +249,7 @@
   
     <div class="archive-article-gallery">
       
-        <a class="article-gallery-img" href="/2023/01/19/RxJS%E9%81%93%E4%B8%8E%E6%9C%AF/" rel="gallery_cldvc4t6v0003t16chte130ae">
+        <a class="article-gallery-img" href="/2023/01/19/RxJS%E9%81%93%E4%B8%8E%E6%9C%AF/" rel="gallery_cldvjpuw10008316cdqohf5cp">
           <img src="https://picx.zhimg.com/v2-84ed5c6eeadf810552b399cec474d1fe_1440w.jpg?source=d16d100b" itemprop="image">
         </a>
       
@@ -300,38 +328,6 @@
     </header>
     
       <h4 id="什么是抽象？"><a href="#什么是抽象？" class="headerlink" title="什么是抽象？"></a>什么是抽象？</h4><p>抽象就是从不同的事物之间抽取出相同点。往往能力越强，抽象能力就越强，认知的维度就越高。</p>
-    
-    
-    
-  </div>
-
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  
-  
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-  
-  <h2 class="archive-article-title" itemprop="name">
-    <a href="/2023/01/17/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/">论读书</a>
-  </h2>
-  
-  
-
-      <a href="/2023/01/17/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/" class="archive-article-date">
-  <time datetime="2023-01-17T03:58:58.152Z" itemprop="datePublished">01/17</time>
-</a>
-    </header>
-    
-      <blockquote>
-<p> 怎么算一本好书</p>
-</blockquote>
-<p>自从看了一本《沧浪之水》的书之后就有点入迷小说类的书了，家里的书也不算少，但最近能找到自己看得上眼的书，基本没有（《人类简史》勉强算是），其他书并非不好，只是不符合自己的标准。所有有时自己就会想，什么样的书才算称得上是好书？自己心里的标准是啥样的？</p>
-<p>针对书架上现有的书做个分类，也大致说下标准：</p>
     
     
     
@@ -459,14 +455,19 @@
 
 
 
-<script src="/js/mermaid.min.js"></script>
-
-
-
 <script src="/fancybox/jquery.fancybox.min.js"></script>
 
 
 
+
+
+
+  <script src='/js/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
 
 
 
