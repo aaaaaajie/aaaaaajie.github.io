@@ -8,7 +8,7 @@
   
   
   <title>
-    编程角度谈抽象 |
+    理解npm legacy-peer-deps 参数标识 |
     
     阿杰
   </title>
@@ -32,7 +32,7 @@
 <body>
   <main class="content">
     <section class="outer">
-  <article id="post-编程角度谈抽象" class="article article-type-post" itemscope
+  <article id="post-npm legacy-peer-deps 参数标识" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -41,7 +41,7 @@
       
   
   <h1 class="article-title" itemprop="name">
-    编程角度谈抽象
+    理解npm legacy-peer-deps 参数标识
   </h1>
   
   
@@ -51,12 +51,12 @@
 
     
     <div class="article-meta">
-      <a href="/2023/01/18/%E7%BC%96%E7%A8%8B%E8%A7%92%E5%BA%A6%E8%B0%88%E6%8A%BD%E8%B1%A1/" class="article-date">
-  <time datetime="2023-01-18T03:28:15.752Z" itemprop="datePublished">2023-01-18</time>
+      <a href="/2023/02/22/npm%20legacy-peer-deps%20%E5%8F%82%E6%95%B0%E6%A0%87%E8%AF%86/" class="article-date">
+  <time datetime="2023-02-22T12:24:57.000Z" itemprop="datePublished">2023-02-22</time>
 </a>
       
 <div class="article-category">
-  <a class="article-category-link" href="/categories/%E6%80%9D%E6%BA%90%E5%9C%B0/">思源地</a>
+  <a class="article-category-link" href="/categories/npm/">npm</a>
 </div>
 
     </div>
@@ -72,28 +72,53 @@
       
       
       
-        <h4 id="什么是抽象？"><a href="#什么是抽象？" class="headerlink" title="什么是抽象？"></a>什么是抽象？</h4><p>抽象就是从不同的事物之间抽取出相同点。往往能力越强，抽象能力就越强，认知的维度就越高。</p>
+        <p>大家应该都遇到过这样的错误：  <strong>unable to resolve dependency tree</strong>  <strong>。</strong></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/63f5a12ea299063b352a91dd/origin-url" alt="image.png"></p>
+<p>那么大家是如何解决的？以下有几个问题，都知道的同学可以绕过了。</p>
+<p>刚开始是根据报错提示给出的解决方案：  <code>npm install --legacy-peer-deps</code>  ，这个用过很多次了，也解决过大多数场景，但最近一次却栽到了这上面。</p>
 <span id="more"></span>
 
-<h4 id="为什么要抽象？"><a href="#为什么要抽象？" class="headerlink" title="为什么要抽象？"></a>为什么要抽象？</h4><p>世间万物都在变化，如果具有了抽象能力，在变化中找到不变，那么在解决问题中只需要更改那些需要变化的元素，从而减少工作量。</p>
-<p>例如，软件开发中的需求不断变化。有人说，杀死一个程序员，不是给他一把刀，而只需要改3次需求。程序员设计程序时，能够把这些变化的需求和不变的本质分析出来，设计出相对抽象的程序，选择适当的数据结构和设计模式，来进行对可变的元素进行重写而不用改其他依赖，那么是否能避免一部分全部推倒重来的事情发生呢？</p>
-<h4 id="抽象的应用或表现"><a href="#抽象的应用或表现" class="headerlink" title="抽象的应用或表现"></a>抽象的应用或表现</h4><p>软件工程学中OOAD(objectorientanalysisdesign)，软件编程思想中的OOP(objectorientprogram)。<br>他们的第一要素都是抽象，抽象的维度越合适，设计的程序就越易用。</p>
-<p>例如，一个小超市要做一款对商品的管理系统，商品暂时只有白酒。</p>
-<p>程序员A针对<strong>白酒</strong>进行分析了属性并设计了一个白酒类</p>
-<p>程序员B针对<strong>酒</strong>分析属性设计了一个酒类并加入了<strong>type</strong>属性来区分白酒或其他类型的酒。</p>
-<p>程序员C针对<strong>饮品</strong>分析属性设计了一个饮品类加入了<strong>type</strong>区分是酒还是其他饮品，并将原来的type变为<strong>color，</strong>只有是type是酒的时候才拥有color属性。</p>
-<p>程序员D针对<strong>商品</strong>分析了属性设计了商品类加入了商品类型<strong>type</strong>区分是饮品还是其他商品，将C的type变为drinkType，只有type是饮品的时候才拥有drinkType属性。</p>
-<p>later……，超市挣钱了变成了大超市，不仅卖白酒也开始卖啤酒和红酒了，那么程序员A的程序设计的程序很遗憾的就被淘汰了！</p>
-<p>又later……，超市继续扩大，不仅卖酒，而且开始卖奶，矿泉水，饮料等饮品，程序员B设计的程序淘汰！<br>又又later……，不仅卖饮品，还卖起了水果，日用品，程序员C设计的程序淘汰！</p>
-<p>从上面的例子中就可以看到，程序员D的程序最棒，因为他抽象的层级比其他三个都要高，所以面对变化也可以从容应对，调整不会太大！</p>
-<h4 id="抽象的维度越高越好吗？"><a href="#抽象的维度越高越好吗？" class="headerlink" title="抽象的维度越高越好吗？"></a>抽象的维度越高越好吗？</h4><p>这个要根据场景选择合适的抽象维度，并不完全是越抽象越好，因为抽象最终要应用到使用，使用必然要具体，要找具体，步骤就会<strong>繁琐</strong>，会<strong>增加复杂度。</strong></p>
-<p>从上面的例子中来说，超市老板的需求最大就是超市可以满足的特征，衣食、日用等商品，他不可能超市卖所有种类东西，不然世界就是这个老板的了，如果程序员的抽象维度是商品(非上面商品)，那么他就要包括其他类型商品：飞机、大炮、汽车、绣花针等，程序员就要分n种类型，那么他这个程序要操作一个商品需要检查n个层级才能找到对应的商品，程序会很慢甚至超出等待，过几天老板就不用这个系统了，因为还没有自己找的快呢！</p>
-<p>所以，抽象能力是必不可少的，抽象能力越高说明你站的角度越高，思考的就越高，这在你的生活和工作当中很有帮助！不然孔子，老子这样的人能够成为大智者呢，老子的道你又是否懂呢？</p>
+<h3 id="为什么会出现-unable-to-resolve-dependency-tree"><a href="#为什么会出现-unable-to-resolve-dependency-tree" class="headerlink" title="为什么会出现 unable to resolve dependency tree ?"></a>为什么会出现 unable to resolve dependency tree ?</h3><p>简单说，  <strong>安装包的依赖出现了不对等</strong>  。具体解释看下面：</p>
+<blockquote>
+<p>前几天还和同事聊这个问题：A 依赖了 C，版本是 1.0，B 也依赖了 C，版本是 2.0，那么最终 npm 安装的 C 是 1.0 还是 2.0，甚至说 C 本身就被项目依赖，版本是 4.0，此时安装的又是什么版本或者以上情况 均不处理报错终止安装，当然这些都是假设自己是 npm 的一些设想，从实际结果来看是终止安装。</p>
+</blockquote>
+<p>所以要处理这个问题就会产生一个用来维护依赖版本的东西，这就是 peerDependencies，peerDependencies 叫对等依赖关系，在 npm 7 才允许显示设置的，再此之前应该是默认始终安装（npm 6 的文档是没有 peerDependencies 相关资料的，也没有 legacy-peer-deps 参数标识），但实际情况我用 node 14.x 却没有此错误（node 14 配套的 npm 是 6.x）……</p>
+<h4 id="dependencies-和-peerDependencies-有什么区别？"><a href="#dependencies-和-peerDependencies-有什么区别？" class="headerlink" title="dependencies 和 peerDependencies 有什么区别？"></a>dependencies 和 peerDependencies 有什么区别？</h4><table>
+<thead>
+<tr>
+<th></th>
+<th>dependencies</th>
+<th>peerDependencies</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>描述</td>
+<td>项目运行时所需的依赖库</td>
+<td>指定我们的包与特定版本的npm包兼容</td>
+</tr>
+<tr>
+<td>行为</td>
+<td>如果node_modules目录中不存在某个包，则会自动添加该包。</td>
+<td>不会自动安装对等依赖项。需要手动修改package.json文件，添加对等依赖项。</td>
+</tr>
+<tr>
+<td>使用</td>
+<td>包括在最终代码包中</td>
+<td>只有在发布自己的包时才能包含</td>
+</tr>
+</tbody></table>
+<h3 id="legacy-peer-deps"><a href="#legacy-peer-deps" class="headerlink" title="legacy-peer-deps"></a>legacy-peer-deps</h3><p><strong>–legacy-peer-deps 参数是代表忽略 peerDependencies 设置的依赖版本并继续安装</strong>  ，这样产生的结果是，所有依赖会被打乱（具体安装策略还不是很清楚），这有时候没问题有时候就会出错，这取决于项目中是否用到了不同版本库的特性，向这次就栽到这上面了    ，很多库版本不一致，导致某些包已经不支持现有代码引用的一些特性而报错。</p>
+<p>所以，综上所述，  <strong>不要轻易加上 –legacy-peer-deps</strong>  ，这也是官方的警告⚠️  ** 。**</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/63f5a895a299063b352a91e3/origin-url" alt="image.png"><img src="https://atlas-rc.pingcode.com/files/public/63f5a8eaa299063b352a91e4/origin-url" alt="image.png"></p>
+<h3 id="其他解决办法"><a href="#其他解决办法" class="headerlink" title="其他解决办法"></a>其他解决办法</h3><ul>
+<li>使用 –force ，代表强制继续安装。<br>–omit&#x3D;peer 这个还没有试过，看到有提到的，感兴趣的同学可以试一下</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>总结就是没有可以总结的    ，重点都画出来了。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/01/18/%E7%BC%96%E7%A8%8B%E8%A7%92%E5%BA%A6%E8%B0%88%E6%8A%BD%E8%B1%A1/" data-id="clefnnkto000r946c1mjjhzq1" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/02/22/npm%20legacy-peer-deps%20%E5%8F%82%E6%95%B0%E6%A0%87%E8%AF%86/" data-id="clefnnkth000g946c8w6j5cpt" class="article-share-link">
         分享
       </a>
       
@@ -105,19 +130,10 @@
   
 <nav class="article-nav">
   
-  <a href="/2023/01/19/2022%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" class="article-nav-link">
-    <strong class="article-nav-caption">前一篇</strong>
-    <div class="article-nav-title">
-      
-      2022年终总结
-      
-    </div>
-  </a>
   
-  
-  <a href="/2023/01/17/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/" class="article-nav-link">
+  <a href="/2023/02/11/git%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/" class="article-nav-link">
     <strong class="article-nav-caption">后一篇</strong>
-    <div class="article-nav-title">论读书</div>
+    <div class="article-nav-title">git常见问题</div>
   </a>
   
 </nav>
