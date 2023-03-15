@@ -8,7 +8,7 @@
   
   
   <title>
-    git常见问题 |
+    linux 语法手册 |
     
     阿杰
   </title>
@@ -32,7 +32,7 @@
 <body>
   <main class="content">
     <section class="outer">
-  <article id="post-git常见问题" class="article article-type-post" itemscope
+  <article id="post-linux语法手册" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -41,7 +41,7 @@
       
   
   <h1 class="article-title" itemprop="name">
-    git常见问题
+    linux 语法手册
   </h1>
   
   
@@ -51,12 +51,12 @@
 
     
     <div class="article-meta">
-      <a href="/2023/02/11/git%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/" class="article-date">
-  <time datetime="2023-02-11T13:10:46.000Z" itemprop="datePublished">2023-02-11</time>
+      <a href="/2023/03/03/linux%E8%AF%AD%E6%B3%95%E6%89%8B%E5%86%8C/" class="article-date">
+  <time datetime="2023-03-03T08:13:20.000Z" itemprop="datePublished">2023-03-03</time>
 </a>
       
 <div class="article-category">
-  <a class="article-category-link" href="/categories/git/">git</a>
+  <a class="article-category-link" href="/categories/linux/">linux</a>
 </div>
 
     </div>
@@ -72,12 +72,16 @@
       
       
       
-        <h2 id="refusing-to-merge-unrelated-histories（拒绝合并不相关历史）"><a href="#refusing-to-merge-unrelated-histories（拒绝合并不相关历史）" class="headerlink" title="refusing to merge unrelated histories（拒绝合并不相关历史）"></a>refusing to merge unrelated histories（拒绝合并不相关历史）</h2><p>这种情况一般是本地仓储和远程仓储的提交历史不一致，git 需要确认是否合并<br>解决：<code>git pull origin master --allow-unrelated-histories</code></p>
+        <h2 id="查看端口占用"><a href="#查看端口占用" class="headerlink" title="查看端口占用"></a>查看端口占用</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsof -i:端口号</span><br></pre></td></tr></table></figure>
+
+<h2 id="杀死进程"><a href="#杀死进程" class="headerlink" title="杀死进程"></a>杀死进程</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -9 PID</span><br></pre></td></tr></table></figure>
+
+<h2 id="查看内存占用情况-前10位"><a href="#查看内存占用情况-前10位" class="headerlink" title="查看内存占用情况(前10位)"></a>查看内存占用情况(前10位)</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps aux --<span class="built_in">sort</span> -rss | <span class="built_in">head</span> -n 10</span><br></pre></td></tr></table></figure>
 <span id="more"></span>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/02/11/git%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/" data-id="clf9rzvjd0008h36c51u82sfc" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/03/03/linux%E8%AF%AD%E6%B3%95%E6%89%8B%E5%86%8C/" data-id="clf9rzvjh000gh36c36273db2" class="article-share-link">
         分享
       </a>
       
@@ -89,19 +93,19 @@
   
 <nav class="article-nav">
   
-  <a href="/2023/02/22/npm%20legacy-peer-deps%20%E5%8F%82%E6%95%B0%E6%A0%87%E8%AF%86/" class="article-nav-link">
+  <a href="/2023/03/05/%E4%BD%BF%E7%94%A8google%E7%9F%A2%E9%87%8F%E5%9B%BE/" class="article-nav-link">
     <strong class="article-nav-caption">前一篇</strong>
     <div class="article-nav-title">
       
-      理解npm legacy-peer-deps 参数标识
+      Sass 中使用 Google icons 和 字体
       
     </div>
   </a>
   
   
-  <a href="/2023/02/08/mermaid/" class="article-nav-link">
+  <a href="/2023/03/03/vscode%E9%95%9C%E5%83%8F%E4%B8%8B%E8%BD%BD/" class="article-nav-link">
     <strong class="article-nav-caption">后一篇</strong>
-    <div class="article-nav-title">hexo ocean 主题集成 mermaid</div>
+    <div class="article-nav-title">使用镜像下载 vscode</div>
   </a>
   
 </nav>
