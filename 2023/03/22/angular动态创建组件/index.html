@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <title>
+    Angular 动态创建组件 |
+    
+    阿杰
+  </title>
+  <!-- Icon -->
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <main class="content">
+    <section class="outer">
+  <article id="post-angular动态创建组件" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h1 class="article-title" itemprop="name">
+    Angular 动态创建组件
+  </h1>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/03/22/angular%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BA%E7%BB%84%E4%BB%B6/" class="article-date">
+  <time datetime="2023-03-22T13:52:23.000Z" itemprop="datePublished">2023-03-22</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/Angular/">Angular</a>
+</div>
+
+    </div>
+    
+
+    
+    
+<div class="tocbot"></div>
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+      
+        <p>有两种方式：视图动态渲染和组件动态创建（笔者拟自己拟的概念），  <strong>区别是前者的重心是使用 NgComponentOutlet 指令在视图模板中，后者的重心是使用 createComponent API 在组件内创建的</strong>  。</p>
+<span id="more"></span>
+<h3 id="方式一：视图渲染"><a href="#方式一：视图渲染" class="headerlink" title="方式一：视图渲染"></a>方式一：视图渲染</h3><p>声明一个组件 app-dynamic</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@Component(&#123;</span><br><span class="line">  selector: &#x27;app-dynamic&#x27;,</span><br><span class="line">  template: &#x27;&lt;div&gt; 123 &lt;div&gt;&#x27;,</span><br><span class="line">&#125;)</span><br><span class="line">export class DynamicComponent implements OnInit &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在其他组件的视图渲染该组件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@Component(&#123;</span><br><span class="line">  selector: &#x27;my-app&#x27;,</span><br><span class="line">  template: `</span><br><span class="line">    &lt;ng-container *ngComponentOutlet=&quot;dynamicComponent&quot;&gt;&lt;/ng-container&gt;</span><br><span class="line">  `,</span><br><span class="line">&#125;)</span><br><span class="line">export class App &#123;</span><br><span class="line">  dynamicComponent = DynamicComponent;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>效果如下</p>
+<p><img src="https://atlas.pingcode.com/files/public/641aa49d7b59c40c0df5baa0/origin-url" alt="image.png"></p>
+<h4 id="传递参数"><a href="#传递参数" class="headerlink" title="传递参数"></a>传递参数</h4><p>这种方式不能直接像 @Input() 一样去传值，但是 ngComponentOutlet 指令  **支持 injector 注入 token **  的方式传值。</p>
+<p>修改上述代码：</p>
+<p><img src="https://atlas.pingcode.com/files/public/641aa5edaad49592766d5672/origin-url" alt="image.png"></p>
+<p>组件接收值</p>
+<p><img src="https://atlas.pingcode.com/files/public/641aa66caad49592766d5689/origin-url" alt="image.png"></p>
+<p>完整代码戳  <a target="_blank" rel="noopener" href="https://stackblitz.com/edit/angular-m1uvoc?file=src/main.ts">这里</a>  </p>
+<h3 id="方式二：组件创建"><a href="#方式二：组件创建" class="headerlink" title="方式二：组件创建"></a>方式二：组件创建</h3><p>声明一个组件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@Component(&#123;</span><br><span class="line">  selector: &#x27;app-two&#x27;,</span><br><span class="line">  template: &#x27;&lt;div&gt; &#123;&#123; name &#125;&#125; &lt;/div&gt;&#x27;,</span><br><span class="line">&#125;)</span><br><span class="line">export class TwoComponent &#123;</span><br><span class="line">  @Input() name: string;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">@Component(&#123;</span><br><span class="line">  selector: &#x27;my-app&#x27;,</span><br><span class="line">  template: `</span><br><span class="line">    &lt;ng-template #container&gt;&lt;/ng-template&gt;</span><br><span class="line">  `,</span><br><span class="line">&#125;)</span><br><span class="line">export class App &#123;</span><br><span class="line">  </span><br><span class="line">  constructor(</span><br><span class="line">    private environmentInjector: EnvironmentInjector,</span><br><span class="line">    private cdr: ChangeDetectorRef</span><br><span class="line">  ) &#123; &#125;</span><br><span class="line">  </span><br><span class="line">  ngAfterViewInit() &#123;</span><br><span class="line">    const component = this.container.createComponent(TwoComponent, &#123;</span><br><span class="line">      environmentInjector: this.environmentInjector,</span><br><span class="line">    &#125;);</span><br><span class="line">    // 传参</span><br><span class="line">    component.setInput(&#x27;name&#x27;, &#x27;组件动态创建&#x27;);</span><br><span class="line">    this.cdr.detectChanges();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>效果</p>
+<p><img src="https://atlas.pingcode.com/files/public/641b0769aad49592766d61a8/origin-url" alt="image.png"></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://angular.cn/api/common/NgComponentOutlet#ngcomponentoutlet">ngcomponentoutlet</a>  </li>
+<li><a target="_blank" rel="noopener" href="https://angular.cn/api/core/ViewContainerRef#createcomponent">createcomponent</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/03/22/angular%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BA%E7%BB%84%E4%BB%B6/" data-id="clfjqzid90006xj6c9plw9hfi" class="article-share-link">
+        分享
+      </a>
+      
+    </footer>
+
+  </div>
+
+  
+  
+<nav class="article-nav">
+  
+  
+  <a href="/2023/03/15/js%E8%AE%BE%E7%BD%AE%E4%BC%AA%E7%B1%BB%E5%85%83%E7%B4%A0/" class="article-nav-link">
+    <strong class="article-nav-caption">后一篇</strong>
+    <div class="article-nav-title">js 修改伪类元素的样式</div>
+  </a>
+  
+</nav>
+
+  
+
+  
+  
+  
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: 'd194952437b67371b253',
+    clientSecret: 'ee8127b1392f7840a0bcded24bd677566b86cbb2',
+    repo: 'comment',
+    owner: 'aaaaaajie',
+    admin: ['aaaaaajie'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last',
+    proxy: 'https://strong-caramel-969805.netlify.app/github_access_token',
+    createIssueManually: 'false'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+</article>
+</section>
+    <footer class="footer">
+  <div class="outer">
+    <!-- <ul class="list-inline">
+      <li>阿杰 &copy; 2023</li>
+      
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank"></a>
+            
+        </li>
+      
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul> -->
+    <!-- 
+      © 2018 ~ 2022-11-11 xxx. All rights reserved.
+      contact email: xxxs@foxmail.com
+     -->
+     
+    <!-- <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p> -->
+    <p>Contact Email: m18210870360@163.com</p>
+    <p>&copy; 2023 A Jie. All rights reserved.</p>
+  </div>
+</footer>
+  </main>
+  <aside class="sidebar">
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img style="border-radius: 50%;" src="/images/avatar.JPG" alt="阿杰"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/gallery">相册</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/favorites">收藏</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        搜索
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="fe fe-feed"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="输入关键字...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+  });
+</script>
+
+
+
+  <script src='/js/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+
+</html>
