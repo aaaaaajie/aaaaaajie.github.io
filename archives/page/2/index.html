@@ -56,34 +56,6 @@
       
   
   <h2 class="archive-article-title" itemprop="name">
-    <a href="/2023/02/06/%E9%9D%A2%E5%AF%B9%E7%96%BE%E9%A3%8E%E5%90%A7/">一剑，一念</a>
-  </h2>
-  
-  
-
-      <a href="/2023/02/06/%E9%9D%A2%E5%AF%B9%E7%96%BE%E9%A3%8E%E5%90%A7/" class="archive-article-date">
-  <time datetime="2023-02-06T15:20:00.000Z" itemprop="datePublished">02/06</time>
-</a>
-    </header>
-    
-      长路漫漫，唯剑作伴
-    
-    
-    
-  </div>
-
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  
-  
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-  
-  <h2 class="archive-article-title" itemprop="name">
     <a href="/2023/02/03/centos7%E5%AE%89%E8%A3%85yum/">centos7安装yum</a>
   </h2>
   
@@ -113,35 +85,7 @@
       
   
   <h2 class="archive-article-title" itemprop="name">
-    <a href="/2023/02/03/%E6%89%B9%E9%87%8F%E5%88%A0%E9%99%A4%E6%9C%AC%E5%9C%B0%E5%88%86%E6%94%AF/">批量删除本地分支</a>
-  </h2>
-  
-  
-
-      <a href="/2023/02/03/%E6%89%B9%E9%87%8F%E5%88%A0%E9%99%A4%E6%9C%AC%E5%9C%B0%E5%88%86%E6%94%AF/" class="archive-article-date">
-  <time datetime="2023-02-03T06:41:33.000Z" itemprop="datePublished">02/03</time>
-</a>
-    </header>
-    
-      <h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch | grep -v &#x27;develop&#x27; | xargs git branch -D</span><br></pre></td></tr></table></figure>
-    
-    
-    
-  </div>
-
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  
-  
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-  
-  <h2 class="archive-article-title" itemprop="name">
-    <a href="/2023/02/03/git%E6%89%8B%E5%86%8C/">Git 常用命令</a>
+    <a href="/2023/02/03/git%E6%89%8B%E5%86%8C/">Git 手册</a>
   </h2>
   
   
@@ -151,7 +95,20 @@
 </a>
     </header>
     
-      
+      <blockquote>
+<p>以下命令中 [ ] 包裹的值为动态值，需要根据情况替换，比如 <code>git push origin [branchName]</code>，[branchName] 需要根据实际情况的值决定，比如： <code>git push origin master</code></p>
+</blockquote>
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><ul>
+<li>创建本地仓库：<code>git init</code></li>
+<li>创建中央仓库：<code>git init --bare</code></li>
+<li>拉取远程分支所有历史提交记录：<code>git pull origin [branch] --allow-unrelated-histories</code></li>
+</ul>
+<h2 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h2><ul>
+<li>快速打标签: <code>git tag [tagName]</code></li>
+<li>推送至远程: <code>git push origin [tagName]</code></li>
+</ul>
+<h2 id="cherry-pick"><a href="#cherry-pick" class="headerlink" title="cherry-pick"></a>cherry-pick</h2><p>将其他分支的 commit 迁移至当前分支(<strong>注意先切换到需要上线的分支</strong>): <code>git cherry-pick [commitid]</code></p>
+<p>一般在热修复，脚本，补丁需要及时上线，但又不能基于开发分支代码部署，将临时代码合并到上个上线的版本部署一版的场景中会用到。</p>
     
     
     
@@ -194,7 +151,7 @@
   
     <div class="archive-article-gallery">
       
-        <a class="article-gallery-img" href="/2023/01/19/RxJS%E9%81%93%E4%B8%8E%E6%9C%AF/" rel="gallery_clg35tyhv0003wc6c9rpnfgib">
+        <a class="article-gallery-img" href="/2023/01/19/RxJS%E9%81%93%E4%B8%8E%E6%9C%AF/" rel="gallery_clgaaw2yf0003zj6c4h42gv9o">
           <img src="https://picx.zhimg.com/v2-84ed5c6eeadf810552b399cec474d1fe_1440w.jpg?source=d16d100b" itemprop="image">
         </a>
       

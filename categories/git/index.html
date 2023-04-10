@@ -56,75 +56,7 @@
       
   
   <h2 class="archive-article-title" itemprop="name">
-    <a href="/2023/02/11/git%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/">git常见问题</a>
-  </h2>
-  
-  
-
-      <a href="/2023/02/11/git%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/" class="archive-article-date">
-  <time datetime="2023-02-11T13:10:46.000Z" itemprop="datePublished">02/11</time>
-</a>
-    </header>
-    
-      <h2 id="refusing-to-merge-unrelated-histories（拒绝合并不相关历史）"><a href="#refusing-to-merge-unrelated-histories（拒绝合并不相关历史）" class="headerlink" title="refusing to merge unrelated histories（拒绝合并不相关历史）"></a>refusing to merge unrelated histories（拒绝合并不相关历史）</h2><p>这种情况一般是本地仓储和远程仓储的提交历史不一致，git 需要确认是否合并<br>解决：<code>git pull origin master --allow-unrelated-histories</code></p>
-    
-    
-      
-<div class="article-category">
-  <a class="article-category-link" href="/categories/git/">git</a>
-</div>
-
-    
-    
-  </div>
-
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  
-  
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-  
-  <h2 class="archive-article-title" itemprop="name">
-    <a href="/2023/02/03/%E6%89%B9%E9%87%8F%E5%88%A0%E9%99%A4%E6%9C%AC%E5%9C%B0%E5%88%86%E6%94%AF/">批量删除本地分支</a>
-  </h2>
-  
-  
-
-      <a href="/2023/02/03/%E6%89%B9%E9%87%8F%E5%88%A0%E9%99%A4%E6%9C%AC%E5%9C%B0%E5%88%86%E6%94%AF/" class="archive-article-date">
-  <time datetime="2023-02-03T06:41:33.000Z" itemprop="datePublished">02/03</time>
-</a>
-    </header>
-    
-      <h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch | grep -v &#x27;develop&#x27; | xargs git branch -D</span><br></pre></td></tr></table></figure>
-    
-    
-      
-<div class="article-category">
-  <a class="article-category-link" href="/categories/git/">git</a>
-</div>
-
-    
-    
-  </div>
-
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  
-  
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-  
-  <h2 class="archive-article-title" itemprop="name">
-    <a href="/2023/02/03/git%E6%89%8B%E5%86%8C/">Git 常用命令</a>
+    <a href="/2023/02/03/git%E6%89%8B%E5%86%8C/">Git 手册</a>
   </h2>
   
   
@@ -134,7 +66,20 @@
 </a>
     </header>
     
-      
+      <blockquote>
+<p>以下命令中 [ ] 包裹的值为动态值，需要根据情况替换，比如 <code>git push origin [branchName]</code>，[branchName] 需要根据实际情况的值决定，比如： <code>git push origin master</code></p>
+</blockquote>
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><ul>
+<li>创建本地仓库：<code>git init</code></li>
+<li>创建中央仓库：<code>git init --bare</code></li>
+<li>拉取远程分支所有历史提交记录：<code>git pull origin [branch] --allow-unrelated-histories</code></li>
+</ul>
+<h2 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h2><ul>
+<li>快速打标签: <code>git tag [tagName]</code></li>
+<li>推送至远程: <code>git push origin [tagName]</code></li>
+</ul>
+<h2 id="cherry-pick"><a href="#cherry-pick" class="headerlink" title="cherry-pick"></a>cherry-pick</h2><p>将其他分支的 commit 迁移至当前分支(<strong>注意先切换到需要上线的分支</strong>): <code>git cherry-pick [commitid]</code></p>
+<p>一般在热修复，脚本，补丁需要及时上线，但又不能基于开发分支代码部署，将临时代码合并到上个上线的版本部署一版的场景中会用到。</p>
     
     
       

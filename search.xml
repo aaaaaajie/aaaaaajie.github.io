@@ -386,6 +386,49 @@
       </categories>
   </entry>
   <entry>
+    <title>Git 手册</title>
+    <url>/2023/02/03/git%E6%89%8B%E5%86%8C/</url>
+    <content><![CDATA[<blockquote>
+<p>以下命令中 [ ] 包裹的值为动态值，需要根据情况替换，比如 <code>git push origin [branchName]</code>，[branchName] 需要根据实际情况的值决定，比如： <code>git push origin master</code></p>
+</blockquote>
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><ul>
+<li>创建本地仓库：<code>git init</code></li>
+<li>创建中央仓库：<code>git init --bare</code></li>
+<li>拉取远程分支所有历史提交记录：<code>git pull origin [branch] --allow-unrelated-histories</code></li>
+</ul>
+<h2 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h2><ul>
+<li>快速打标签: <code>git tag [tagName]</code></li>
+<li>推送至远程: <code>git push origin [tagName]</code></li>
+</ul>
+<h2 id="cherry-pick"><a href="#cherry-pick" class="headerlink" title="cherry-pick"></a>cherry-pick</h2><p>将其他分支的 commit 迁移至当前分支(<strong>注意先切换到需要上线的分支</strong>): <code>git cherry-pick [commitid]</code></p>
+<p>一般在热修复，脚本，补丁需要及时上线，但又不能基于开发分支代码部署，将临时代码合并到上个上线的版本部署一版的场景中会用到。</p>
+<span id="more"></span>
+<h2 id="回滚"><a href="#回滚" class="headerlink" title="回滚"></a>回滚</h2><ul>
+<li>回滚到某次提交: <code>git reset [commitid]</code></li>
+<li>强制回滚某次提交，并且回删除节点后的所有提交(慎用): <code>git reset --hard [commitid]</code></li>
+<li>强制与远程分支保持一致： <code>git reset --hard origin/[branchName]</code></li>
+</ul>
+<h2 id="分支管理"><a href="#分支管理" class="headerlink" title="分支管理"></a>分支管理</h2><ul>
+<li>设置远程分支为默认分支：<code>git branch --set-upstream-to= origin [branchName]</code></li>
+</ul>
+<h3 id="删除分支"><a href="#删除分支" class="headerlink" title="删除分支"></a>删除分支</h3><ul>
+<li>删除本地分支： <code>git branch -D [branchName]</code></li>
+<li>删除远程分支： <code>git push origin -d [branchName]</code></li>
+<li>批量删除所有分支：<code>git branch | grep -v &#39;develop&#39; | xargs git branch -D</code><ul>
+<li><code>|</code> 管道命令，用于将一串命令串联起来。前面命令的输出可以作为后面命令的输入</li>
+<li><code>git branch</code> 列出本地所有分支</li>
+<li><code>grep</code> 搜索过滤命令。使用正则表达式搜索文本，并把匹配的行打印出来</li>
+<li><code>xargs</code> 参数传递命令。用于将标准输入作为命令的参数传给下一个命令</li>
+</ul>
+</li>
+</ul>
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="1-refusing-to-merge-unrelated-histories（拒绝合并不相关历史）"><a href="#1-refusing-to-merge-unrelated-histories（拒绝合并不相关历史）" class="headerlink" title="1. refusing to merge unrelated histories（拒绝合并不相关历史）"></a>1. refusing to merge unrelated histories（拒绝合并不相关历史）</h3><p>这种情况一般是本地仓储和远程仓储的提交历史不一致，git 需要确认是否合并<br>解决：<code>git pull origin master --allow-unrelated-histories</code></p>
+]]></content>
+      <categories>
+        <category>git</category>
+      </categories>
+  </entry>
+  <entry>
     <title>基于 Angular CDK 实现拖拽复制元素</title>
     <url>/2023/04/05/%E5%9F%BA%E4%BA%8EAngularCDK%E5%AE%9E%E7%8E%B0%E6%8B%96%E6%8B%BD%E5%A4%8D%E5%88%B6%E5%85%83%E7%B4%A0/</url>
     <content><![CDATA[<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>有这样一个需求：<br><img src="https://atlas.pingcode.com/files/public/642cdbc113b2732f78dd3cff"></p>
@@ -565,15 +608,6 @@
       </categories>
   </entry>
   <entry>
-    <title>git常见问题</title>
-    <url>/2023/02/11/git%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<h2 id="refusing-to-merge-unrelated-histories（拒绝合并不相关历史）"><a href="#refusing-to-merge-unrelated-histories（拒绝合并不相关历史）" class="headerlink" title="refusing to merge unrelated histories（拒绝合并不相关历史）"></a>refusing to merge unrelated histories（拒绝合并不相关历史）</h2><p>这种情况一般是本地仓储和远程仓储的提交历史不一致，git 需要确认是否合并<br>解决：<code>git pull origin master --allow-unrelated-histories</code></p>
-<span id="more"></span>]]></content>
-      <categories>
-        <category>git</category>
-      </categories>
-  </entry>
-  <entry>
     <title>hexo ocean 主题集成 mermaid</title>
     <url>/2023/02/08/mermaid/</url>
     <content><![CDATA[<p>mermaid 是一款可以使用文本来绘图的工具，支持流程图、时序图、类图、饼状图等等，更多看<a href="https://mermaid.js.org/intro/">这里</a>。它可以支持在 markdown 中使用，这对于我这种程序员非常的好用，可以代替一些插图，hexo 对插图是一大痛点（上传图片，然后在 markdown 中插入链接，重要的是要考虑储存位置、空间和后期的维护），本人习惯使用代码块或文字的方式代替，所以这是一篇 hexo ocean 集成 mermaid 的文档。</p>
@@ -720,33 +754,6 @@
 ]]></content>
       <categories>
         <category>Linux</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>批量删除本地分支</title>
-    <url>/2023/02/03/%E6%89%B9%E9%87%8F%E5%88%A0%E9%99%A4%E6%9C%AC%E5%9C%B0%E5%88%86%E6%94%AF/</url>
-    <content><![CDATA[<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git branch | grep -v &#x27;develop&#x27; | xargs git branch -D</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<h2 id=""><a href="#" class="headerlink" title="|"></a>|</h2><p>管道命令，用于将一串命令串联起来。前面命令的输出可以作为后面命令的输入。</p>
-<h2 id="git-branch"><a href="#git-branch" class="headerlink" title="git branch"></a>git branch</h2><p>用于列出本地所有分支。</p>
-<h2 id="grep"><a href="#grep" class="headerlink" title="grep"></a>grep</h2><p>搜索过滤命令。使用正则表达式搜索文本，并把匹配的行打印出来。</p>
-<h2 id="xargs"><a href="#xargs" class="headerlink" title="xargs"></a>xargs</h2><p>参数传递命令。用于将标准输入作为命令的参数传给下一个命令。</p>
-<p>参考<br>grep： <a href="https://wangchujiang.com/linux-command/c/grep.html">https://wangchujiang.com/linux-command/c/grep.html</a> <br>xargs： <a href="https://wangchujiang.com/linux-command/c/xargs.html">https://wangchujiang.com/linux-command/c/xargs.html</a> </p>
-]]></content>
-      <categories>
-        <category>git</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Git 常用命令</title>
-    <url>/2023/02/03/git%E6%89%8B%E5%86%8C/</url>
-    <content><![CDATA[<h2 id="打-tag"><a href="#打-tag" class="headerlink" title="打 tag"></a>打 tag</h2><ul>
-<li>快速打标签: <code>git tag 名字</code></li>
-<li>推送至远程: <code>git push origin 标签名</code></li>
-</ul>
-]]></content>
-      <categories>
-        <category>git</category>
       </categories>
   </entry>
   <entry>
