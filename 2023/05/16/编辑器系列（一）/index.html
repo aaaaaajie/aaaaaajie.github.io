@@ -8,7 +8,7 @@
   
   
   <title>
-    理解npm legacy-peer-deps 参数标识 |
+    编辑器系列——什么是插件 |
     
     阿杰
   </title>
@@ -32,7 +32,7 @@
 <body>
   <main class="content">
     <section class="outer">
-  <article id="post-npm legacy-peer-deps 参数标识" class="article article-type-post" itemscope
+  <article id="post-编辑器系列（一）" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -41,7 +41,7 @@
       
   
   <h1 class="article-title" itemprop="name">
-    理解npm legacy-peer-deps 参数标识
+    编辑器系列——什么是插件
   </h1>
   
   
@@ -51,12 +51,12 @@
 
     
     <div class="article-meta">
-      <a href="/2023/02/22/npm%20legacy-peer-deps%20%E5%8F%82%E6%95%B0%E6%A0%87%E8%AF%86/" class="article-date">
-  <time datetime="2023-02-22T12:24:57.000Z" itemprop="datePublished">2023-02-22</time>
+      <a href="/2023/05/16/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/" class="article-date">
+  <time datetime="2023-05-16T10:12:09.000Z" itemprop="datePublished">2023-05-16</time>
 </a>
       
 <div class="article-category">
-  <a class="article-category-link" href="/categories/npm/">npm</a>
+  <a class="article-category-link" href="/categories/%E7%BC%96%E8%BE%91%E5%99%A8/">编辑器</a>
 </div>
 
     </div>
@@ -64,60 +64,29 @@
 
     
     
-<div class="tocbot"></div>
-
     
 
     <div class="article-entry" itemprop="articleBody">
       
       
       
-        <p>大家应该都遇到过这样的错误：  <strong>unable to resolve dependency tree</strong>  <strong>。</strong></p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/63f5a12ea299063b352a91dd/origin-url" alt="image.png"></p>
-<p>刚开始是根据报错提示给出的解决方案：  <code>npm install --legacy-peer-deps</code>  ，这个用过很多次了，也解决过大多数场景，但最近一次却栽到了这上面。</p>
-<span id="more"></span>
-
-<h3 id="为什么会出现-unable-to-resolve-dependency-tree"><a href="#为什么会出现-unable-to-resolve-dependency-tree" class="headerlink" title="为什么会出现 unable to resolve dependency tree ?"></a>为什么会出现 unable to resolve dependency tree ?</h3><p>简单说，  <strong>安装包的依赖出现了不对等</strong>  。具体解释看下面：</p>
-<blockquote>
-<p>前几天还和同事聊这个问题：A 依赖了 C，版本是 1.0，B 也依赖了 C，版本是 2.0，那么最终 npm 安装的 C 是 1.0 还是 2.0，甚至说 C 本身就被项目依赖，版本是 4.0，此时安装的又是什么版本或者以上情况 均不处理报错终止安装，当然这些都是假设自己是 npm 的一些设想，从实际结果来看是终止安装。</p>
+        <blockquote>
+<p>插件（Plugin）是指一种可以增强或扩展已有软件功能的组件或模块。它们通常是以独立的方式编写，可以被动态地添加到主应用程序中，从而提供额外的功能和特性。                                                                                                          —— ChatGPT</p>
 </blockquote>
-<p>所以要处理这个问题就会产生一个用来维护依赖版本的东西，这就是 peerDependencies，peerDependencies 叫对等依赖关系，在 npm 7 才允许显示设置的，再此之前应该是默认始终安装（npm 6 的文档是没有 peerDependencies 相关资料的，也没有 legacy-peer-deps 参数标识），但实际情况我用 node 14.x 却没有此错误（node 14 配套的 npm 是 6.x）……</p>
-<h4 id="dependencies-和-peerDependencies-有什么区别？"><a href="#dependencies-和-peerDependencies-有什么区别？" class="headerlink" title="dependencies 和 peerDependencies 有什么区别？"></a>dependencies 和 peerDependencies 有什么区别？</h4><table>
-<thead>
-<tr>
-<th></th>
-<th>dependencies</th>
-<th>peerDependencies</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>描述</td>
-<td>项目运行时所需的依赖库</td>
-<td>指定我们的包与特定版本的npm包兼容</td>
-</tr>
-<tr>
-<td>行为</td>
-<td>如果node_modules目录中不存在某个包，则会自动添加该包。</td>
-<td>不会自动安装对等依赖项。需要手动修改package.json文件，添加对等依赖项。</td>
-</tr>
-<tr>
-<td>使用</td>
-<td>包括在最终代码包中</td>
-<td>只有在发布自己的包时才能包含</td>
-</tr>
-</tbody></table>
-<h3 id="legacy-peer-deps"><a href="#legacy-peer-deps" class="headerlink" title="legacy-peer-deps"></a>legacy-peer-deps</h3><p><strong>–legacy-peer-deps 参数是代表忽略 peerDependencies 设置的依赖版本并继续安装</strong>  ，这样产生的结果是，所有依赖会被打乱（具体安装策略还不是很清楚），这有时候没问题有时候就会出错，这取决于项目中是否用到了不同版本库的特性，向这次就栽到这上面了    ，很多库版本不一致，导致某些包已经不支持现有代码引用的一些特性而报错。</p>
-<p>所以，综上所述，  <strong>不要轻易加上 –legacy-peer-deps</strong>  ，这也是官方的警告⚠️  ** 。**</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/63f5a895a299063b352a91e3/origin-url" alt="image.png"><img src="https://atlas-rc.pingcode.com/files/public/63f5a8eaa299063b352a91e4/origin-url" alt="image.png"></p>
-<h3 id="其他解决办法"><a href="#其他解决办法" class="headerlink" title="其他解决办法"></a>其他解决办法</h3><ul>
-<li>使用 –force ，代表强制继续安装。<br>–omit&#x3D;peer 这个倒还没有试过。</li>
+<p>个人理解：插件是一个相对的名词，它必须有一个主体容器&#x2F;应用，其他独立的组件以插入的形式扩展主体容器&#x2F;应用。</p>
+<p>在 Slate 中，Editor 对象扮演着主体容器&#x2F;应用的角色，提供核心功能，Plugins 是一个个插件，每个插件可以基于 Editor 提供的核心能力去扩展自己的功能&#x2F;逻辑。</p>
+<span id="more"></span>
+<p>编辑器主体和插件的关系：</p>
+<ul>
+<li>插件依赖于编辑器，无法单独使用</li>
+<li>编辑器可以在没有插件的情况下运行，但功能将受到限制</li>
 </ul>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>总结就是<strong>能不用 –legacy-peer-deps</strong>的就不用，求其次用 <strong>–force</strong>。</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/645e04fd521bcc58219384a4/origin-url" alt="image.png"></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/02/22/npm%20legacy-peer-deps%20%E5%8F%82%E6%95%B0%E6%A0%87%E8%AF%86/" data-id="clhq4vuei000l3z6c19d95lpc" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/05/16/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/" data-id="clhq4vuff001o3z6c91j6fkd4" class="article-share-link">
         分享
       </a>
       
@@ -129,19 +98,19 @@
   
 <nav class="article-nav">
   
-  <a href="/2023/03/03/vscode%E9%95%9C%E5%83%8F%E4%B8%8B%E8%BD%BD/" class="article-nav-link">
+  <a href="/2023/05/16/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%BA%8C%EF%BC%89/" class="article-nav-link">
     <strong class="article-nav-caption">前一篇</strong>
     <div class="article-nav-title">
       
-      使用镜像下载 vscode
+      编辑器系列——插件注册流程
       
     </div>
   </a>
   
   
-  <a href="/2023/02/08/mermaid/" class="article-nav-link">
+  <a href="/2023/04/05/%E5%9F%BA%E4%BA%8EAngularCDK%E5%AE%9E%E7%8E%B0%E6%8B%96%E6%8B%BD%E5%A4%8D%E5%88%B6%E5%85%83%E7%B4%A0/" class="article-nav-link">
     <strong class="article-nav-caption">后一篇</strong>
-    <div class="article-nav-title">hexo ocean 主题集成 mermaid</div>
+    <div class="article-nav-title">基于 Angular CDK 实现拖拽复制元素</div>
   </a>
   
 </nav>
