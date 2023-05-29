@@ -108,7 +108,7 @@
   <div class="article-gallery-photos">
     
       
-      <a class="article-gallery-img" href="/2023/01/19/RxJS%E9%81%93%E4%B8%8E%E6%9C%AF/" rel="gallery_clht0opds0003sd6c3teefxdm">
+      <a class="article-gallery-img" href="/2023/01/19/RxJS%E9%81%93%E4%B8%8E%E6%9C%AF/" rel="gallery_cli8jdcyd0006r26c2qa45cqn">
         <img src="https://picx.zhimg.com/v2-84ed5c6eeadf810552b399cec474d1fe_1440w.jpg?source=d16d100b" itemprop="image">
       </a>
       
@@ -133,7 +133,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/01/19/RxJS%E9%81%93%E4%B8%8E%E6%9C%AF/" data-id="clht0opds0003sd6c3teefxdm" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/01/19/RxJS%E9%81%93%E4%B8%8E%E6%9C%AF/" data-id="cli8jdcyd0006r26c2qa45cqn" class="article-share-link">
         分享
       </a>
       
@@ -213,7 +213,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/02/03/git%E6%89%8B%E5%86%8C/" data-id="clht0opdz000asd6ceagpgp4m" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/02/03/git%E6%89%8B%E5%86%8C/" data-id="cli8jdcyp000ar26c50mb16hr" class="article-share-link">
         分享
       </a>
       
@@ -284,7 +284,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/03/03/linux%E8%AF%AD%E6%B3%95%E6%89%8B%E5%86%8C/" data-id="clht0ope2000gsd6c5lb8cjmq" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/03/03/linux%E8%AF%AD%E6%B3%95%E6%89%8B%E5%86%8C/" data-id="cli8jdcyt000gr26c6ft4dzbs" class="article-share-link">
         分享
       </a>
       
@@ -298,7 +298,7 @@
 
 </article>
     
-    <article id="post-编辑器系列（三）-md" class="article article-type-post" itemscope
+    <article id="post-编辑器系列-如何判断光标和元素位置" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -307,7 +307,7 @@
       
   
   <h2 class="article-title" itemprop="name">
-    <a href="/2023/05/18/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89-md/">编辑器系列——插件渲染机制</a>
+    <a href="/2023/05/29/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%85%89%E6%A0%87%E5%92%8C%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE/">编辑器系列——如何获取光标/元素位置</a>
   </h2>
   
   
@@ -317,7 +317,72 @@
 
     
     <div class="article-meta">
-      <a href="/2023/05/18/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89-md/" class="article-date">
+      <a href="/2023/05/29/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%85%89%E6%A0%87%E5%92%8C%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE/" class="article-date">
+  <time datetime="2023-05-29T07:30:42.000Z" itemprop="datePublished">2023-05-29</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/%E7%BC%96%E8%BE%91%E5%99%A8/">编辑器</a>
+</div>
+
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+        
+      
+      
+        <h3 id="Slate-Selection"><a href="#Slate-Selection" class="headerlink" title="Slate Selection"></a>Slate Selection</h3><p>slate 的 selection 是用来表示一个元素或节点的位置，结构如下：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64744566e468e3b3652fa138/origin-url" alt="image.png"></p>
+<p>它是基于原生 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Selection">DOM Selection API</a> 封装的，一些基础概念：</p>
+        
+          <p>
+            <a class="article-more-link" href="/2023/05/29/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%85%89%E6%A0%87%E5%92%8C%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE/">
+              阅读全文...
+            </a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/05/29/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%85%89%E6%A0%87%E5%92%8C%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE/" data-id="cli8jdcz30011r26cf8560mr9" class="article-share-link">
+        分享
+      </a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+    
+    <article id="post-编辑器系列（三）" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h2 class="article-title" itemprop="name">
+    <a href="/2023/05/18/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89/">编辑器系列——插件渲染机制</a>
+  </h2>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/05/18/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89/" class="article-date">
   <time datetime="2023-05-18T10:12:09.000Z" itemprop="datePublished">2023-05-18</time>
 </a>
       
@@ -339,7 +404,7 @@
         <h3 id="单个插件渲染流程"><a href="#单个插件渲染流程" class="headerlink" title="单个插件渲染流程"></a>单个插件渲染流程</h3><p><img src="https://atlas-rc.pingcode.com/files/public/6465f1e87083dd5ecd38a428/origin-url" alt="image.png"></p>
         
           <p>
-            <a class="article-more-link" href="/2023/05/18/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89-md/">
+            <a class="article-more-link" href="/2023/05/18/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89/">
               阅读全文...
             </a>
           </p>
@@ -347,7 +412,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/05/18/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89-md/" data-id="clht0opeg0012sd6ca0vw61tu" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/05/18/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89/" data-id="cli8jdcz40013r26c7yp05eiw" class="article-share-link">
         分享
       </a>
       
@@ -410,7 +475,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/05/16/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%BA%8C%EF%BC%89/" data-id="clht0opeg0015sd6ce1w81j27" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/05/16/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%BA%8C%EF%BC%89/" data-id="cli8jdcz50016r26c4mbogsin" class="article-share-link">
         分享
       </a>
       
@@ -477,7 +542,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/05/16/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/" data-id="clht0opef0011sd6c0z89c1cx" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/05/16/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/" data-id="cli8jdcz50015r26cdjfff7zb" class="article-share-link">
         分享
       </a>
       
@@ -540,7 +605,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/04/05/%E5%9F%BA%E4%BA%8EAngularCDK%E5%AE%9E%E7%8E%B0%E6%8B%96%E6%8B%BD%E5%A4%8D%E5%88%B6%E5%85%83%E7%B4%A0/" data-id="clht0opeb000tsd6cen84h8p7" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/04/05/%E5%9F%BA%E4%BA%8EAngularCDK%E5%AE%9E%E7%8E%B0%E6%8B%96%E6%8B%BD%E5%A4%8D%E5%88%B6%E5%85%83%E7%B4%A0/" data-id="cli8jdcz0000tr26c29vk3zih" class="article-share-link">
         分享
       </a>
       
@@ -603,7 +668,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/03/22/angular%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BA%E7%BB%84%E4%BB%B6/" data-id="clht0opdx0006sd6cfja51qt0" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/03/22/angular%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BA%E7%BB%84%E4%BB%B6/" data-id="cli8jdcyp0009r26c7v3a15ei" class="article-share-link">
         分享
       </a>
       
@@ -673,70 +738,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/03/15/js%E8%AE%BE%E7%BD%AE%E4%BC%AA%E7%B1%BB%E5%85%83%E7%B4%A0/" data-id="clht0ope1000dsd6cffxqddkn" class="article-share-link">
-        分享
-      </a>
-      
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-    
-    <article id="post-使用google矢量图" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-      
-  
-  <h2 class="article-title" itemprop="name">
-    <a href="/2023/03/05/%E4%BD%BF%E7%94%A8google%E7%9F%A2%E9%87%8F%E5%9B%BE/">Sass 中使用 Google icons 和 字体</a>
-  </h2>
-  
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2023/03/05/%E4%BD%BF%E7%94%A8google%E7%9F%A2%E9%87%8F%E5%9B%BE/" class="article-date">
-  <time datetime="2023-03-05T02:55:50.000Z" itemprop="datePublished">2023-03-05</time>
-</a>
-      
-<div class="article-category">
-  <a class="article-category-link" href="/categories/icon/">icon</a>
-</div>
-
-    </div>
-    
-
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-      
-        
-      
-      
-        <h2 id="1-导入-icon"><a href="#1-导入-icon" class="headerlink" title="1. 导入 icon"></a>1. 导入 icon</h2><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@import</span> <span class="string">&quot;https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&amp;display=swap&quot;</span>;</span><br></pre></td></tr></table></figure>
-        
-          <p>
-            <a class="article-more-link" href="/2023/03/05/%E4%BD%BF%E7%94%A8google%E7%9F%A2%E9%87%8F%E5%9B%BE/">
-              阅读全文...
-            </a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/03/05/%E4%BD%BF%E7%94%A8google%E7%9F%A2%E9%87%8F%E5%9B%BE/" data-id="clht0ope9000psd6c2w8957ba" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/03/15/js%E8%AE%BE%E7%BD%AE%E4%BC%AA%E7%B1%BB%E5%85%83%E7%B4%A0/" data-id="cli8jdcyq000cr26cfm483ufh" class="article-share-link">
         分享
       </a>
       
