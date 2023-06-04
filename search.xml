@@ -586,7 +586,18 @@
 <p>Ps：Wiki 中采用这种方式进行数据存取的。</p>
 <p>一个操作 clipboard API 的示例片段：</p>
 <p><img src="https://atlas-rc.pingcode.com/files/public/647bfceee468e3b3652fa6df/origin-url" alt="image.png"></p>
-<h3 id="navigator-clipboard-write-和-clipboardData-setData-有何区别？"><a href="#navigator-clipboard-write-和-clipboardData-setData-有何区别？" class="headerlink" title="navigator.clipboard.write 和 clipboardData.setData 有何区别？"></a>navigator.clipboard.write 和 clipboardData.setData 有何区别？</h3><table>
+<h3 id="navigator-clipboard-write-和-clipboardData-setData-有何区别？"><a href="#navigator-clipboard-write-和-clipboardData-setData-有何区别？" class="headerlink" title="navigator.clipboard.write 和 clipboardData.setData 有何区别？"></a>navigator.clipboard.write 和 clipboardData.setData 有何区别？</h3><style>
+table th:nth-of-type(2) {
+    width: 30%;
+}
+table th:nth-of-type(3) {
+    width: 25%;
+}
+table th:last-of-type {
+    width: 40%;
+}
+</style>
+<table>
 <thead>
 <tr>
 <th></th>
