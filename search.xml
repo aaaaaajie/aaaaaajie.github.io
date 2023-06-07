@@ -447,6 +447,57 @@
       </categories>
   </entry>
   <entry>
+    <title>再谈单元测试</title>
+    <url>/2023/06/07/%E5%86%8D%E8%B0%88%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/</url>
+    <content><![CDATA[<p>曾写过多篇测试相关的文章，都源于每次测试给我带来的触动，这次也不例外，最近在重构复杂逻辑时，再次感谢它为我保驾护航，同时也发现了历史测试中存在的一些问题。</p>
+<h3 id="测试的意义"><a href="#测试的意义" class="headerlink" title="测试的意义"></a>测试的意义</h3><blockquote>
+<p>这是一个认知问题，如果不清楚为何要写测试，那么最终产生的测试大概率是腐烂、或无意义的。</p>
+</blockquote>
+<ol>
+<li>保证代码的正确性，提升代码质量是它最高的使命。</li>
+<li>保证代码的安全性&#x2F;稳定性，当对某段代码改动后，测试会告诉哪些代码受到了潜在的问题。</li>
+<li>可以指导写代码的思路，在测试驱动开发（TDD）体现尤为明显。</li>
+<li>更能透彻的理解代码，很多情况下，写代码时常常会陷入自己的世界，从测试相当于站在旁观者的角度审视代码，从而提升可读性和扩展性。</li>
+</ol>
+<h3 id="写测试的一些原则"><a href="#写测试的一些原则" class="headerlink" title="写测试的一些原则"></a>写测试的一些原则</h3><blockquote>
+<p>首先必须要有一个态度&#x2F;认知：写测试与写普通代码一样，测试也要很清楚的表达逻辑，不能因为它不体现到产品上就粗糙了事。</p>
+</blockquote>
+<p>有些原则会受不同开发者个人能力影响，所以我的看法是正面原则应该鼓励，反面原则明令禁止。</p>
+<h4 id="不写没有意义的测试"><a href="#不写没有意义的测试" class="headerlink" title="不写没有意义的测试"></a>不写没有意义的测试</h4><p>比如   <code>1 + 2 === 3</code>  ，或者让函数执行一次，而不是验证函数执行的结果，这种无意义的行为，还有一种情况是为了提升测试覆盖率而补充，在我看来更是“本末倒置”。</p>
+<h4 id="不写重复的测试"><a href="#不写重复的测试" class="headerlink" title="不写重复的测试"></a>不写重复的测试</h4><p>相同的逻辑写多遍，当然有可能是不同开发成员测相同的逻辑，如果发现应该删除。</p>
+<h4 id="不写描述与实际逻辑不符的测试"><a href="#不写描述与实际逻辑不符的测试" class="headerlink" title="不写描述与实际逻辑不符的测试"></a>不写描述与实际逻辑不符的测试</h4><p>典型的挂羊头卖狗肉，当修复测试时，通过描述不能准备判断场景，细排查发现并不是预期逻辑，花费了不必要的时间。</p>
+<h4 id="不写上下文依赖的测试"><a href="#不写上下文依赖的测试" class="headerlink" title="不写上下文依赖的测试"></a>不写上下文依赖的测试</h4><p>要保证测试的独立性，就是说单个的测试也可以运行，在工作当中也很多处发现，下一个测试要依赖于上一个测试，这显然是不合理的，如果某天删掉了第一个测试，第二个测试就会挂掉。</p>
+<h4 id="尽可能保证测试的可读性"><a href="#尽可能保证测试的可读性" class="headerlink" title="尽可能保证测试的可读性"></a>尽可能保证测试的可读性</h4><p>最好有递进关系，很容易从测试中看到你的逻辑是什么。</p>
+<h4 id="尽可能保证测试的纯粹性"><a href="#尽可能保证测试的纯粹性" class="headerlink" title="尽可能保证测试的纯粹性"></a>尽可能保证测试的纯粹性</h4><p>一个测试只测一种场景，也可以说编程原则中的“单一原则”，可以正反面断言。</p>
+<h4 id="提取重复的前置条件"><a href="#提取重复的前置条件" class="headerlink" title="提取重复的前置条件"></a>提取重复的前置条件</h4><p>很多时候只为了测关键点，需要配备一些前置条件，当多个测试都有相同逻辑时，应当提取到不同维度。</p>
+<p>比如使用 before、beforeEach、after、afterEach，或者提升至更底层的函数，比如 Helper 类。</p>
+<p>反面示例（下图）很多是本人曾经犯过的问题，自觉公开处刑 🙃</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/648038e2e468e3b3652fab3d/origin-url" alt="image.png"></p>
+<h3 id="应该如何写一个测试？"><a href="#应该如何写一个测试？" class="headerlink" title="应该如何写一个测试？"></a>应该如何写一个测试？</h3><p>关于测试的方法论，本人所知道的是 TDD 和 BDD，也曾查过一些资料，对我至今仍然有非常大的指导意义，不讲过多的概念，回顾一张图吧。</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64801dffe468e3b3652faaab/origin-url" alt="image.png"></p>
+<h4 id="几个例子"><a href="#几个例子" class="headerlink" title="几个例子"></a>几个例子</h4><ol>
+<li><p>开发一个创建用户的 API，我的步骤是：</p>
+<p> a. <strong>编写测试用例</strong>  ：先 http 请求这个 API 的路由，此时路由可能都不存在，没有关系，这一步就是要  <strong>这个测试用例失败</strong>  。<br> <img src="https://atlas-rc.pingcode.com/files/public/64802844e468e3b3652faae5/origin-url" alt="image.png"></p>
+<p> b. <strong>编写代码</strong>  ：解决它为什么失败？原因：没有定义路由和响应数据，OK 解决它，添加一个 POST &#x2F;api&#x2F;user 的路由，并且   <code>response.end(&#39;success&#39;)</code>  。  <strong>这一步让测试用例通过</strong>  。<br> <img src="https://atlas-rc.pingcode.com/files/public/64802959e468e3b3652faae7/origin-url" alt="image.png"></p>
+<p> c. <strong>编写测试用例</strong>  ：制定创建用户的信息：名字（张三）、手机号（xxx）、年龄……，并且期望创建成功，并且判断创建的信息无误，此时运行测试，  <strong>结果应当是失败</strong>  ，因为代码中还没有创建逻辑。<br> <img src="https://atlas-rc.pingcode.com/files/public/64802a36e468e3b3652faaec/origin-url" alt="image.png"></p>
+<p> d. <strong>编写代码：</strong>  解决失败原因，创建响应结果的实体，并且 response.send({ code: 200, data: user })，  <strong>让测试成功。</strong><br> <img src="https://atlas-rc.pingcode.com/files/public/64802c6ee468e3b3652faaf6/origin-url" alt="image.png"></p>
+<p> e. <strong>编写测试用例</strong>  ：输入不合法的信息，让  <strong>测试继续报错</strong>  。</p>
+<p> f. <strong>编写程序：</strong>  加入校验逻辑，解决报错，让  <strong>测试成功。</strong></p>
+<p> g. ……</p>
+</li>
+<li><p>一个缺陷，真实开发的例子：<br><img src="https://atlas-rc.pingcode.com/files/public/64802e2ee468e3b3652faaff/origin-url" alt="image.png"></p>
+</li>
+</ol>
+<p>a. 这个思路应当是先按照描述去模拟场景，验证预期行为和实际行为是否一致，如下：<br><img src="https://atlas-rc.pingcode.com/files/public/64802fe8e468e3b3652fab06/origin-url" alt="image.png"></p>
+<p>b. 这种情况就避免了  <strong>启动前端代码的麻烦事，进行自我验证，驱动排查</strong>  。在解决这个缺陷时，重构了大量的代码，历史的测试一次次告诉我重构逻辑漏掉了哪些场景。</p>
+<p>从上面的两个例子中，可以再次得出它的指导思路：  <strong>让测试失败，改代码修复，在让测试失败，修复……反复验证。</strong></p>
+<h3 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h3><p>好吧，暂时没有其他要说的了，后续有想法，再继续更新。</p>
+]]></content>
+      <categories>
+        <category>单元测试</category>
+      </categories>
+  </entry>
+  <entry>
     <title>编辑器系列-剪贴板</title>
     <url>/2023/06/04/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%89%AA%E8%B4%B4%E6%9D%BF/</url>
     <content><![CDATA[<h2 id="剪贴板概述"><a href="#剪贴板概述" class="headerlink" title="剪贴板概述"></a>剪贴板概述</h2><p>在编辑器中复制&#x2F;剪切的方式有两种：</p>
