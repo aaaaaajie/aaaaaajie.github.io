@@ -386,64 +386,134 @@
       </categories>
   </entry>
   <entry>
-    <title>Git 手册</title>
-    <url>/2023/02/03/git%E6%89%8B%E5%86%8C/</url>
-    <content><![CDATA[<blockquote>
-<p>以下命令中 [ ] 包裹的值为动态值，需要根据情况替换，比如 <code>git push origin [branchName]</code>，[branchName] 需要根据实际情况的值决定，比如： <code>git push origin master</code></p>
-</blockquote>
-<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><ul>
-<li>创建本地仓库：<code>git init</code></li>
-<li>创建中央仓库：<code>git init --bare</code></li>
-<li>拉取远程分支所有历史提交记录：<code>git pull origin [branch] --allow-unrelated-histories</code></li>
-</ul>
-<h2 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h2><ul>
-<li>快速打标签: <code>git tag [tagName]</code></li>
-<li>推送至远程: <code>git push origin [tagName]</code></li>
-</ul>
-<h2 id="cherry-pick"><a href="#cherry-pick" class="headerlink" title="cherry-pick"></a>cherry-pick</h2><p>将其他分支的 commit 迁移至当前分支(<strong>注意先切换到需要上线的分支</strong>): <code>git cherry-pick [commitid]</code></p>
-<p>一般在热修复，脚本，补丁需要及时上线，但又不能基于开发分支代码部署，将临时代码合并到上个上线的版本部署一版的场景中会用到。</p>
+    <title>编辑器系列—插件注册流程</title>
+    <url>/2023/05/16/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
+    <content><![CDATA[<h2 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h2><p><img src="https://atlas-rc.pingcode.com/files/public/646353137083dd5ecd38a0d5/origin-url" alt="image.png"></p>
 <span id="more"></span>
-<h2 id="回滚"><a href="#回滚" class="headerlink" title="回滚"></a>回滚</h2><ul>
-<li>回滚到某次提交: <code>git reset [commitid]</code></li>
-<li>强制回滚某次提交，并且回删除节点后的所有提交(慎用): <code>git reset --hard [commitid]</code></li>
-<li>强制与远程分支保持一致： <code>git reset --hard origin/[branchName]</code></li>
-</ul>
-<h2 id="分支管理"><a href="#分支管理" class="headerlink" title="分支管理"></a>分支管理</h2><ul>
-<li>设置远程分支为默认分支：<code>git branch --set-upstream-to= origin [branchName]</code></li>
-</ul>
-<h3 id="删除分支"><a href="#删除分支" class="headerlink" title="删除分支"></a>删除分支</h3><ul>
-<li>删除本地分支： <code>git branch -D [branchName]</code></li>
-<li>删除远程分支： <code>git push origin -d [branchName]</code></li>
-<li>批量删除所有分支：<code>git branch | grep -v &#39;develop&#39; | xargs git branch -D</code><ul>
-<li><code>|</code> 管道命令，用于将一串命令串联起来。前面命令的输出可以作为后面命令的输入</li>
-<li><code>git branch</code> 列出本地所有分支</li>
-<li><code>grep</code> 搜索过滤命令。使用正则表达式搜索文本，并把匹配的行打印出来</li>
-<li><code>xargs</code> 参数传递命令。用于将标准输入作为命令的参数传给下一个命令</li>
-</ul>
+
+<h2 id="创建编辑器"><a href="#创建编辑器" class="headerlink" title="创建编辑器"></a>创建编辑器</h2><h3 id="Slate-createEditor"><a href="#Slate-createEditor" class="headerlink" title="Slate createEditor"></a>Slate createEditor</h3><p>createEditor 是 Slate 提供的创建编辑器对象的函数，编辑器对象的重要性相当于一个系统的核心，后面所有的插件注册&#x2F;声明部分也都必须返回该对象，插件在运行过程中执行完当前插件的逻辑，最终也需要流转到该对象提供的核心函数上。</p>
+<h4 id="核心能力"><a href="#核心能力" class="headerlink" title="核心能力"></a>核心能力</h4><ol>
+<li>数据操作：<ol>
+<li>插入节点&#x2F;文本（insertNode、insertText）</li>
+<li>删除（delete）</li>
+<li>文本数据操作（apply）</li>
+<li>插入或替换文本、节点（insertFragment）</li>
+<li>装饰文本（addMark）</li>
+</ol>
 </li>
-</ul>
-<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="1-refusing-to-merge-unrelated-histories（拒绝合并不相关历史）"><a href="#1-refusing-to-merge-unrelated-histories（拒绝合并不相关历史）" class="headerlink" title="1. refusing to merge unrelated histories（拒绝合并不相关历史）"></a>1. refusing to merge unrelated histories（拒绝合并不相关历史）</h3><p>这种情况一般是本地仓储和远程仓储的提交历史不一致，git 需要确认是否合并<br>解决：<code>git pull origin master --allow-unrelated-histories</code></p>
+<li>数据变化：onChange</li>
+<li>检查元素类型：空元素（isVoid）、行内元素（isInline）</li>
+<li>属性：选区（selection）、动作&#x2F;操作（operations）、子数据（children）</li>
+</ol>
+<h4 id="源码预览"><a href="#源码预览" class="headerlink" title="源码预览"></a>源码预览</h4><p><img src="https://atlas-rc.pingcode.com/files/public/646349d97083dd5ecd38a0b9/origin-url" alt="image.png"></p>
+<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import &#123; createEditor &#125; from &#x27;slate&#x27;;</span><br><span class="line">const editor = createEditor();</span><br><span class="line">editor.insertText(&#x27;哈哈哈&#x27;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="Slate-angular-withAngular"><a href="#Slate-angular-withAngular" class="headerlink" title="Slate-angular withAngular"></a>Slate-angular withAngular</h3><blockquote>
+<ol>
+<li>以 withXxx 命名的一般为插件</li>
+</ol>
+</blockquote>
+<ol>
+<li>withAngular 本身也是一个插件</li>
+</ol>
+<p>withAngular 是 Slate-angular 内置插件，介于框架的限制，该插件大致上做了两件事：</p>
+<ol>
+<li>对于 Slate 部分函数进行了重写（比如 onChange）</li>
+<li>扩展额外的一些能力</li>
+</ol>
+<h4 id="核心能力-1"><a href="#核心能力-1" class="headerlink" title="核心能力"></a>核心能力</h4><ol>
+<li>重写数据操作函数：插入、删除、复制&#x2F;粘贴板（insertFragment、setFragment）</li>
+<li>数据变化通知（onChange）</li>
+<li>基础 DOM 事件：onkeydown、onclick</li>
+<li>检查元素类型（isBlockCard）</li>
+<li>错误处理（onError）</li>
+</ol>
+<h4 id="源码预览-1"><a href="#源码预览-1" class="headerlink" title="源码预览"></a>源码预览</h4><p><img src="https://atlas-rc.pingcode.com/files/public/64634a287083dd5ecd38a0bc/origin-url" alt="image.png"></p>
+<h4 id="使用-1"><a href="#使用-1" class="headerlink" title="使用"></a>使用</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import &#123; createEditor &#125; from &#x27;slate&#x27;;</span><br><span class="line">import &#123; withAngular &#125; from &#x27;slate-angular&#x27;;</span><br><span class="line"></span><br><span class="line">const editor = withAngular(createEditor());</span><br></pre></td></tr></table></figure>
+
+<h3 id="Theia-withTheia"><a href="#Theia-withTheia" class="headerlink" title="Theia withTheia"></a>Theia withTheia</h3><p>基于 Slate-angular 进行扩展和复写 editor 对象，提供了更多的特性，同时基于 Worktile 和 PingCode 业务封装了一些更复杂的逻辑。</p>
+<h4 id="核心能力-2"><a href="#核心能力-2" class="headerlink" title="核心能力"></a>核心能力</h4><ol>
+<li>多插件自动组合注册（combinePlugins）</li>
+<li>支持插件的渲染自定义组件（renderElement）</li>
+<li>更多的事件：globalMousedown</li>
+</ol>
+<h4 id="源码预览-2"><a href="#源码预览-2" class="headerlink" title="源码预览"></a>源码预览</h4><p><img src="https://atlas-rc.pingcode.com/files/public/6463519e7083dd5ecd38a0d0/origin-url" alt="image.png"></p>
+<h2 id="构建-x2F-声明插件"><a href="#构建-x2F-声明插件" class="headerlink" title="构建&#x2F;声明插件"></a>构建&#x2F;声明插件</h2><p>上面 withTheia 和 withAngular 已经展示了一个插件的声明流程，那么插件需要到底做了什么事：</p>
+<ol>
+<li>重写和拦截编辑器对象（editor）提供的能力</li>
+<li>返回编辑器对象，供下一个插件使用继续流转</li>
+</ol>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p><img src="https://atlas-rc.pingcode.com/files/public/646350e97083dd5ecd38a0ce/origin-url" alt="image.png"></p>
+<h2 id="组合-x2F-装载插件"><a href="#组合-x2F-装载插件" class="headerlink" title="组合&#x2F;装载插件"></a>组合&#x2F;装载插件</h2><p>方式：js 高阶函数～</p>
+<p>如：  <code>withInlines(withHistory(withAngular(createEditor())))</code>  </p>
+<p>theia 中组合插件</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/646351457083dd5ecd38a0cf/origin-url" alt="image.png"></p>
+<h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">this.editor = withTheia(</span><br><span class="line">  withHistory(</span><br><span class="line">    withAngular(</span><br><span class="line">      createEditor(),</span><br><span class="line">      CLIPBOARD_FORMAT_KEY)</span><br><span class="line">  ), plugins</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
 ]]></content>
       <categories>
-        <category>Git</category>
+        <category>编辑器</category>
       </categories>
   </entry>
   <entry>
-    <title>Linux/Mac 语法手册</title>
-    <url>/2023/03/03/linux%E8%AF%AD%E6%B3%95%E6%89%8B%E5%86%8C/</url>
-    <content><![CDATA[<h2 id="查看端口占用"><a href="#查看端口占用" class="headerlink" title="查看端口占用"></a>查看端口占用</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lsof -i:端口号</span><br></pre></td></tr></table></figure>
-
-<h2 id="杀死进程"><a href="#杀死进程" class="headerlink" title="杀死进程"></a>杀死进程</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">kill</span> -9 PID</span><br></pre></td></tr></table></figure>
-
-<h2 id="查看内存占用情况-前10位"><a href="#查看内存占用情况-前10位" class="headerlink" title="查看内存占用情况(前10位)"></a>查看内存占用情况(前10位)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps aux --<span class="built_in">sort</span> -rss | <span class="built_in">head</span> -n 10</span><br></pre></td></tr></table></figure>
+    <title>编辑器系列—插件渲染机制</title>
+    <url>/2023/05/18/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89/</url>
+    <content><![CDATA[<h3 id="单个插件渲染流程"><a href="#单个插件渲染流程" class="headerlink" title="单个插件渲染流程"></a>单个插件渲染流程</h3><p><img src="https://atlas-rc.pingcode.com/files/public/6465f1e87083dd5ecd38a428/origin-url" alt="image.png"></p>
 <span id="more"></span>
-
-<h2 id="剪切-x2F-移动-x2F-重命名"><a href="#剪切-x2F-移动-x2F-重命名" class="headerlink" title="剪切&#x2F;移动&#x2F;重命名"></a>剪切&#x2F;移动&#x2F;重命名</h2><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> 目录名/文件名 目录名/文件名 <span class="comment"># 移动</span></span><br><span class="line"><span class="built_in">mv</span> 文件名 文件名 <span class="comment"># 重命名</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="压缩-x2F-解压"><a href="#压缩-x2F-解压" class="headerlink" title="压缩&#x2F;解压"></a>压缩&#x2F;解压</h2><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">tar zxvf fileName.tgz <span class="comment"># 解压</span></span><br><span class="line">tar cvf fileName.tar dirName <span class="comment"># 压缩</span></span><br></pre></td></tr></table></figure>]]></content>
+<h3 id="多插件"><a href="#多插件" class="headerlink" title="多插件"></a>多插件</h3><p>插件机制有一个关键的问题是：当注册了多个插件，如何正确的找出要渲染的哪个插件。</p>
+<p><strong>插件的冒泡机制：先注册的插件会后执行，这很像数据结构中的“栈”，先入后出。比如，注册了三个插件 [A, B, C]，那么渲染时会优先取出 C，运行预渲染函数（renderElement），然后是 B，最后是 A，每个渲染函数中可以通过插件的类型与当前插件预定义的类型相比较，如果匹配则返回当前预定义插件对应的视图组件，否则流转到下一个插件，继续重复此逻辑</strong>  ，如下图：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6465f95f7083dd5ecd38a449/origin-url" alt="image.png"></p>
+<h4 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h4><p><img src="https://atlas-rc.pingcode.com/files/public/6465fd057083dd5ecd38a457/origin-url" alt="image.png"></p>
+]]></content>
       <categories>
-        <category>Linux</category>
-        <category>Mac</category>
+        <category>编辑器</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>编辑器系列—如何获取光标/元素位置</title>
+    <url>/2023/05/29/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%85%89%E6%A0%87%E5%92%8C%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE/</url>
+    <content><![CDATA[<h3 id="Slate-Selection"><a href="#Slate-Selection" class="headerlink" title="Slate Selection"></a>Slate Selection</h3><p>slate 的 selection 是用来表示一个元素或节点的位置，结构如下：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64744566e468e3b3652fa138/origin-url" alt="image.png"></p>
+<p>它是基于原生 <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Selection">DOM Selection API</a> 封装的，一些基础概念：</p>
+<span id="more"></span>
+<h4 id="anchor"><a href="#anchor" class="headerlink" title="anchor"></a>anchor</h4><blockquote>
+<p>锚指的是一个选区的起始点。当我们使用鼠标框选一个区域的时候，锚点就是我们鼠标按下瞬间的那个点。在用户拖动鼠标时，锚点是不会变的 <strong>。</strong> ——MDN</p>
+</blockquote>
+<h4 id="focus"><a href="#focus" class="headerlink" title="focus"></a>focus</h4><blockquote>
+<p>选区的焦点是该选区的终点，当您用鼠标框选一个选区的时候，焦点是你的鼠标松开瞬间所记录的那个点。随着用户拖动鼠标，焦点的位置会随着改变。——MDN</p>
+</blockquote>
+<p>注意的一点是： <strong>anchor 和 focus 的概念不能与选区的起始位置和终止位置混淆，因为 anchor 指向的位置可能在 focus 指向的位置的前面，也可能在 focus 指向位置的后面，这取决于你选择文本时鼠标移动的方向（也就是按下鼠标键和松开鼠标键的位置）</strong></p>
+<h4 id="path"><a href="#path" class="headerlink" title="path"></a>path</h4><p>slate 中 path 的类型： <code>type Path = number[];</code> ，它是一个描述元素的路径。</p>
+<p>看一个例子：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64216ce4d074dd3307dfb4e9/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/642163a5d074dd3307dfb4d0/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64216523d074dd3307dfb4d5/origin-url" alt="image.png"></p>
+<ul>
+<li>第一张图，path:[0,0]，无论光标在 1、2、3、4、5、6 它的 path 都是 [0, 0]</li>
+<li>第二张图光标落在行内代码上时，发现 path 变了，变成了 [0, 1, 0]</li>
+<li>第三张图光标落在分隔线元素上，path 是 [1, 0]</li>
+</ul>
+<p>根据以上结果可以推出， <strong>path 第一位是第几行或者独占整行的块级元素，第二位是第几行的第几个元素（不是第几个光标），第三位是指嵌套的元素，</strong> 比如表格中的列填充的就是第三位。</p>
+<h4 id="offset"><a href="#offset" class="headerlink" title="offset"></a>offset</h4><p>指元素的偏移位置，从上面第一张图中还可以看到起始 offset 是 3，结束 offset 是 6，可以推出 offset 指元素的第几个位置，path + offset 可以描述出起始或结束的点，achor + focus 表示从第几个元素第几个位置选到第几个元素第几个位置。</p>
+<h3 id="Selection-是如何构造出来的？"><a href="#Selection-是如何构造出来的？" class="headerlink" title="Selection 是如何构造出来的？"></a><strong>Selection 是如何构造出来的？</strong></h3><p>通过原生的 Selection API 的数据观察，我们很容易知道 offset，如图中的 anchorOffset 和 focusOffset：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64744883e468e3b3652fa140/origin-url" alt="image.png"></p>
+<p>转换成 Slate Selection：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    anchor: &#123; offset: 9 &#125;,</span><br><span class="line">    focus: &#123; offset: 9 &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再从上面数据中观察，并没有找到是第几行的信息，为什么？</p>
+<p>行的信息也是比较复杂且灵活的，比如：第二行插入了表格元素，该元素本身就是独占整行，它是第二行，那么表格里的第一行该如何表示呢？我个人猜测原生 API 应该也不知道如何表示，所以把这个问题交给开发者定义，也就有了上述的一些规则，下面从代码层面仔细讲解这个行（path）是如何构建出来的。</p>
+<h4 id="基于插件结构定规则"><a href="#基于插件结构定规则" class="headerlink" title="基于插件结构定规则"></a>基于插件结构定规则</h4><p>selection 的 path 是根据插件数据结构为基础构建的，在另一篇文章讲到的表格数据结构例子：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64744f7ae468e3b3652fa14b/origin-url" alt="image.png"></p>
+<p>那么数组的第一个元素的默认就是第一行（path 为 0），表格元素的第一行是 (0,0)，第二行是 (0,2)。</p>
+<h4 id="实现规则"><a href="#实现规则" class="headerlink" title="实现规则"></a>实现规则</h4><ol>
+<li>渲染元素时，记录元素和索引。</li>
+<li><strong>当前元素开始从缓存的元素和索引中向上找，找到一级就向 path 数组的开头，临界终止条件：找至顶层。</strong></li>
+</ol>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64745359e468e3b3652fa14d/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6474522ce468e3b3652fa14c/origin-url" alt="image.png"></p>
+]]></content>
+      <categories>
+        <category>编辑器</category>
       </categories>
   </entry>
   <entry>
@@ -643,138 +713,7 @@ table th:last-of-type {
       </categories>
   </entry>
   <entry>
-    <title>编辑器系列——如何获取光标/元素位置</title>
-    <url>/2023/05/29/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%85%89%E6%A0%87%E5%92%8C%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE/</url>
-    <content><![CDATA[<h3 id="Slate-Selection"><a href="#Slate-Selection" class="headerlink" title="Slate Selection"></a>Slate Selection</h3><p>slate 的 selection 是用来表示一个元素或节点的位置，结构如下：</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64744566e468e3b3652fa138/origin-url" alt="image.png"></p>
-<p>它是基于原生 <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Selection">DOM Selection API</a> 封装的，一些基础概念：</p>
-<span id="more"></span>
-<h4 id="anchor"><a href="#anchor" class="headerlink" title="anchor"></a>anchor</h4><blockquote>
-<p>锚指的是一个选区的起始点。当我们使用鼠标框选一个区域的时候，锚点就是我们鼠标按下瞬间的那个点。在用户拖动鼠标时，锚点是不会变的 <strong>。</strong> ——MDN</p>
-</blockquote>
-<h4 id="focus"><a href="#focus" class="headerlink" title="focus"></a>focus</h4><blockquote>
-<p>选区的焦点是该选区的终点，当您用鼠标框选一个选区的时候，焦点是你的鼠标松开瞬间所记录的那个点。随着用户拖动鼠标，焦点的位置会随着改变。——MDN</p>
-</blockquote>
-<p>注意的一点是： <strong>anchor 和 focus 的概念不能与选区的起始位置和终止位置混淆，因为 anchor 指向的位置可能在 focus 指向的位置的前面，也可能在 focus 指向位置的后面，这取决于你选择文本时鼠标移动的方向（也就是按下鼠标键和松开鼠标键的位置）</strong></p>
-<h4 id="path"><a href="#path" class="headerlink" title="path"></a>path</h4><p>slate 中 path 的类型： <code>type Path = number[];</code> ，它是一个描述元素的路径。</p>
-<p>看一个例子：</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64216ce4d074dd3307dfb4e9/origin-url" alt="image.png"></p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/642163a5d074dd3307dfb4d0/origin-url" alt="image.png"></p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64216523d074dd3307dfb4d5/origin-url" alt="image.png"></p>
-<ul>
-<li>第一张图，path:[0,0]，无论光标在 1、2、3、4、5、6 它的 path 都是 [0, 0]</li>
-<li>第二张图光标落在行内代码上时，发现 path 变了，变成了 [0, 1, 0]</li>
-<li>第三张图光标落在分隔线元素上，path 是 [1, 0]</li>
-</ul>
-<p>根据以上结果可以推出， <strong>path 第一位是第几行或者独占整行的块级元素，第二位是第几行的第几个元素（不是第几个光标），第三位是指嵌套的元素，</strong> 比如表格中的列填充的就是第三位。</p>
-<h4 id="offset"><a href="#offset" class="headerlink" title="offset"></a>offset</h4><p>指元素的偏移位置，从上面第一张图中还可以看到起始 offset 是 3，结束 offset 是 6，可以推出 offset 指元素的第几个位置，path + offset 可以描述出起始或结束的点，achor + focus 表示从第几个元素第几个位置选到第几个元素第几个位置。</p>
-<h3 id="Selection-是如何构造出来的？"><a href="#Selection-是如何构造出来的？" class="headerlink" title="Selection 是如何构造出来的？"></a><strong>Selection 是如何构造出来的？</strong></h3><p>通过原生的 Selection API 的数据观察，我们很容易知道 offset，如图中的 anchorOffset 和 focusOffset：</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64744883e468e3b3652fa140/origin-url" alt="image.png"></p>
-<p>转换成 Slate Selection：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    anchor: &#123; offset: 9 &#125;,</span><br><span class="line">    focus: &#123; offset: 9 &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>再从上面数据中观察，并没有找到是第几行的信息，为什么？</p>
-<p>行的信息也是比较复杂且灵活的，比如：第二行插入了表格元素，该元素本身就是独占整行，它是第二行，那么表格里的第一行该如何表示呢？我个人猜测原生 API 应该也不知道如何表示，所以把这个问题交给开发者定义，也就有了上述的一些规则，下面从代码层面仔细讲解这个行（path）是如何构建出来的。</p>
-<h4 id="基于插件结构定规则"><a href="#基于插件结构定规则" class="headerlink" title="基于插件结构定规则"></a>基于插件结构定规则</h4><p>selection 的 path 是根据插件数据结构为基础构建的，在另一篇文章讲到的表格数据结构例子：</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64744f7ae468e3b3652fa14b/origin-url" alt="image.png"></p>
-<p>那么数组的第一个元素的默认就是第一行（path 为 0），表格元素的第一行是 (0,0)，第二行是 (0,2)。</p>
-<h4 id="实现规则"><a href="#实现规则" class="headerlink" title="实现规则"></a>实现规则</h4><ol>
-<li>渲染元素时，记录元素和索引。</li>
-<li><strong>当前元素开始从缓存的元素和索引中向上找，找到一级就向 path 数组的开头，临界终止条件：找至顶层。</strong></li>
-</ol>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64745359e468e3b3652fa14d/origin-url" alt="image.png"></p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/6474522ce468e3b3652fa14c/origin-url" alt="image.png"></p>
-]]></content>
-      <categories>
-        <category>编辑器</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>编辑器系列——插件渲染机制</title>
-    <url>/2023/05/18/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89/</url>
-    <content><![CDATA[<h3 id="单个插件渲染流程"><a href="#单个插件渲染流程" class="headerlink" title="单个插件渲染流程"></a>单个插件渲染流程</h3><p><img src="https://atlas-rc.pingcode.com/files/public/6465f1e87083dd5ecd38a428/origin-url" alt="image.png"></p>
-<span id="more"></span>
-<h3 id="多插件"><a href="#多插件" class="headerlink" title="多插件"></a>多插件</h3><p>插件机制有一个关键的问题是：当注册了多个插件，如何正确的找出要渲染的哪个插件。</p>
-<p><strong>插件的冒泡机制：先注册的插件会后执行，这很像数据结构中的“栈”，先入后出。比如，注册了三个插件 [A, B, C]，那么渲染时会优先取出 C，运行预渲染函数（renderElement），然后是 B，最后是 A，每个渲染函数中可以通过插件的类型与当前插件预定义的类型相比较，如果匹配则返回当前预定义插件对应的视图组件，否则流转到下一个插件，继续重复此逻辑</strong>  ，如下图：</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/6465f95f7083dd5ecd38a449/origin-url" alt="image.png"></p>
-<h4 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h4><p><img src="https://atlas-rc.pingcode.com/files/public/6465fd057083dd5ecd38a457/origin-url" alt="image.png"></p>
-]]></content>
-      <categories>
-        <category>编辑器</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>编辑器系列——插件注册流程</title>
-    <url>/2023/05/16/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
-    <content><![CDATA[<h2 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h2><p><img src="https://atlas-rc.pingcode.com/files/public/646353137083dd5ecd38a0d5/origin-url" alt="image.png"></p>
-<span id="more"></span>
-
-<h2 id="创建编辑器"><a href="#创建编辑器" class="headerlink" title="创建编辑器"></a>创建编辑器</h2><h3 id="Slate-createEditor"><a href="#Slate-createEditor" class="headerlink" title="Slate createEditor"></a>Slate createEditor</h3><p>createEditor 是 Slate 提供的创建编辑器对象的函数，编辑器对象的重要性相当于一个系统的核心，后面所有的插件注册&#x2F;声明部分也都必须返回该对象，插件在运行过程中执行完当前插件的逻辑，最终也需要流转到该对象提供的核心函数上。</p>
-<h4 id="核心能力"><a href="#核心能力" class="headerlink" title="核心能力"></a>核心能力</h4><ol>
-<li>数据操作：<ol>
-<li>插入节点&#x2F;文本（insertNode、insertText）</li>
-<li>删除（delete）</li>
-<li>文本数据操作（apply）</li>
-<li>插入或替换文本、节点（insertFragment）</li>
-<li>装饰文本（addMark）</li>
-</ol>
-</li>
-<li>数据变化：onChange</li>
-<li>检查元素类型：空元素（isVoid）、行内元素（isInline）</li>
-<li>属性：选区（selection）、动作&#x2F;操作（operations）、子数据（children）</li>
-</ol>
-<h4 id="源码预览"><a href="#源码预览" class="headerlink" title="源码预览"></a>源码预览</h4><p><img src="https://atlas-rc.pingcode.com/files/public/646349d97083dd5ecd38a0b9/origin-url" alt="image.png"></p>
-<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import &#123; createEditor &#125; from &#x27;slate&#x27;;</span><br><span class="line">const editor = createEditor();</span><br><span class="line">editor.insertText(&#x27;哈哈哈&#x27;);</span><br></pre></td></tr></table></figure>
-
-<h3 id="Slate-angular-withAngular"><a href="#Slate-angular-withAngular" class="headerlink" title="Slate-angular withAngular"></a>Slate-angular withAngular</h3><blockquote>
-<ol>
-<li>以 withXxx 命名的一般为插件</li>
-</ol>
-</blockquote>
-<ol>
-<li>withAngular 本身也是一个插件</li>
-</ol>
-<p>withAngular 是 Slate-angular 内置插件，介于框架的限制，该插件大致上做了两件事：</p>
-<ol>
-<li>对于 Slate 部分函数进行了重写（比如 onChange）</li>
-<li>扩展额外的一些能力</li>
-</ol>
-<h4 id="核心能力-1"><a href="#核心能力-1" class="headerlink" title="核心能力"></a>核心能力</h4><ol>
-<li>重写数据操作函数：插入、删除、复制&#x2F;粘贴板（insertFragment、setFragment）</li>
-<li>数据变化通知（onChange）</li>
-<li>基础 DOM 事件：onkeydown、onclick</li>
-<li>检查元素类型（isBlockCard）</li>
-<li>错误处理（onError）</li>
-</ol>
-<h4 id="源码预览-1"><a href="#源码预览-1" class="headerlink" title="源码预览"></a>源码预览</h4><p><img src="https://atlas-rc.pingcode.com/files/public/64634a287083dd5ecd38a0bc/origin-url" alt="image.png"></p>
-<h4 id="使用-1"><a href="#使用-1" class="headerlink" title="使用"></a>使用</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import &#123; createEditor &#125; from &#x27;slate&#x27;;</span><br><span class="line">import &#123; withAngular &#125; from &#x27;slate-angular&#x27;;</span><br><span class="line"></span><br><span class="line">const editor = withAngular(createEditor());</span><br></pre></td></tr></table></figure>
-
-<h3 id="Theia-withTheia"><a href="#Theia-withTheia" class="headerlink" title="Theia withTheia"></a>Theia withTheia</h3><p>基于 Slate-angular 进行扩展和复写 editor 对象，提供了更多的特性，同时基于 Worktile 和 PingCode 业务封装了一些更复杂的逻辑。</p>
-<h4 id="核心能力-2"><a href="#核心能力-2" class="headerlink" title="核心能力"></a>核心能力</h4><ol>
-<li>多插件自动组合注册（combinePlugins）</li>
-<li>支持插件的渲染自定义组件（renderElement）</li>
-<li>更多的事件：globalMousedown</li>
-</ol>
-<h4 id="源码预览-2"><a href="#源码预览-2" class="headerlink" title="源码预览"></a>源码预览</h4><p><img src="https://atlas-rc.pingcode.com/files/public/6463519e7083dd5ecd38a0d0/origin-url" alt="image.png"></p>
-<h2 id="构建-x2F-声明插件"><a href="#构建-x2F-声明插件" class="headerlink" title="构建&#x2F;声明插件"></a>构建&#x2F;声明插件</h2><p>上面 withTheia 和 withAngular 已经展示了一个插件的声明流程，那么插件需要到底做了什么事：</p>
-<ol>
-<li>重写和拦截编辑器对象（editor）提供的能力</li>
-<li>返回编辑器对象，供下一个插件使用继续流转</li>
-</ol>
-<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p><img src="https://atlas-rc.pingcode.com/files/public/646350e97083dd5ecd38a0ce/origin-url" alt="image.png"></p>
-<h2 id="组合-x2F-装载插件"><a href="#组合-x2F-装载插件" class="headerlink" title="组合&#x2F;装载插件"></a>组合&#x2F;装载插件</h2><p>方式：js 高阶函数～</p>
-<p>如：  <code>withInlines(withHistory(withAngular(createEditor())))</code>  </p>
-<p>theia 中组合插件</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/646351457083dd5ecd38a0cf/origin-url" alt="image.png"></p>
-<h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">this.editor = withTheia(</span><br><span class="line">  withHistory(</span><br><span class="line">    withAngular(</span><br><span class="line">      createEditor(),</span><br><span class="line">      CLIPBOARD_FORMAT_KEY)</span><br><span class="line">  ), plugins</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>编辑器</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>编辑器系列——什么是插件</title>
+    <title>编辑器系列—什么是插件</title>
     <url>/2023/05/16/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/</url>
     <content><![CDATA[<blockquote>
 <p>插件（Plugin）是指一种可以增强或扩展已有软件功能的组件或模块。它们通常是以独立的方式编写，可以被动态地添加到主应用程序中，从而提供额外的功能和特性。                                                                                                          —— ChatGPT</p>
@@ -878,7 +817,7 @@ table th:last-of-type {
       </categories>
   </entry>
   <entry>
-    <title>Angular 指令组合 API——hostDirectives</title>
+    <title>Angular 指令组合 API—hostDirectives</title>
     <url>/2023/03/10/directive-composition-api/</url>
     <content><![CDATA[<blockquote>
 <p>原文在我的知乎：<a href="https://zhuanlan.zhihu.com/p/612817008">Angular hostDirective 详解</a></p>
@@ -975,6 +914,24 @@ table th:last-of-type {
       </categories>
   </entry>
   <entry>
+    <title>Linux/Mac 语法手册</title>
+    <url>/2023/03/03/linux%E8%AF%AD%E6%B3%95%E6%89%8B%E5%86%8C/</url>
+    <content><![CDATA[<h2 id="查看端口占用"><a href="#查看端口占用" class="headerlink" title="查看端口占用"></a>查看端口占用</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lsof -i:端口号</span><br></pre></td></tr></table></figure>
+
+<h2 id="杀死进程"><a href="#杀死进程" class="headerlink" title="杀死进程"></a>杀死进程</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">kill</span> -9 PID</span><br></pre></td></tr></table></figure>
+
+<h2 id="查看内存占用情况-前10位"><a href="#查看内存占用情况-前10位" class="headerlink" title="查看内存占用情况(前10位)"></a>查看内存占用情况(前10位)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps aux --<span class="built_in">sort</span> -rss | <span class="built_in">head</span> -n 10</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<h2 id="剪切-x2F-移动-x2F-重命名"><a href="#剪切-x2F-移动-x2F-重命名" class="headerlink" title="剪切&#x2F;移动&#x2F;重命名"></a>剪切&#x2F;移动&#x2F;重命名</h2><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> 目录名/文件名 目录名/文件名 <span class="comment"># 移动</span></span><br><span class="line"><span class="built_in">mv</span> 文件名 文件名 <span class="comment"># 重命名</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="压缩-x2F-解压"><a href="#压缩-x2F-解压" class="headerlink" title="压缩&#x2F;解压"></a>压缩&#x2F;解压</h2><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">tar zxvf fileName.tgz <span class="comment"># 解压</span></span><br><span class="line">tar cvf fileName.tar dirName <span class="comment"># 压缩</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>Mac</category>
+      </categories>
+  </entry>
+  <entry>
     <title>使用镜像下载 vscode</title>
     <url>/2023/03/03/vscode%E9%95%9C%E5%83%8F%E4%B8%8B%E8%BD%BD/</url>
     <content><![CDATA[<p>从官网下载 vscode 会特别的慢，所以利用镜像可以提高下载速度。</p>
@@ -986,7 +943,7 @@ table th:last-of-type {
 <h2 id="4-修改链接地址"><a href="#4-修改链接地址" class="headerlink" title="4. 修改链接地址"></a>4. 修改链接地址</h2><p>将复制后的链接地址的域名(上图https后面框起来的那块)修改为 <code>vscode.cdn.azure.cn</code><br>最终类似于这样的网址：<code>https://az764295.vo.msecnd.net/stable/e7d7e9a9348e6a8cc8c03f877d39cb72e5dfb1ff/VSCode-darwin-universal.zip</code></p>
 ]]></content>
       <categories>
-        <category>vscode</category>
+        <category>VSCode</category>
       </categories>
   </entry>
   <entry>
@@ -1245,6 +1202,49 @@ table th:last-of-type {
       </categories>
   </entry>
   <entry>
+    <title>Git 手册</title>
+    <url>/2023/02/03/git%E6%89%8B%E5%86%8C/</url>
+    <content><![CDATA[<blockquote>
+<p>以下命令中 [ ] 包裹的值为动态值，需要根据情况替换，比如 <code>git push origin [branchName]</code>，[branchName] 需要根据实际情况的值决定，比如： <code>git push origin master</code></p>
+</blockquote>
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><ul>
+<li>创建本地仓库：<code>git init</code></li>
+<li>创建中央仓库：<code>git init --bare</code></li>
+<li>拉取远程分支所有历史提交记录：<code>git pull origin [branch] --allow-unrelated-histories</code></li>
+</ul>
+<h2 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h2><ul>
+<li>快速打标签: <code>git tag [tagName]</code></li>
+<li>推送至远程: <code>git push origin [tagName]</code></li>
+</ul>
+<h2 id="cherry-pick"><a href="#cherry-pick" class="headerlink" title="cherry-pick"></a>cherry-pick</h2><p>将其他分支的 commit 迁移至当前分支(<strong>注意先切换到需要上线的分支</strong>): <code>git cherry-pick [commitid]</code></p>
+<p>一般在热修复，脚本，补丁需要及时上线，但又不能基于开发分支代码部署，将临时代码合并到上个上线的版本部署一版的场景中会用到。</p>
+<span id="more"></span>
+<h2 id="回滚"><a href="#回滚" class="headerlink" title="回滚"></a>回滚</h2><ul>
+<li>回滚到某次提交: <code>git reset [commitid]</code></li>
+<li>强制回滚某次提交，并且回删除节点后的所有提交(慎用): <code>git reset --hard [commitid]</code></li>
+<li>强制与远程分支保持一致： <code>git reset --hard origin/[branchName]</code></li>
+</ul>
+<h2 id="分支管理"><a href="#分支管理" class="headerlink" title="分支管理"></a>分支管理</h2><ul>
+<li>设置远程分支为默认分支：<code>git branch --set-upstream-to= origin [branchName]</code></li>
+</ul>
+<h3 id="删除分支"><a href="#删除分支" class="headerlink" title="删除分支"></a>删除分支</h3><ul>
+<li>删除本地分支： <code>git branch -D [branchName]</code></li>
+<li>删除远程分支： <code>git push origin -d [branchName]</code></li>
+<li>批量删除所有分支：<code>git branch | grep -v &#39;develop&#39; | xargs git branch -D</code><ul>
+<li><code>|</code> 管道命令，用于将一串命令串联起来。前面命令的输出可以作为后面命令的输入</li>
+<li><code>git branch</code> 列出本地所有分支</li>
+<li><code>grep</code> 搜索过滤命令。使用正则表达式搜索文本，并把匹配的行打印出来</li>
+<li><code>xargs</code> 参数传递命令。用于将标准输入作为命令的参数传给下一个命令</li>
+</ul>
+</li>
+</ul>
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="1-refusing-to-merge-unrelated-histories（拒绝合并不相关历史）"><a href="#1-refusing-to-merge-unrelated-histories（拒绝合并不相关历史）" class="headerlink" title="1. refusing to merge unrelated histories（拒绝合并不相关历史）"></a>1. refusing to merge unrelated histories（拒绝合并不相关历史）</h3><p>这种情况一般是本地仓储和远程仓储的提交历史不一致，git 需要确认是否合并<br>解决：<code>git pull origin master --allow-unrelated-histories</code></p>
+]]></content>
+      <categories>
+        <category>Git</category>
+      </categories>
+  </entry>
+  <entry>
     <title>Mongodb 常用 API</title>
     <url>/2023/02/01/mongodb%E6%89%8B%E5%86%8C/</url>
     <content><![CDATA[]]></content>
@@ -1291,7 +1291,7 @@ table th:last-of-type {
       </categories>
   </entry>
   <entry>
-    <title>新启程——开篇</title>
+    <title>新启程—开篇</title>
     <url>/2023/01/17/%E5%BC%80%E7%AF%87/</url>
     <content><![CDATA[<blockquote>
 <p>今天是 2023-01-18，农历壬寅年腊月廿七（2022 年 12 月 27），此时是年前的摸鱼时刻 😂 </p>
