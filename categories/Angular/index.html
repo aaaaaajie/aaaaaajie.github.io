@@ -34,7 +34,7 @@
     <section class="outer">
   <article class="articles">
     
-    <h1 class="page-type-title">Angular</h1>
+    <!-- <h1 class="page-type-title">Angular</h1> -->
     
   
   
@@ -101,6 +101,43 @@
     </header>
     
       <p>有两种方式：视图动态渲染和组件动态创建（笔者拟自己拟的概念），  <strong>区别是前者的重心是使用 NgComponentOutlet 指令在视图模板中，后者的重心是使用 createComponent API 在组件内创建的</strong>  。</p>
+    
+    
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/Angular/">Angular</a>
+</div>
+
+    
+    
+  </div>
+
+</article>
+      
+  
+  
+      <article class="archive-article archive-type-post">
+  
+  
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      
+  
+  <h2 class="archive-article-title" itemprop="name">
+    <a href="/2023/03/10/directive-composition-api/">Angular 指令组合 API—hostDirectives</a>
+  </h2>
+  
+  
+
+      <a href="/2023/03/10/directive-composition-api/" class="archive-article-date">
+  <time datetime="2023-03-10T06:09:39.000Z" itemprop="datePublished">03/10</time>
+</a>
+    </header>
+    
+      <blockquote>
+<p>原文在我的知乎：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/612817008">Angular hostDirective 详解</a></p>
+</blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近有一个需求是动态创建组件，然后给其组件添加指令，当时可难坏了，因为 createComponent API 不支持绑定指令，所以我当时猜想是否可以在 @Component 注入或 @HostBindingDirective 绑定实现呢？找了很久，最终发现官方支持了这种，选择的是前者，Feature Issue 如下：</p>
     
     
       

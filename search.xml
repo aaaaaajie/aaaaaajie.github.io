@@ -386,115 +386,134 @@
       </categories>
   </entry>
   <entry>
-    <title>Git 手册</title>
-    <url>/2023/02/03/git%E6%89%8B%E5%86%8C/</url>
-    <content><![CDATA[<blockquote>
-<p>以下命令中 [ ] 包裹的值为动态值，需要根据情况替换，比如 <code>git push origin [branchName]</code>，[branchName] 需要根据实际情况的值决定，比如： <code>git push origin master</code></p>
-</blockquote>
-<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><ul>
-<li>创建本地仓库：<code>git init</code></li>
-<li>创建中央仓库：<code>git init --bare</code></li>
-<li>拉取远程分支所有历史提交记录：<code>git pull origin [branch] --allow-unrelated-histories</code></li>
-</ul>
-<h2 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h2><ul>
-<li>快速打标签: <code>git tag [tagName]</code></li>
-<li>推送至远程: <code>git push origin [tagName]</code></li>
-</ul>
-<h2 id="cherry-pick"><a href="#cherry-pick" class="headerlink" title="cherry-pick"></a>cherry-pick</h2><p>将其他分支的 commit 迁移至当前分支(<strong>注意先切换到需要上线的分支</strong>): <code>git cherry-pick [commitid]</code></p>
-<p>一般在热修复，脚本，补丁需要及时上线，但又不能基于开发分支代码部署，将临时代码合并到上个上线的版本部署一版的场景中会用到。</p>
+    <title>编辑器系列—插件注册流程</title>
+    <url>/2023/05/16/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
+    <content><![CDATA[<h2 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h2><p><img src="https://atlas-rc.pingcode.com/files/public/646353137083dd5ecd38a0d5/origin-url" alt="image.png"></p>
 <span id="more"></span>
-<h2 id="回滚"><a href="#回滚" class="headerlink" title="回滚"></a>回滚</h2><ul>
-<li>回滚到某次提交: <code>git reset [commitid]</code></li>
-<li>强制回滚某次提交，并且回删除节点后的所有提交(慎用): <code>git reset --hard [commitid]</code></li>
-<li>强制与远程分支保持一致： <code>git reset --hard origin/[branchName]</code></li>
-</ul>
-<h2 id="分支管理"><a href="#分支管理" class="headerlink" title="分支管理"></a>分支管理</h2><ul>
-<li>设置远程分支为默认分支：<code>git branch --set-upstream-to= origin [branchName]</code></li>
-</ul>
-<h3 id="删除分支"><a href="#删除分支" class="headerlink" title="删除分支"></a>删除分支</h3><ul>
-<li>删除本地分支： <code>git branch -D [branchName]</code></li>
-<li>删除远程分支： <code>git push origin -d [branchName]</code></li>
-<li>批量删除所有分支：<code>git branch | grep -v &#39;develop&#39; | xargs git branch -D</code><ul>
-<li><code>|</code> 管道命令，用于将一串命令串联起来。前面命令的输出可以作为后面命令的输入</li>
-<li><code>git branch</code> 列出本地所有分支</li>
-<li><code>grep</code> 搜索过滤命令。使用正则表达式搜索文本，并把匹配的行打印出来</li>
-<li><code>xargs</code> 参数传递命令。用于将标准输入作为命令的参数传给下一个命令</li>
-</ul>
+
+<h2 id="创建编辑器"><a href="#创建编辑器" class="headerlink" title="创建编辑器"></a>创建编辑器</h2><h3 id="Slate-createEditor"><a href="#Slate-createEditor" class="headerlink" title="Slate createEditor"></a>Slate createEditor</h3><p>createEditor 是 Slate 提供的创建编辑器对象的函数，编辑器对象的重要性相当于一个系统的核心，后面所有的插件注册&#x2F;声明部分也都必须返回该对象，插件在运行过程中执行完当前插件的逻辑，最终也需要流转到该对象提供的核心函数上。</p>
+<h4 id="核心能力"><a href="#核心能力" class="headerlink" title="核心能力"></a>核心能力</h4><ol>
+<li>数据操作：<ol>
+<li>插入节点&#x2F;文本（insertNode、insertText）</li>
+<li>删除（delete）</li>
+<li>文本数据操作（apply）</li>
+<li>插入或替换文本、节点（insertFragment）</li>
+<li>装饰文本（addMark）</li>
+</ol>
 </li>
-</ul>
-<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="1-refusing-to-merge-unrelated-histories（拒绝合并不相关历史）"><a href="#1-refusing-to-merge-unrelated-histories（拒绝合并不相关历史）" class="headerlink" title="1. refusing to merge unrelated histories（拒绝合并不相关历史）"></a>1. refusing to merge unrelated histories（拒绝合并不相关历史）</h3><p>这种情况一般是本地仓储和远程仓储的提交历史不一致，git 需要确认是否合并<br>解决：<code>git pull origin master --allow-unrelated-histories</code></p>
-]]></content>
-      <categories>
-        <category>git</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>linux/mac 语法手册</title>
-    <url>/2023/03/03/linux%E8%AF%AD%E6%B3%95%E6%89%8B%E5%86%8C/</url>
-    <content><![CDATA[<h2 id="查看端口占用"><a href="#查看端口占用" class="headerlink" title="查看端口占用"></a>查看端口占用</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lsof -i:端口号</span><br></pre></td></tr></table></figure>
+<li>数据变化：onChange</li>
+<li>检查元素类型：空元素（isVoid）、行内元素（isInline）</li>
+<li>属性：选区（selection）、动作&#x2F;操作（operations）、子数据（children）</li>
+</ol>
+<h4 id="源码预览"><a href="#源码预览" class="headerlink" title="源码预览"></a>源码预览</h4><p><img src="https://atlas-rc.pingcode.com/files/public/646349d97083dd5ecd38a0b9/origin-url" alt="image.png"></p>
+<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import &#123; createEditor &#125; from &#x27;slate&#x27;;</span><br><span class="line">const editor = createEditor();</span><br><span class="line">editor.insertText(&#x27;哈哈哈&#x27;);</span><br></pre></td></tr></table></figure>
 
-<h2 id="杀死进程"><a href="#杀死进程" class="headerlink" title="杀死进程"></a>杀死进程</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">kill</span> -9 PID</span><br></pre></td></tr></table></figure>
-
-<h2 id="查看内存占用情况-前10位"><a href="#查看内存占用情况-前10位" class="headerlink" title="查看内存占用情况(前10位)"></a>查看内存占用情况(前10位)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps aux --<span class="built_in">sort</span> -rss | <span class="built_in">head</span> -n 10</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-
-<h2 id="剪切-x2F-移动-x2F-重命名"><a href="#剪切-x2F-移动-x2F-重命名" class="headerlink" title="剪切&#x2F;移动&#x2F;重命名"></a>剪切&#x2F;移动&#x2F;重命名</h2><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> 目录名/文件名 目录名/文件名 <span class="comment"># 移动</span></span><br><span class="line"><span class="built_in">mv</span> 文件名 文件名 <span class="comment"># 重命名</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="压缩-x2F-解压"><a href="#压缩-x2F-解压" class="headerlink" title="压缩&#x2F;解压"></a>压缩&#x2F;解压</h2><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">tar zxvf fileName.tgz <span class="comment"># 解压</span></span><br><span class="line">tar cvf fileName.tar dirName <span class="comment"># 压缩</span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>linux</category>
-        <category>mac</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>再谈单元测试</title>
-    <url>/2023/06/07/%E5%86%8D%E8%B0%88%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/</url>
-    <content><![CDATA[<p>曾写过多篇测试相关的文章，都源于每次测试给我带来的触动，这次也不例外，最近在重构复杂逻辑时，再次感谢它为我保驾护航，同时也发现了历史测试中存在的一些问题。</p>
-<h3 id="测试的意义"><a href="#测试的意义" class="headerlink" title="测试的意义"></a>测试的意义</h3><blockquote>
-<p>这是一个认知问题，如果不清楚为何要写测试，那么最终产生的测试大概率是腐烂、或无意义的。</p>
+<h3 id="Slate-angular-withAngular"><a href="#Slate-angular-withAngular" class="headerlink" title="Slate-angular withAngular"></a>Slate-angular withAngular</h3><blockquote>
+<ol>
+<li>以 withXxx 命名的一般为插件</li>
+</ol>
 </blockquote>
 <ol>
-<li>保证代码的正确性，提升代码质量是它最高的使命。</li>
-<li>保证代码的安全性&#x2F;稳定性，当对某段代码改动后，测试会告诉哪些代码受到了潜在的问题。</li>
-<li>可以指导写代码的思路，在测试驱动开发（TDD）体现尤为明显。</li>
-<li>更能透彻的理解代码，很多情况下，写代码时常常会陷入自己的世界，从测试相当于站在旁观者的角度审视代码，从而提升可读性和扩展性。<span id="more"></span></li>
+<li>withAngular 本身也是一个插件</li>
 </ol>
-<h3 id="写测试的一些原则"><a href="#写测试的一些原则" class="headerlink" title="写测试的一些原则"></a>写测试的一些原则</h3><blockquote>
-<p>首先必须要有一个态度&#x2F;认知：写测试与写普通代码一样，测试也要很清楚的表达逻辑，不能因为它不体现到产品上就粗糙了事。</p>
-</blockquote>
-<p>有些原则会受不同开发者个人能力影响，所以我的看法是正面原则应该鼓励，反面原则明令禁止。</p>
-<h4 id="不写没有意义的测试"><a href="#不写没有意义的测试" class="headerlink" title="不写没有意义的测试"></a>不写没有意义的测试</h4><p>比如   <code>1 + 2 === 3</code>  ，或者让函数执行一次，而不是验证函数执行的结果，这种无意义的行为，还有一种情况是为了提升测试覆盖率而补充，在我看来更是“本末倒置”。</p>
-<h4 id="不写重复的测试"><a href="#不写重复的测试" class="headerlink" title="不写重复的测试"></a>不写重复的测试</h4><p>相同的逻辑写多遍，当然有可能是不同开发成员测相同的逻辑，如果发现应该删除。</p>
-<h4 id="不写描述与实际逻辑不符的测试"><a href="#不写描述与实际逻辑不符的测试" class="headerlink" title="不写描述与实际逻辑不符的测试"></a>不写描述与实际逻辑不符的测试</h4><p>典型的挂羊头卖狗肉，当修复测试时，通过描述不能准备判断场景，细排查发现并不是预期逻辑，花费了不必要的时间。</p>
-<h4 id="不写上下文依赖的测试"><a href="#不写上下文依赖的测试" class="headerlink" title="不写上下文依赖的测试"></a>不写上下文依赖的测试</h4><p>要保证测试的独立性，就是说单个的测试也可以运行，在工作当中也很多处发现，下一个测试要依赖于上一个测试，这显然是不合理的，如果某天删掉了第一个测试，第二个测试就会挂掉。</p>
-<h4 id="尽可能保证测试的可读性"><a href="#尽可能保证测试的可读性" class="headerlink" title="尽可能保证测试的可读性"></a>尽可能保证测试的可读性</h4><p>最好有递进关系，很容易从测试中看到你的逻辑是什么。</p>
-<h4 id="尽可能保证测试的纯粹性"><a href="#尽可能保证测试的纯粹性" class="headerlink" title="尽可能保证测试的纯粹性"></a>尽可能保证测试的纯粹性</h4><p>一个测试只测一种场景，也可以说编程原则中的“单一原则”，可以正反面断言。</p>
-<h4 id="提取重复的前置条件"><a href="#提取重复的前置条件" class="headerlink" title="提取重复的前置条件"></a>提取重复的前置条件</h4><p>很多时候只为了测关键点，需要配备一些前置条件，当多个测试都有相同逻辑时，应当提取到不同维度。</p>
-<p>比如使用 before、beforeEach、after、afterEach，或者提升至更底层的函数，比如 Helper 类。</p>
-<p>反面示例（下图）很多是本人曾经犯过的问题，自觉公开处刑 🙃</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/648038e2e468e3b3652fab3d/origin-url" alt="image.png"></p>
-<h3 id="应该如何写一个测试？"><a href="#应该如何写一个测试？" class="headerlink" title="应该如何写一个测试？"></a>应该如何写一个测试？</h3><p>关于测试的方法论，本人所知道的是 TDD 和 BDD，也曾查过一些资料，对我至今仍然有非常大的指导意义，不讲过多的概念，回顾一张图吧。</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64801dffe468e3b3652faaab/origin-url" alt="image.png"></p>
-<h4 id="几个例子"><a href="#几个例子" class="headerlink" title="几个例子"></a>几个例子</h4><ol>
-<li><p>开发一个创建用户的 API，我的步骤是：</p>
-<p> a. <strong>编写测试用例</strong>  ：先 http 请求这个 API 的路由，此时路由可能都不存在，没有关系，这一步就是要  <strong>这个测试用例失败</strong>  。<br> <img src="https://atlas-rc.pingcode.com/files/public/64802844e468e3b3652faae5/origin-url" alt="image.png"></p>
-<p> b. <strong>编写代码</strong>  ：解决它为什么失败？原因：没有定义路由和响应数据，OK 解决它，添加一个 POST &#x2F;api&#x2F;user 的路由，并且   <code>response.end(&#39;success&#39;)</code>  。  <strong>这一步让测试用例通过</strong>  。<br> <img src="https://atlas-rc.pingcode.com/files/public/64802959e468e3b3652faae7/origin-url" alt="image.png"></p>
-<p> c. <strong>编写测试用例</strong>  ：制定创建用户的信息：名字（张三）、手机号（xxx）、年龄……，并且期望创建成功，并且判断创建的信息无误，此时运行测试，  <strong>结果应当是失败</strong>  ，因为代码中还没有创建逻辑。<br> <img src="https://atlas-rc.pingcode.com/files/public/64802a36e468e3b3652faaec/origin-url" alt="image.png"></p>
-<p> d. <strong>编写代码：</strong>  解决失败原因，创建响应结果的实体，并且 response.send({ code: 200, data: user })，  <strong>让测试成功。</strong><br> <img src="https://atlas-rc.pingcode.com/files/public/64802c6ee468e3b3652faaf6/origin-url" alt="image.png"></p>
-<p> e. <strong>编写测试用例</strong>  ：输入不合法的信息，让  <strong>测试继续报错</strong>  。</p>
-<p> f. <strong>编写程序：</strong>  加入校验逻辑，解决报错，让  <strong>测试成功。</strong></p>
-<p> g. ……</p>
-</li>
-<li><p>一个缺陷，真实开发的例子：<br><img src="https://atlas-rc.pingcode.com/files/public/64802e2ee468e3b3652faaff/origin-url" alt="image.png"></p>
-</li>
+<p>withAngular 是 Slate-angular 内置插件，介于框架的限制，该插件大致上做了两件事：</p>
+<ol>
+<li>对于 Slate 部分函数进行了重写（比如 onChange）</li>
+<li>扩展额外的一些能力</li>
 </ol>
-<p>a. 这个思路应当是先按照描述去模拟场景，验证预期行为和实际行为是否一致，如下：<br><img src="https://atlas-rc.pingcode.com/files/public/64802fe8e468e3b3652fab06/origin-url" alt="image.png"></p>
-<p>b. 这种情况就避免了  <strong>启动前端代码的麻烦事，进行自我验证，驱动排查</strong>  。在解决这个缺陷时，重构了大量的代码，历史的测试一次次告诉我重构逻辑漏掉了哪些场景。</p>
-<p>从上面的两个例子中，可以再次得出它的指导思路：  <strong>让测试失败，改代码修复，在让测试失败，修复……反复验证。</strong></p>
-<h3 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h3><p>好吧，暂时没有其他要说的了，后续有想法，再继续更新。</p>
+<h4 id="核心能力-1"><a href="#核心能力-1" class="headerlink" title="核心能力"></a>核心能力</h4><ol>
+<li>重写数据操作函数：插入、删除、复制&#x2F;粘贴板（insertFragment、setFragment）</li>
+<li>数据变化通知（onChange）</li>
+<li>基础 DOM 事件：onkeydown、onclick</li>
+<li>检查元素类型（isBlockCard）</li>
+<li>错误处理（onError）</li>
+</ol>
+<h4 id="源码预览-1"><a href="#源码预览-1" class="headerlink" title="源码预览"></a>源码预览</h4><p><img src="https://atlas-rc.pingcode.com/files/public/64634a287083dd5ecd38a0bc/origin-url" alt="image.png"></p>
+<h4 id="使用-1"><a href="#使用-1" class="headerlink" title="使用"></a>使用</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import &#123; createEditor &#125; from &#x27;slate&#x27;;</span><br><span class="line">import &#123; withAngular &#125; from &#x27;slate-angular&#x27;;</span><br><span class="line"></span><br><span class="line">const editor = withAngular(createEditor());</span><br></pre></td></tr></table></figure>
+
+<h3 id="Theia-withTheia"><a href="#Theia-withTheia" class="headerlink" title="Theia withTheia"></a>Theia withTheia</h3><p>基于 Slate-angular 进行扩展和复写 editor 对象，提供了更多的特性，同时基于 Worktile 和 PingCode 业务封装了一些更复杂的逻辑。</p>
+<h4 id="核心能力-2"><a href="#核心能力-2" class="headerlink" title="核心能力"></a>核心能力</h4><ol>
+<li>多插件自动组合注册（combinePlugins）</li>
+<li>支持插件的渲染自定义组件（renderElement）</li>
+<li>更多的事件：globalMousedown</li>
+</ol>
+<h4 id="源码预览-2"><a href="#源码预览-2" class="headerlink" title="源码预览"></a>源码预览</h4><p><img src="https://atlas-rc.pingcode.com/files/public/6463519e7083dd5ecd38a0d0/origin-url" alt="image.png"></p>
+<h2 id="构建-x2F-声明插件"><a href="#构建-x2F-声明插件" class="headerlink" title="构建&#x2F;声明插件"></a>构建&#x2F;声明插件</h2><p>上面 withTheia 和 withAngular 已经展示了一个插件的声明流程，那么插件需要到底做了什么事：</p>
+<ol>
+<li>重写和拦截编辑器对象（editor）提供的能力</li>
+<li>返回编辑器对象，供下一个插件使用继续流转</li>
+</ol>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p><img src="https://atlas-rc.pingcode.com/files/public/646350e97083dd5ecd38a0ce/origin-url" alt="image.png"></p>
+<h2 id="组合-x2F-装载插件"><a href="#组合-x2F-装载插件" class="headerlink" title="组合&#x2F;装载插件"></a>组合&#x2F;装载插件</h2><p>方式：js 高阶函数～</p>
+<p>如：  <code>withInlines(withHistory(withAngular(createEditor())))</code>  </p>
+<p>theia 中组合插件</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/646351457083dd5ecd38a0cf/origin-url" alt="image.png"></p>
+<h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">this.editor = withTheia(</span><br><span class="line">  withHistory(</span><br><span class="line">    withAngular(</span><br><span class="line">      createEditor(),</span><br><span class="line">      CLIPBOARD_FORMAT_KEY)</span><br><span class="line">  ), plugins</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
 ]]></content>
       <categories>
-        <category>单元测试</category>
+        <category>编辑器</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>编辑器系列—插件渲染机制</title>
+    <url>/2023/05/18/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89/</url>
+    <content><![CDATA[<h3 id="单个插件渲染流程"><a href="#单个插件渲染流程" class="headerlink" title="单个插件渲染流程"></a>单个插件渲染流程</h3><p><img src="https://atlas-rc.pingcode.com/files/public/6465f1e87083dd5ecd38a428/origin-url" alt="image.png"></p>
+<span id="more"></span>
+<h3 id="多插件"><a href="#多插件" class="headerlink" title="多插件"></a>多插件</h3><p>插件机制有一个关键的问题是：当注册了多个插件，如何正确的找出要渲染的哪个插件。</p>
+<p><strong>插件的冒泡机制：先注册的插件会后执行，这很像数据结构中的“栈”，先入后出。比如，注册了三个插件 [A, B, C]，那么渲染时会优先取出 C，运行预渲染函数（renderElement），然后是 B，最后是 A，每个渲染函数中可以通过插件的类型与当前插件预定义的类型相比较，如果匹配则返回当前预定义插件对应的视图组件，否则流转到下一个插件，继续重复此逻辑</strong>  ，如下图：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6465f95f7083dd5ecd38a449/origin-url" alt="image.png"></p>
+<h4 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h4><p><img src="https://atlas-rc.pingcode.com/files/public/6465fd057083dd5ecd38a457/origin-url" alt="image.png"></p>
+]]></content>
+      <categories>
+        <category>编辑器</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>编辑器系列—如何获取光标/元素位置</title>
+    <url>/2023/05/29/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%85%89%E6%A0%87%E5%92%8C%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE/</url>
+    <content><![CDATA[<h3 id="Slate-Selection"><a href="#Slate-Selection" class="headerlink" title="Slate Selection"></a>Slate Selection</h3><p>slate 的 selection 是用来表示一个元素或节点的位置，结构如下：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64744566e468e3b3652fa138/origin-url" alt="image.png"></p>
+<p>它是基于原生 <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Selection">DOM Selection API</a> 封装的，一些基础概念：</p>
+<span id="more"></span>
+<h4 id="anchor"><a href="#anchor" class="headerlink" title="anchor"></a>anchor</h4><blockquote>
+<p>锚指的是一个选区的起始点。当我们使用鼠标框选一个区域的时候，锚点就是我们鼠标按下瞬间的那个点。在用户拖动鼠标时，锚点是不会变的 <strong>。</strong> ——MDN</p>
+</blockquote>
+<h4 id="focus"><a href="#focus" class="headerlink" title="focus"></a>focus</h4><blockquote>
+<p>选区的焦点是该选区的终点，当您用鼠标框选一个选区的时候，焦点是你的鼠标松开瞬间所记录的那个点。随着用户拖动鼠标，焦点的位置会随着改变。——MDN</p>
+</blockquote>
+<p>注意的一点是： <strong>anchor 和 focus 的概念不能与选区的起始位置和终止位置混淆，因为 anchor 指向的位置可能在 focus 指向的位置的前面，也可能在 focus 指向位置的后面，这取决于你选择文本时鼠标移动的方向（也就是按下鼠标键和松开鼠标键的位置）</strong></p>
+<h4 id="path"><a href="#path" class="headerlink" title="path"></a>path</h4><p>slate 中 path 的类型： <code>type Path = number[];</code> ，它是一个描述元素的路径。</p>
+<p>看一个例子：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64216ce4d074dd3307dfb4e9/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/642163a5d074dd3307dfb4d0/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64216523d074dd3307dfb4d5/origin-url" alt="image.png"></p>
+<ul>
+<li>第一张图，path:[0,0]，无论光标在 1、2、3、4、5、6 它的 path 都是 [0, 0]</li>
+<li>第二张图光标落在行内代码上时，发现 path 变了，变成了 [0, 1, 0]</li>
+<li>第三张图光标落在分隔线元素上，path 是 [1, 0]</li>
+</ul>
+<p>根据以上结果可以推出， <strong>path 第一位是第几行或者独占整行的块级元素，第二位是第几行的第几个元素（不是第几个光标），第三位是指嵌套的元素，</strong> 比如表格中的列填充的就是第三位。</p>
+<h4 id="offset"><a href="#offset" class="headerlink" title="offset"></a>offset</h4><p>指元素的偏移位置，从上面第一张图中还可以看到起始 offset 是 3，结束 offset 是 6，可以推出 offset 指元素的第几个位置，path + offset 可以描述出起始或结束的点，achor + focus 表示从第几个元素第几个位置选到第几个元素第几个位置。</p>
+<h3 id="Selection-是如何构造出来的？"><a href="#Selection-是如何构造出来的？" class="headerlink" title="Selection 是如何构造出来的？"></a><strong>Selection 是如何构造出来的？</strong></h3><p>通过原生的 Selection API 的数据观察，我们很容易知道 offset，如图中的 anchorOffset 和 focusOffset：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64744883e468e3b3652fa140/origin-url" alt="image.png"></p>
+<p>转换成 Slate Selection：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    anchor: &#123; offset: 9 &#125;,</span><br><span class="line">    focus: &#123; offset: 9 &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再从上面数据中观察，并没有找到是第几行的信息，为什么？</p>
+<p>行的信息也是比较复杂且灵活的，比如：第二行插入了表格元素，该元素本身就是独占整行，它是第二行，那么表格里的第一行该如何表示呢？我个人猜测原生 API 应该也不知道如何表示，所以把这个问题交给开发者定义，也就有了上述的一些规则，下面从代码层面仔细讲解这个行（path）是如何构建出来的。</p>
+<h4 id="基于插件结构定规则"><a href="#基于插件结构定规则" class="headerlink" title="基于插件结构定规则"></a>基于插件结构定规则</h4><p>selection 的 path 是根据插件数据结构为基础构建的，在另一篇文章讲到的表格数据结构例子：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64744f7ae468e3b3652fa14b/origin-url" alt="image.png"></p>
+<p>那么数组的第一个元素的默认就是第一行（path 为 0），表格元素的第一行是 (0,0)，第二行是 (0,2)。</p>
+<h4 id="实现规则"><a href="#实现规则" class="headerlink" title="实现规则"></a>实现规则</h4><ol>
+<li>渲染元素时，记录元素和索引。</li>
+<li><strong>当前元素开始从缓存的元素和索引中向上找，找到一级就向 path 数组的开头，临界终止条件：找至顶层。</strong></li>
+</ol>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64745359e468e3b3652fa14d/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6474522ce468e3b3652fa14c/origin-url" alt="image.png"></p>
+]]></content>
+      <categories>
+        <category>编辑器</category>
       </categories>
   </entry>
   <entry>
@@ -694,138 +713,58 @@ table th:last-of-type {
       </categories>
   </entry>
   <entry>
-    <title>编辑器系列——如何获取光标/元素位置</title>
-    <url>/2023/05/29/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%85%89%E6%A0%87%E5%92%8C%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE/</url>
-    <content><![CDATA[<h3 id="Slate-Selection"><a href="#Slate-Selection" class="headerlink" title="Slate Selection"></a>Slate Selection</h3><p>slate 的 selection 是用来表示一个元素或节点的位置，结构如下：</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64744566e468e3b3652fa138/origin-url" alt="image.png"></p>
-<p>它是基于原生 <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Selection">DOM Selection API</a> 封装的，一些基础概念：</p>
-<span id="more"></span>
-<h4 id="anchor"><a href="#anchor" class="headerlink" title="anchor"></a>anchor</h4><blockquote>
-<p>锚指的是一个选区的起始点。当我们使用鼠标框选一个区域的时候，锚点就是我们鼠标按下瞬间的那个点。在用户拖动鼠标时，锚点是不会变的 <strong>。</strong> ——MDN</p>
+    <title>再谈单元测试</title>
+    <url>/2023/06/07/%E5%86%8D%E8%B0%88%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/</url>
+    <content><![CDATA[<p>曾写过多篇测试相关的文章，都源于每次测试给我带来的触动，这次也不例外，最近在重构复杂逻辑时，再次感谢它为我保驾护航，同时也发现了历史测试中存在的一些问题。</p>
+<h3 id="测试的意义"><a href="#测试的意义" class="headerlink" title="测试的意义"></a>测试的意义</h3><blockquote>
+<p>这是一个认知问题，如果不清楚为何要写测试，那么最终产生的测试大概率是腐烂、或无意义的。</p>
 </blockquote>
-<h4 id="focus"><a href="#focus" class="headerlink" title="focus"></a>focus</h4><blockquote>
-<p>选区的焦点是该选区的终点，当您用鼠标框选一个选区的时候，焦点是你的鼠标松开瞬间所记录的那个点。随着用户拖动鼠标，焦点的位置会随着改变。——MDN</p>
+<ol>
+<li>保证代码的正确性，提升代码质量是它最高的使命。</li>
+<li>保证代码的安全性&#x2F;稳定性，当对某段代码改动后，测试会告诉哪些代码受到了潜在的问题。</li>
+<li>可以指导写代码的思路，在测试驱动开发（TDD）体现尤为明显。</li>
+<li>更能透彻的理解代码，很多情况下，写代码时常常会陷入自己的世界，从测试相当于站在旁观者的角度审视代码，从而提升可读性和扩展性。<span id="more"></span></li>
+</ol>
+<h3 id="写测试的一些原则"><a href="#写测试的一些原则" class="headerlink" title="写测试的一些原则"></a>写测试的一些原则</h3><blockquote>
+<p>首先必须要有一个态度&#x2F;认知：写测试与写普通代码一样，测试也要很清楚的表达逻辑，不能因为它不体现到产品上就粗糙了事。</p>
 </blockquote>
-<p>注意的一点是： <strong>anchor 和 focus 的概念不能与选区的起始位置和终止位置混淆，因为 anchor 指向的位置可能在 focus 指向的位置的前面，也可能在 focus 指向位置的后面，这取决于你选择文本时鼠标移动的方向（也就是按下鼠标键和松开鼠标键的位置）</strong></p>
-<h4 id="path"><a href="#path" class="headerlink" title="path"></a>path</h4><p>slate 中 path 的类型： <code>type Path = number[];</code> ，它是一个描述元素的路径。</p>
-<p>看一个例子：</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64216ce4d074dd3307dfb4e9/origin-url" alt="image.png"></p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/642163a5d074dd3307dfb4d0/origin-url" alt="image.png"></p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64216523d074dd3307dfb4d5/origin-url" alt="image.png"></p>
-<ul>
-<li>第一张图，path:[0,0]，无论光标在 1、2、3、4、5、6 它的 path 都是 [0, 0]</li>
-<li>第二张图光标落在行内代码上时，发现 path 变了，变成了 [0, 1, 0]</li>
-<li>第三张图光标落在分隔线元素上，path 是 [1, 0]</li>
-</ul>
-<p>根据以上结果可以推出， <strong>path 第一位是第几行或者独占整行的块级元素，第二位是第几行的第几个元素（不是第几个光标），第三位是指嵌套的元素，</strong> 比如表格中的列填充的就是第三位。</p>
-<h4 id="offset"><a href="#offset" class="headerlink" title="offset"></a>offset</h4><p>指元素的偏移位置，从上面第一张图中还可以看到起始 offset 是 3，结束 offset 是 6，可以推出 offset 指元素的第几个位置，path + offset 可以描述出起始或结束的点，achor + focus 表示从第几个元素第几个位置选到第几个元素第几个位置。</p>
-<h3 id="Selection-是如何构造出来的？"><a href="#Selection-是如何构造出来的？" class="headerlink" title="Selection 是如何构造出来的？"></a><strong>Selection 是如何构造出来的？</strong></h3><p>通过原生的 Selection API 的数据观察，我们很容易知道 offset，如图中的 anchorOffset 和 focusOffset：</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64744883e468e3b3652fa140/origin-url" alt="image.png"></p>
-<p>转换成 Slate Selection：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    anchor: &#123; offset: 9 &#125;,</span><br><span class="line">    focus: &#123; offset: 9 &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>再从上面数据中观察，并没有找到是第几行的信息，为什么？</p>
-<p>行的信息也是比较复杂且灵活的，比如：第二行插入了表格元素，该元素本身就是独占整行，它是第二行，那么表格里的第一行该如何表示呢？我个人猜测原生 API 应该也不知道如何表示，所以把这个问题交给开发者定义，也就有了上述的一些规则，下面从代码层面仔细讲解这个行（path）是如何构建出来的。</p>
-<h4 id="基于插件结构定规则"><a href="#基于插件结构定规则" class="headerlink" title="基于插件结构定规则"></a>基于插件结构定规则</h4><p>selection 的 path 是根据插件数据结构为基础构建的，在另一篇文章讲到的表格数据结构例子：</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64744f7ae468e3b3652fa14b/origin-url" alt="image.png"></p>
-<p>那么数组的第一个元素的默认就是第一行（path 为 0），表格元素的第一行是 (0,0)，第二行是 (0,2)。</p>
-<h4 id="实现规则"><a href="#实现规则" class="headerlink" title="实现规则"></a>实现规则</h4><ol>
-<li>渲染元素时，记录元素和索引。</li>
-<li><strong>当前元素开始从缓存的元素和索引中向上找，找到一级就向 path 数组的开头，临界终止条件：找至顶层。</strong></li>
-</ol>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64745359e468e3b3652fa14d/origin-url" alt="image.png"></p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/6474522ce468e3b3652fa14c/origin-url" alt="image.png"></p>
-]]></content>
-      <categories>
-        <category>编辑器</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>编辑器系列——插件渲染机制</title>
-    <url>/2023/05/18/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89/</url>
-    <content><![CDATA[<h3 id="单个插件渲染流程"><a href="#单个插件渲染流程" class="headerlink" title="单个插件渲染流程"></a>单个插件渲染流程</h3><p><img src="https://atlas-rc.pingcode.com/files/public/6465f1e87083dd5ecd38a428/origin-url" alt="image.png"></p>
-<span id="more"></span>
-<h3 id="多插件"><a href="#多插件" class="headerlink" title="多插件"></a>多插件</h3><p>插件机制有一个关键的问题是：当注册了多个插件，如何正确的找出要渲染的哪个插件。</p>
-<p><strong>插件的冒泡机制：先注册的插件会后执行，这很像数据结构中的“栈”，先入后出。比如，注册了三个插件 [A, B, C]，那么渲染时会优先取出 C，运行预渲染函数（renderElement），然后是 B，最后是 A，每个渲染函数中可以通过插件的类型与当前插件预定义的类型相比较，如果匹配则返回当前预定义插件对应的视图组件，否则流转到下一个插件，继续重复此逻辑</strong>  ，如下图：</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/6465f95f7083dd5ecd38a449/origin-url" alt="image.png"></p>
-<h4 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h4><p><img src="https://atlas-rc.pingcode.com/files/public/6465fd057083dd5ecd38a457/origin-url" alt="image.png"></p>
-]]></content>
-      <categories>
-        <category>编辑器</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>编辑器系列——插件注册流程</title>
-    <url>/2023/05/16/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
-    <content><![CDATA[<h2 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h2><p><img src="https://atlas-rc.pingcode.com/files/public/646353137083dd5ecd38a0d5/origin-url" alt="image.png"></p>
-<span id="more"></span>
-
-<h2 id="创建编辑器"><a href="#创建编辑器" class="headerlink" title="创建编辑器"></a>创建编辑器</h2><h3 id="Slate-createEditor"><a href="#Slate-createEditor" class="headerlink" title="Slate createEditor"></a>Slate createEditor</h3><p>createEditor 是 Slate 提供的创建编辑器对象的函数，编辑器对象的重要性相当于一个系统的核心，后面所有的插件注册&#x2F;声明部分也都必须返回该对象，插件在运行过程中执行完当前插件的逻辑，最终也需要流转到该对象提供的核心函数上。</p>
-<h4 id="核心能力"><a href="#核心能力" class="headerlink" title="核心能力"></a>核心能力</h4><ol>
-<li>数据操作：<ol>
-<li>插入节点&#x2F;文本（insertNode、insertText）</li>
-<li>删除（delete）</li>
-<li>文本数据操作（apply）</li>
-<li>插入或替换文本、节点（insertFragment）</li>
-<li>装饰文本（addMark）</li>
-</ol>
+<p>有些原则会受不同开发者个人能力影响，所以我的看法是正面原则应该鼓励，反面原则明令禁止。</p>
+<h4 id="不写没有意义的测试"><a href="#不写没有意义的测试" class="headerlink" title="不写没有意义的测试"></a>不写没有意义的测试</h4><p>比如   <code>1 + 2 === 3</code>  ，或者让函数执行一次，而不是验证函数执行的结果，这种无意义的行为，还有一种情况是为了提升测试覆盖率而补充，在我看来更是“本末倒置”。</p>
+<h4 id="不写重复的测试"><a href="#不写重复的测试" class="headerlink" title="不写重复的测试"></a>不写重复的测试</h4><p>相同的逻辑写多遍，当然有可能是不同开发成员测相同的逻辑，如果发现应该删除。</p>
+<h4 id="不写描述与实际逻辑不符的测试"><a href="#不写描述与实际逻辑不符的测试" class="headerlink" title="不写描述与实际逻辑不符的测试"></a>不写描述与实际逻辑不符的测试</h4><p>典型的挂羊头卖狗肉，当修复测试时，通过描述不能准备判断场景，细排查发现并不是预期逻辑，花费了不必要的时间。</p>
+<h4 id="不写上下文依赖的测试"><a href="#不写上下文依赖的测试" class="headerlink" title="不写上下文依赖的测试"></a>不写上下文依赖的测试</h4><p>要保证测试的独立性，就是说单个的测试也可以运行，在工作当中也很多处发现，下一个测试要依赖于上一个测试，这显然是不合理的，如果某天删掉了第一个测试，第二个测试就会挂掉。</p>
+<h4 id="尽可能保证测试的可读性"><a href="#尽可能保证测试的可读性" class="headerlink" title="尽可能保证测试的可读性"></a>尽可能保证测试的可读性</h4><p>最好有递进关系，很容易从测试中看到你的逻辑是什么。</p>
+<h4 id="尽可能保证测试的纯粹性"><a href="#尽可能保证测试的纯粹性" class="headerlink" title="尽可能保证测试的纯粹性"></a>尽可能保证测试的纯粹性</h4><p>一个测试只测一种场景，也可以说编程原则中的“单一原则”，可以正反面断言。</p>
+<h4 id="提取重复的前置条件"><a href="#提取重复的前置条件" class="headerlink" title="提取重复的前置条件"></a>提取重复的前置条件</h4><p>很多时候只为了测关键点，需要配备一些前置条件，当多个测试都有相同逻辑时，应当提取到不同维度。</p>
+<p>比如使用 before、beforeEach、after、afterEach，或者提升至更底层的函数，比如 Helper 类。</p>
+<p>反面示例（下图）很多是本人曾经犯过的问题，自觉公开处刑 🙃</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/648038e2e468e3b3652fab3d/origin-url" alt="image.png"></p>
+<h3 id="应该如何写一个测试？"><a href="#应该如何写一个测试？" class="headerlink" title="应该如何写一个测试？"></a>应该如何写一个测试？</h3><p>关于测试的方法论，本人所知道的是 TDD 和 BDD，也曾查过一些资料，对我至今仍然有非常大的指导意义，不讲过多的概念，回顾一张图吧。</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64801dffe468e3b3652faaab/origin-url" alt="image.png"></p>
+<h4 id="几个例子"><a href="#几个例子" class="headerlink" title="几个例子"></a>几个例子</h4><ol>
+<li><p>开发一个创建用户的 API，我的步骤是：</p>
+<p> a. <strong>编写测试用例</strong>  ：先 http 请求这个 API 的路由，此时路由可能都不存在，没有关系，这一步就是要  <strong>这个测试用例失败</strong>  。<br> <img src="https://atlas-rc.pingcode.com/files/public/64802844e468e3b3652faae5/origin-url" alt="image.png"></p>
+<p> b. <strong>编写代码</strong>  ：解决它为什么失败？原因：没有定义路由和响应数据，OK 解决它，添加一个 POST &#x2F;api&#x2F;user 的路由，并且   <code>response.end(&#39;success&#39;)</code>  。  <strong>这一步让测试用例通过</strong>  。<br> <img src="https://atlas-rc.pingcode.com/files/public/64802959e468e3b3652faae7/origin-url" alt="image.png"></p>
+<p> c. <strong>编写测试用例</strong>  ：制定创建用户的信息：名字（张三）、手机号（xxx）、年龄……，并且期望创建成功，并且判断创建的信息无误，此时运行测试，  <strong>结果应当是失败</strong>  ，因为代码中还没有创建逻辑。<br> <img src="https://atlas-rc.pingcode.com/files/public/64802a36e468e3b3652faaec/origin-url" alt="image.png"></p>
+<p> d. <strong>编写代码：</strong>  解决失败原因，创建响应结果的实体，并且 response.send({ code: 200, data: user })，  <strong>让测试成功。</strong><br> <img src="https://atlas-rc.pingcode.com/files/public/64802c6ee468e3b3652faaf6/origin-url" alt="image.png"></p>
+<p> e. <strong>编写测试用例</strong>  ：输入不合法的信息，让  <strong>测试继续报错</strong>  。</p>
+<p> f. <strong>编写程序：</strong>  加入校验逻辑，解决报错，让  <strong>测试成功。</strong></p>
+<p> g. ……</p>
 </li>
-<li>数据变化：onChange</li>
-<li>检查元素类型：空元素（isVoid）、行内元素（isInline）</li>
-<li>属性：选区（selection）、动作&#x2F;操作（operations）、子数据（children）</li>
+<li><p>一个缺陷，真实开发的例子：<br><img src="https://atlas-rc.pingcode.com/files/public/64802e2ee468e3b3652faaff/origin-url" alt="image.png"></p>
+</li>
 </ol>
-<h4 id="源码预览"><a href="#源码预览" class="headerlink" title="源码预览"></a>源码预览</h4><p><img src="https://atlas-rc.pingcode.com/files/public/646349d97083dd5ecd38a0b9/origin-url" alt="image.png"></p>
-<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import &#123; createEditor &#125; from &#x27;slate&#x27;;</span><br><span class="line">const editor = createEditor();</span><br><span class="line">editor.insertText(&#x27;哈哈哈&#x27;);</span><br></pre></td></tr></table></figure>
-
-<h3 id="Slate-angular-withAngular"><a href="#Slate-angular-withAngular" class="headerlink" title="Slate-angular withAngular"></a>Slate-angular withAngular</h3><blockquote>
-<ol>
-<li>以 withXxx 命名的一般为插件</li>
-</ol>
-</blockquote>
-<ol>
-<li>withAngular 本身也是一个插件</li>
-</ol>
-<p>withAngular 是 Slate-angular 内置插件，介于框架的限制，该插件大致上做了两件事：</p>
-<ol>
-<li>对于 Slate 部分函数进行了重写（比如 onChange）</li>
-<li>扩展额外的一些能力</li>
-</ol>
-<h4 id="核心能力-1"><a href="#核心能力-1" class="headerlink" title="核心能力"></a>核心能力</h4><ol>
-<li>重写数据操作函数：插入、删除、复制&#x2F;粘贴板（insertFragment、setFragment）</li>
-<li>数据变化通知（onChange）</li>
-<li>基础 DOM 事件：onkeydown、onclick</li>
-<li>检查元素类型（isBlockCard）</li>
-<li>错误处理（onError）</li>
-</ol>
-<h4 id="源码预览-1"><a href="#源码预览-1" class="headerlink" title="源码预览"></a>源码预览</h4><p><img src="https://atlas-rc.pingcode.com/files/public/64634a287083dd5ecd38a0bc/origin-url" alt="image.png"></p>
-<h4 id="使用-1"><a href="#使用-1" class="headerlink" title="使用"></a>使用</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import &#123; createEditor &#125; from &#x27;slate&#x27;;</span><br><span class="line">import &#123; withAngular &#125; from &#x27;slate-angular&#x27;;</span><br><span class="line"></span><br><span class="line">const editor = withAngular(createEditor());</span><br></pre></td></tr></table></figure>
-
-<h3 id="Theia-withTheia"><a href="#Theia-withTheia" class="headerlink" title="Theia withTheia"></a>Theia withTheia</h3><p>基于 Slate-angular 进行扩展和复写 editor 对象，提供了更多的特性，同时基于 Worktile 和 PingCode 业务封装了一些更复杂的逻辑。</p>
-<h4 id="核心能力-2"><a href="#核心能力-2" class="headerlink" title="核心能力"></a>核心能力</h4><ol>
-<li>多插件自动组合注册（combinePlugins）</li>
-<li>支持插件的渲染自定义组件（renderElement）</li>
-<li>更多的事件：globalMousedown</li>
-</ol>
-<h4 id="源码预览-2"><a href="#源码预览-2" class="headerlink" title="源码预览"></a>源码预览</h4><p><img src="https://atlas-rc.pingcode.com/files/public/6463519e7083dd5ecd38a0d0/origin-url" alt="image.png"></p>
-<h2 id="构建-x2F-声明插件"><a href="#构建-x2F-声明插件" class="headerlink" title="构建&#x2F;声明插件"></a>构建&#x2F;声明插件</h2><p>上面 withTheia 和 withAngular 已经展示了一个插件的声明流程，那么插件需要到底做了什么事：</p>
-<ol>
-<li>重写和拦截编辑器对象（editor）提供的能力</li>
-<li>返回编辑器对象，供下一个插件使用继续流转</li>
-</ol>
-<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p><img src="https://atlas-rc.pingcode.com/files/public/646350e97083dd5ecd38a0ce/origin-url" alt="image.png"></p>
-<h2 id="组合-x2F-装载插件"><a href="#组合-x2F-装载插件" class="headerlink" title="组合&#x2F;装载插件"></a>组合&#x2F;装载插件</h2><p>方式：js 高阶函数～</p>
-<p>如：  <code>withInlines(withHistory(withAngular(createEditor())))</code>  </p>
-<p>theia 中组合插件</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/646351457083dd5ecd38a0cf/origin-url" alt="image.png"></p>
-<h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">this.editor = withTheia(</span><br><span class="line">  withHistory(</span><br><span class="line">    withAngular(</span><br><span class="line">      createEditor(),</span><br><span class="line">      CLIPBOARD_FORMAT_KEY)</span><br><span class="line">  ), plugins</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
+<p>a. 这个思路应当是先按照描述去模拟场景，验证预期行为和实际行为是否一致，如下：<br><img src="https://atlas-rc.pingcode.com/files/public/64802fe8e468e3b3652fab06/origin-url" alt="image.png"></p>
+<p>b. 这种情况就避免了  <strong>启动前端代码的麻烦事，进行自我验证，驱动排查</strong>  。在解决这个缺陷时，重构了大量的代码，历史的测试一次次告诉我重构逻辑漏掉了哪些场景。</p>
+<p>从上面的两个例子中，可以再次得出它的指导思路：  <strong>让测试失败，改代码修复，在让测试失败，修复……反复验证。</strong></p>
+<h3 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h3><p>好吧，暂时没有其他要说的了，后续有想法，再继续更新。</p>
 ]]></content>
       <categories>
-        <category>编辑器</category>
+        <category>单元测试</category>
       </categories>
   </entry>
   <entry>
-    <title>编辑器系列——什么是插件</title>
+    <title>编辑器系列—什么是插件</title>
     <url>/2023/05/16/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/</url>
     <content><![CDATA[<blockquote>
 <p>插件（Plugin）是指一种可以增强或扩展已有软件功能的组件或模块。它们通常是以独立的方式编写，可以被动态地添加到主应用程序中，从而提供额外的功能和特性。                                                                                                          —— ChatGPT</p>
@@ -929,6 +868,85 @@ table th:last-of-type {
       </categories>
   </entry>
   <entry>
+    <title>Angular 指令组合 API—hostDirectives</title>
+    <url>/2023/03/10/directive-composition-api/</url>
+    <content><![CDATA[<blockquote>
+<p>原文在我的知乎：<a href="https://zhuanlan.zhihu.com/p/612817008">Angular hostDirective 详解</a></p>
+</blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近有一个需求是动态创建组件，然后给其组件添加指令，当时可难坏了，因为 createComponent API 不支持绑定指令，所以我当时猜想是否可以在 @Component 注入或 @HostBindingDirective 绑定实现呢？找了很久，最终发现官方支持了这种，选择的是前者，Feature Issue 如下：</p>
+<span id="more"></span>
+<p><img src="https://pic2.zhimg.com/v2-d304bc6d587aba81e8d2dbb7a8c29685_r.jpg"><br>具体详情：<a href="https://github.com/angular/angular/issues/47728">https://github.com/angular/angular/issues/47728</a></p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>hostDirectives 是以依赖注入（ @Component 装饰器）的方式给宿主绑定指令，该特性于 Angular 15 支持。</p>
+<p>基本使用：</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&#x27;app-demo&#x27;</span>,</span><br><span class="line">  <span class="attr">template</span>: <span class="string">&#x27;&lt;div&gt;&lt;/div&gt;&#x27;</span>,</span><br><span class="line">  <span class="attr">hostDirectives</span>: [<span class="title class_">CdkDrag</span>]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">DemoComponent</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>等价于</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><span class="line">&lt;app-demo cdkDrag&gt;&lt;/app-demo&gt;</span><br></pre></td></tr></table></figure>
+<p>有些类似 host 属性（或<code>@HostBinding(&#39;class&#39;) className = &#39;active&#39;</code>）和 <code>&lt;div class=&#39;active&#39;&gt;&lt;/div&gt;</code> 的关系。</p>
+<h2 id="需要注意的点"><a href="#需要注意的点" class="headerlink" title="需要注意的点"></a>需要注意的点</h2><ul>
+<li>Angular 会在编译时静态应用宿主指令。不能在运行时动态添加指令。</li>
+<li>hostDirectives 中使用的指令必须是 standalone: true 。</li>
+<li>Angular 会忽略 hostDirectives 属性中所应用的那些指令的 selector 。</li>
+</ul>
+<p><img src="https://pic3.zhimg.com/v2-56bfc82c5187d5fa9645aba6827ce2e6_b.jpg"></p>
+<p>还有个小区别是，hostDirectives 添加的指令不会给 dom 元素加上属性，不过这并不影响效果。<br><img src="https://pic4.zhimg.com/v2-72b83d9917ee69d13b1c5738681a8e8f_b.jpg"><br><img src="https://pic3.zhimg.com/v2-5ba4e6493ef88fb15173edccc78c666a_b.jpg"></p>
+<h2 id="指令支持输入（属性）与输出（事件）"><a href="#指令支持输入（属性）与输出（事件）" class="headerlink" title="指令支持输入（属性）与输出（事件）"></a>指令支持输入（属性）与输出（事件）</h2><ol>
+<li><p>创建一个指令</p>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Directive</span>, <span class="title class_">EventEmitter</span>, <span class="title class_">Input</span>, <span class="title class_">OnInit</span>, <span class="title class_">Output</span>, <span class="title class_">ViewContainerRef</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@angular/core&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&#x27;[one]&#x27;</span>,</span><br><span class="line">  <span class="attr">exportAs</span>: <span class="string">&#x27;one&#x27;</span>,</span><br><span class="line">  <span class="attr">standalone</span>: <span class="literal">true</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">DirectiveOne</span> <span class="keyword">implements</span> <span class="title class_">OnInit</span> &#123;</span><br><span class="line">  <span class="meta">@Input</span>() <span class="keyword">public</span> <span class="attr">name</span>: <span class="built_in">string</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Output</span>() nameChange = <span class="keyword">new</span> <span class="title class_">EventEmitter</span>();</span><br><span class="line"></span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"><span class="keyword">private</span> viewContainer: ViewContainerRef</span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">ngOnInit</span>(): <span class="built_in">void</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;one input name: &#x27;</span> + <span class="variable language_">this</span>.<span class="property">name</span>);</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">viewContainer</span>.<span class="property">element</span>.<span class="property">nativeElement</span>.<span class="property">style</span> = <span class="string">&#x27;color: red;&#x27;</span>;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">nameChange</span>.<span class="title function_">emit</span>(<span class="string">&#x27;one name output&#x27;</span>);</span><br><span class="line">    &#125;, <span class="number">1000</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>组件使用指令添加输入输出参数</p>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&#x27;app-demo&#x27;</span>,</span><br><span class="line">  <span class="attr">standalone</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">imports</span>: [<span class="title class_">DirectiveOne</span>],</span><br><span class="line">  <span class="attr">hostDirectives</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">directive</span>: <span class="title class_">DirectiveOne</span>,</span><br><span class="line">      <span class="attr">inputs</span>: [<span class="string">&#x27;name&#x27;</span>],</span><br><span class="line">      <span class="attr">outputs</span>: [<span class="string">&#x27;nameChange&#x27;</span>]</span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">template</span>: <span class="string">`脱我战时袍，著我旧时裳`</span>,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">DemoComponent</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用组件绑定输入属性和事件返回</p>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Component</span>, <span class="title class_">Input</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@angular/core&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">CommonModule</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@angular/common&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; bootstrapApplication &#125; <span class="keyword">from</span> <span class="string">&#x27;@angular/platform-browser&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">DemoComponent</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./demo.component&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&#x27;my-app&#x27;</span>,</span><br><span class="line">  <span class="attr">imports</span>: [<span class="title class_">CommonModule</span>, <span class="title class_">DemoComponent</span>],</span><br><span class="line">  <span class="attr">standalone</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">template</span>: <span class="string">`</span></span><br><span class="line"><span class="string">    &lt;app-demo [name]=&quot;name&quot; (nameChange)=&quot;change($event)&quot;&gt;&lt;/app-demo&gt;</span></span><br><span class="line"><span class="string">  `</span>,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">App</span> &#123;</span><br><span class="line">  <span class="meta">@Input</span>() name = <span class="string">&#x27;Angular app&#x27;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">change</span>(<span class="params">value</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(value);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>效果显示：<br><img src="https://pic2.zhimg.com/v2-46c50c58c07b45e6d872497d31ea43a5_b.jpg"></p>
+</li>
+</ol>
+<h2 id="给输入输出起别名"><a href="#给输入输出起别名" class="headerlink" title="给输入输出起别名"></a>给输入输出起别名</h2><figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">      <span class="attr">directive</span>: <span class="title class_">DirectiveOne</span>,</span><br><span class="line">      <span class="attr">inputs</span>: [<span class="string">&#x27;name: Name&#x27;</span>],</span><br><span class="line">      <span class="attr">outputs</span>: [<span class="string">&#x27;nameChange: NameChange&#x27;</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>&lt;app-demo [Name]=&quot;name&quot; (NameChange)=&quot;change($event)&quot;&gt;&lt;/app-demo&gt;</code> </p>
+<h2 id="指令中引入另一个指令"><a href="#指令中引入另一个指令" class="headerlink" title="指令中引入另一个指令"></a>指令中引入另一个指令</h2><blockquote>
+<p>方便理解，我把这种叫做指令嵌套或指令继承</p>
+</blockquote>
+<ol>
+<li><p>指令 DirectiveTwo</p>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Directive</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@angular/core&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">DirectiveOne</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./directive-one&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&#x27;[two]&#x27;</span>,</span><br><span class="line">  <span class="attr">standalone</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">exportAs</span>: <span class="string">&#x27;two&#x27;</span>,</span><br><span class="line">  <span class="attr">hostDirectives</span>: [<span class="title class_">DirectiveOne</span>]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">DirectiveTwo</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>组件使用指令</p>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Component</span>, <span class="title class_">Input</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@angular/core&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">DirectiveTwo</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./directive-two&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&#x27;app-demo&#x27;</span>,</span><br><span class="line">  <span class="attr">standalone</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">imports</span>: [<span class="title class_">DirectiveTwo</span>],</span><br><span class="line">  <span class="attr">hostDirectives</span>: [<span class="title class_">DirectiveTwo</span>],</span><br><span class="line">  <span class="attr">template</span>: <span class="string">`脱我战时袍，著我旧时裳`</span>,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">DemoComponent</span> &#123; &#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="指令嵌套的执行顺序"><a href="#指令嵌套的执行顺序" class="headerlink" title="指令嵌套的执行顺序"></a>指令嵌套的执行顺序</h2><p>以上述为例，大体的执行顺序为：DirectiveOne -&gt; DirectiveTwo。</p>
+<p>加上每个指令生命钩子后的顺序为：DirectiveOne constructor（初始化）-&gt; DirectiveTwo constructor（初始化）-&gt; DirectiveOne ngOnInit -&gt; DirectiveTwo ngOnInit …… 等等，<strong>这个顺序意味着后续的指令可以修改前面指令对宿主元素的操作</strong>。</p>
+<p>示例如下：</p>
+<ol>
+<li><p>DirectiveOne</p>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Directive</span>, <span class="title class_">EventEmitter</span>, <span class="title class_">Input</span>, <span class="title class_">OnInit</span>, <span class="title class_">Output</span>, <span class="title class_">ViewContainerRef</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@angular/core&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&#x27;[one]&#x27;</span>,</span><br><span class="line">  <span class="attr">exportAs</span>: <span class="string">&#x27;one&#x27;</span>,</span><br><span class="line">  <span class="attr">standalone</span>: <span class="literal">true</span>,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">DirectiveOne</span> <span class="keyword">implements</span> <span class="title class_">OnInit</span> &#123;</span><br><span class="line">  <span class="meta">@Input</span>() <span class="keyword">public</span> <span class="attr">name</span>: <span class="built_in">string</span>;</span><br><span class="line">  <span class="meta">@Output</span>() nameChange = <span class="keyword">new</span> <span class="title class_">EventEmitter</span>();</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"><span class="keyword">private</span> viewContainer: ViewContainerRef</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;one constructor&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">ngOnInit</span>(): <span class="built_in">void</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;one ngOnInit&#x27;</span>);</span><br><span class="line">    <span class="comment">// console.log(&#x27;one input name: &#x27; + this.name);</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">viewContainer</span>.<span class="property">element</span>.<span class="property">nativeElement</span>.<span class="property">style</span> = <span class="string">&#x27;color: red;&#x27;</span>;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">nameChange</span>.<span class="title function_">emit</span>(<span class="string">&#x27;one output&#x27;</span>);</span><br><span class="line">    &#125;, <span class="number">1000</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>DirectiveTwo</p>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Directive</span>, <span class="title class_">EventEmitter</span>, <span class="title class_">Input</span>, <span class="title class_">OnInit</span>, <span class="title class_">Output</span>, <span class="title class_">ViewContainerRef</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@angular/core&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">DirectiveOne</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./directive-one&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&#x27;[two]&#x27;</span>,</span><br><span class="line">  <span class="attr">standalone</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">exportAs</span>: <span class="string">&#x27;two&#x27;</span>,</span><br><span class="line">  <span class="attr">hostDirectives</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">directive</span>: <span class="title class_">DirectiveOne</span>,</span><br><span class="line">      <span class="attr">inputs</span>: [<span class="string">&#x27;name&#x27;</span>],</span><br><span class="line">      <span class="attr">outputs</span>: [<span class="string">&#x27;nameChange&#x27;</span>]</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">DirectiveTwo</span> <span class="keyword">implements</span> <span class="title class_">OnInit</span> &#123;</span><br><span class="line">  <span class="meta">@Input</span>() <span class="keyword">public</span> name = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">  <span class="meta">@Output</span>() nameChange = <span class="keyword">new</span> <span class="title class_">EventEmitter</span>();</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"><span class="keyword">private</span> viewContainer: ViewContainerRef</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;two constructor&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">ngOnInit</span>(): <span class="built_in">void</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;two ngOnInit&#x27;</span>);</span><br><span class="line">    <span class="comment">// 覆盖宿主元素</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">viewContainer</span>.<span class="property">element</span>.<span class="property">nativeElement</span>.<span class="property">innerHTML</span> += <span class="string">&#x27;；&lt;span&gt;当窗理云鬓，对镜帖花黄&lt;/span&gt;。&#x27;</span>;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">viewContainer</span>.<span class="property">element</span>.<span class="property">nativeElement</span>.<span class="property">style</span> = <span class="string">&#x27;color: red; background-color: yellow;&#x27;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>组件使用指令</p>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Component</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@angular/core&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">DirectiveTwo</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./directive-two&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&#x27;app-demo&#x27;</span>,</span><br><span class="line">  <span class="attr">standalone</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">imports</span>: [<span class="title class_">DirectiveTwo</span>],</span><br><span class="line">  <span class="attr">hostDirectives</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">directive</span>: <span class="title class_">DirectiveTwo</span>,</span><br><span class="line">      <span class="attr">inputs</span>: [<span class="string">&#x27;name&#x27;</span>],</span><br><span class="line">      <span class="attr">outputs</span>: [<span class="string">&#x27;nameChange&#x27;</span>]</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">  <span class="attr">template</span>: <span class="string">`脱我战时袍，著我旧时裳`</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">DemoComponent</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;demo constructor&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">ngOnInit</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;demo ngOnInit&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>使用组件</p>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&#x27;my-app&#x27;</span>,</span><br><span class="line">  <span class="attr">imports</span>: [<span class="title class_">CommonModule</span>, <span class="title class_">DemoComponent</span>],</span><br><span class="line">  <span class="attr">standalone</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">template</span>: <span class="string">`</span></span><br><span class="line"><span class="string">    &lt;app-demo [name]=&quot;name&quot; (nameChange)=&quot;change($event)&quot;&gt;&lt;/app-demo&gt;</span></span><br><span class="line"><span class="string">  `</span>,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">App</span> &#123;</span><br><span class="line">  <span class="meta">@Input</span>() name = <span class="string">&#x27;Angular app&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>效果展示：<br><img src="https://pic3.zhimg.com/v2-5d4bac157f712e1822e9d13dff735ea2_b.jpg"><br>最终的效果可以发现 DirectiveTwo 在 DirectiveOne 的基础上修改了宿主元素。</p>
+</li>
+</ol>
+<h2 id="向动态创建的组件添加指令"><a href="#向动态创建的组件添加指令" class="headerlink" title="向动态创建的组件添加指令"></a>向动态创建的组件添加指令</h2><p>场景：使用官方 cdk 的拖拽组件实现将左侧组件拖拽至可添加区域（中间部分），并且中间的元素可拖拽排序，所以中间部分也必须是一个 cdkDragList，复制出的组件必须包含指令 cdkDrag。<br><img src="https://pic4.zhimg.com/v2-150933b20bd5b9e0e7848927790a2b37_b.jpg"><br><img src="https://pic3.zhimg.com/v2-f2b760caee55c6d8623da993b323e8d2_b.jpg"></p>
+<ol>
+<li>动态创建组件：<br><img src="https://pic1.zhimg.com/v2-51fb0719c069fb876f55eb70ef707a04_b.jpg"><br><img src="https://pic1.zhimg.com/v2-bb6eaa59b3f78b5c69f90be7e2a38c74_b.jpg"></li>
+<li>给组件添加 cdkDrag 指令<br><img src="https://pic4.zhimg.com/v2-16b950c305ddf3b4d3d87fd0ecb65503_b.jpg"></li>
+</ol>
+<p>dom 元素<br><img src="https://pic1.zhimg.com/v2-2164fb9111b7169baeeac807a19e2c68_b.jpg"></p>
+<h2 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h2><p><a href="https://link.zhihu.com/?target=https://stackblitz.com/edit/angular-directive-compose-api?file=src%252Fmain.ts">angular-directive-compose-api - StackBlitz</a></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://link.zhihu.com/?target=https://angular.cn/guide/directive-composition-api%23directive-composition-api">Angular directive-composition-api</a></li>
+<li><a href="https://link.zhihu.com/?target=https://angular.cn/api/core/Directive%23hostdirectives">Angular @Directive#hostdirectives</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Angular</category>
+      </categories>
+  </entry>
+  <entry>
     <title>Sass 中使用 Google icons 和 字体</title>
     <url>/2023/03/05/%E4%BD%BF%E7%94%A8google%E7%9F%A2%E9%87%8F%E5%9B%BE/</url>
     <content><![CDATA[<h2 id="1-导入-icon"><a href="#1-导入-icon" class="headerlink" title="1. 导入 icon"></a>1. 导入 icon</h2><figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="keyword">@import</span> <span class="string">&quot;https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&amp;display=swap&quot;</span>;</span><br></pre></td></tr></table></figure>
@@ -947,6 +965,24 @@ table th:last-of-type {
       </categories>
   </entry>
   <entry>
+    <title>Linux/Mac 语法手册</title>
+    <url>/2023/03/03/linux%E8%AF%AD%E6%B3%95%E6%89%8B%E5%86%8C/</url>
+    <content><![CDATA[<h2 id="查看端口占用"><a href="#查看端口占用" class="headerlink" title="查看端口占用"></a>查看端口占用</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lsof -i:端口号</span><br></pre></td></tr></table></figure>
+
+<h2 id="杀死进程"><a href="#杀死进程" class="headerlink" title="杀死进程"></a>杀死进程</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">kill</span> -9 PID</span><br></pre></td></tr></table></figure>
+
+<h2 id="查看内存占用情况-前10位"><a href="#查看内存占用情况-前10位" class="headerlink" title="查看内存占用情况(前10位)"></a>查看内存占用情况(前10位)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps aux --<span class="built_in">sort</span> -rss | <span class="built_in">head</span> -n 10</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<h2 id="剪切-x2F-移动-x2F-重命名"><a href="#剪切-x2F-移动-x2F-重命名" class="headerlink" title="剪切&#x2F;移动&#x2F;重命名"></a>剪切&#x2F;移动&#x2F;重命名</h2><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> 目录名/文件名 目录名/文件名 <span class="comment"># 移动</span></span><br><span class="line"><span class="built_in">mv</span> 文件名 文件名 <span class="comment"># 重命名</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="压缩-x2F-解压"><a href="#压缩-x2F-解压" class="headerlink" title="压缩&#x2F;解压"></a>压缩&#x2F;解压</h2><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">tar zxvf fileName.tgz <span class="comment"># 解压</span></span><br><span class="line">tar cvf fileName.tar dirName <span class="comment"># 压缩</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>Mac</category>
+      </categories>
+  </entry>
+  <entry>
     <title>使用镜像下载 vscode</title>
     <url>/2023/03/03/vscode%E9%95%9C%E5%83%8F%E4%B8%8B%E8%BD%BD/</url>
     <content><![CDATA[<p>从官网下载 vscode 会特别的慢，所以利用镜像可以提高下载速度。</p>
@@ -958,7 +994,7 @@ table th:last-of-type {
 <h2 id="4-修改链接地址"><a href="#4-修改链接地址" class="headerlink" title="4. 修改链接地址"></a>4. 修改链接地址</h2><p>将复制后的链接地址的域名(上图https后面框起来的那块)修改为 <code>vscode.cdn.azure.cn</code><br>最终类似于这样的网址：<code>https://az764295.vo.msecnd.net/stable/e7d7e9a9348e6a8cc8c03f877d39cb72e5dfb1ff/VSCode-darwin-universal.zip</code></p>
 ]]></content>
       <categories>
-        <category>vscode</category>
+        <category>VSCode</category>
       </categories>
   </entry>
   <entry>
@@ -1007,7 +1043,7 @@ table th:last-of-type {
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>总结就是<strong>能不用 –legacy-peer-deps</strong>的就不用，求其次用 <strong>–force</strong>。</p>
 ]]></content>
       <categories>
-        <category>npm</category>
+        <category>Npm</category>
       </categories>
   </entry>
   <entry>
@@ -1160,6 +1196,49 @@ table th:last-of-type {
       </categories>
   </entry>
   <entry>
+    <title>Git 手册</title>
+    <url>/2023/02/03/git%E6%89%8B%E5%86%8C/</url>
+    <content><![CDATA[<blockquote>
+<p>以下命令中 [ ] 包裹的值为动态值，需要根据情况替换，比如 <code>git push origin [branchName]</code>，[branchName] 需要根据实际情况的值决定，比如： <code>git push origin master</code></p>
+</blockquote>
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><ul>
+<li>创建本地仓库：<code>git init</code></li>
+<li>创建中央仓库：<code>git init --bare</code></li>
+<li>拉取远程分支所有历史提交记录：<code>git pull origin [branch] --allow-unrelated-histories</code></li>
+</ul>
+<h2 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h2><ul>
+<li>快速打标签: <code>git tag [tagName]</code></li>
+<li>推送至远程: <code>git push origin [tagName]</code></li>
+</ul>
+<h2 id="cherry-pick"><a href="#cherry-pick" class="headerlink" title="cherry-pick"></a>cherry-pick</h2><p>将其他分支的 commit 迁移至当前分支(<strong>注意先切换到需要上线的分支</strong>): <code>git cherry-pick [commitid]</code></p>
+<p>一般在热修复，脚本，补丁需要及时上线，但又不能基于开发分支代码部署，将临时代码合并到上个上线的版本部署一版的场景中会用到。</p>
+<span id="more"></span>
+<h2 id="回滚"><a href="#回滚" class="headerlink" title="回滚"></a>回滚</h2><ul>
+<li>回滚到某次提交: <code>git reset [commitid]</code></li>
+<li>强制回滚某次提交，并且回删除节点后的所有提交(慎用): <code>git reset --hard [commitid]</code></li>
+<li>强制与远程分支保持一致： <code>git reset --hard origin/[branchName]</code></li>
+</ul>
+<h2 id="分支管理"><a href="#分支管理" class="headerlink" title="分支管理"></a>分支管理</h2><ul>
+<li>设置远程分支为默认分支：<code>git branch --set-upstream-to= origin [branchName]</code></li>
+</ul>
+<h3 id="删除分支"><a href="#删除分支" class="headerlink" title="删除分支"></a>删除分支</h3><ul>
+<li>删除本地分支： <code>git branch -D [branchName]</code></li>
+<li>删除远程分支： <code>git push origin -d [branchName]</code></li>
+<li>批量删除所有分支：<code>git branch | grep -v &#39;develop&#39; | xargs git branch -D</code><ul>
+<li><code>|</code> 管道命令，用于将一串命令串联起来。前面命令的输出可以作为后面命令的输入</li>
+<li><code>git branch</code> 列出本地所有分支</li>
+<li><code>grep</code> 搜索过滤命令。使用正则表达式搜索文本，并把匹配的行打印出来</li>
+<li><code>xargs</code> 参数传递命令。用于将标准输入作为命令的参数传给下一个命令</li>
+</ul>
+</li>
+</ul>
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="1-refusing-to-merge-unrelated-histories（拒绝合并不相关历史）"><a href="#1-refusing-to-merge-unrelated-histories（拒绝合并不相关历史）" class="headerlink" title="1. refusing to merge unrelated histories（拒绝合并不相关历史）"></a>1. refusing to merge unrelated histories（拒绝合并不相关历史）</h3><p>这种情况一般是本地仓储和远程仓储的提交历史不一致，git 需要确认是否合并<br>解决：<code>git pull origin master --allow-unrelated-histories</code></p>
+]]></content>
+      <categories>
+        <category>Git</category>
+      </categories>
+  </entry>
+  <entry>
     <title>Mongodb 常用 API</title>
     <url>/2023/02/01/mongodb%E6%89%8B%E5%86%8C/</url>
     <content><![CDATA[]]></content>
@@ -1263,7 +1342,7 @@ table th:last-of-type {
       </categories>
   </entry>
   <entry>
-    <title>新启程——开篇</title>
+    <title>新启程—开篇</title>
     <url>/2023/01/17/%E5%BC%80%E7%AF%87/</url>
     <content><![CDATA[<blockquote>
 <p>今天是 2023-01-18，农历壬寅年腊月廿七（2022 年 12 月 27），此时是年前的摸鱼时刻 😂 </p>

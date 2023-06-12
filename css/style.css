@@ -1147,6 +1147,9 @@ img {
 .tocbot {
   display: none;
 }
+.aside-categories {
+  display: none;
+}
 @media (min-width: 768px) {
   .jumbotron {
     margin-bottom: 6rem;
@@ -1186,6 +1189,43 @@ img {
 @media (min-width: 1200px) {
   .tocbot {
     display: block;
+  }
+  .page-content {
+    display: flex;
+  }
+  .aside-categories {
+    display: block;
+    position: sticky;
+    top: 100px;
+    left: 10%;
+    height: 100%;
+  }
+  .category-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    margin-top: 20px;
+    padding-left: 3rem;
+    padding: 2px;
+  }
+  .category-list-box {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .category-name {
+    margin-bottom: 6px;
+  }
+  .category-name:before {
+    content: "\f18c";
+    font-family: feathericon;
+    margin-right: 0.5rem;
+  }
+  .category-link {
+    text-decoration: none;
+  }
+  .category-link:hover {
+    text-decoration: underline;
   }
 }
 .list-unstyled,
@@ -2228,7 +2268,7 @@ a.toc-link {
   }
 }
 .articles .article {
-  padding: 4.5rem 0;
+  padding: 0;
 }
 .articles .article:not(:last-child) {
   border-bottom: 0.1rem #e6e6e6 solid;
