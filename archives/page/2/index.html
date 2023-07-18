@@ -30,6 +30,7 @@
 <meta name="generator" content="Hexo 6.3.0"></head>
 
 <body>
+  
   <main class="content">
     <section class="outer">
   <article class="articles">
@@ -48,6 +49,65 @@
     </div>
     <div class="archives">
       
+      <article class="archive-article archive-type-post">
+  
+  
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      
+  
+  <h2 class="archive-article-title" itemprop="name">
+    <a href="/2023/03/10/directive-composition-api/">Angular 指令组合 API—hostDirectives</a>
+  </h2>
+  
+  
+
+      <a href="/2023/03/10/directive-composition-api/" class="archive-article-date">
+  <time datetime="2023-03-10T06:09:39.000Z" itemprop="datePublished">03/10</time>
+</a>
+    </header>
+    
+      <blockquote>
+<p>原文在我的知乎：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/612817008">Angular hostDirective 详解</a></p>
+</blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近有一个需求是动态创建组件，然后给其组件添加指令，当时可难坏了，因为 createComponent API 不支持绑定指令，所以我当时猜想是否可以在 @Component 注入或 @HostBindingDirective 绑定实现呢？找了很久，最终发现官方支持了这种，选择的是前者，Feature Issue 如下：</p>
+    
+    
+    
+  </div>
+
+</article>
+      
+  
+  
+      <article class="archive-article archive-type-post">
+  
+  
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      
+  
+  <h2 class="archive-article-title" itemprop="name">
+    <a href="/2023/03/05/%E4%BD%BF%E7%94%A8google%E7%9F%A2%E9%87%8F%E5%9B%BE/">Sass 中使用 Google icons 和 字体</a>
+  </h2>
+  
+  
+
+      <a href="/2023/03/05/%E4%BD%BF%E7%94%A8google%E7%9F%A2%E9%87%8F%E5%9B%BE/" class="archive-article-date">
+  <time datetime="2023-03-05T02:55:50.000Z" itemprop="datePublished">03/05</time>
+</a>
+    </header>
+    
+      <h2 id="1-导入-icon"><a href="#1-导入-icon" class="headerlink" title="1. 导入 icon"></a>1. 导入 icon</h2><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@import</span> <span class="string">&quot;https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&amp;display=swap&quot;</span>;</span><br></pre></td></tr></table></figure>
+    
+    
+    
+  </div>
+
+</article>
+      
+  
+  
       <article class="archive-article archive-type-post">
   
   
@@ -274,76 +334,6 @@
     </header>
     
       长路漫漫，唯剑作伴
-    
-    
-    
-  </div>
-
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  
-  
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-  
-  <h2 class="archive-article-title" itemprop="name">
-    <a href="/2023/02/03/centos7%E5%AE%89%E8%A3%85yum/">centos7安装yum</a>
-  </h2>
-  
-  
-
-      <a href="/2023/02/03/centos7%E5%AE%89%E8%A3%85yum/" class="archive-article-date">
-  <time datetime="2023-02-03T07:12:12.000Z" itemprop="datePublished">02/03</time>
-</a>
-    </header>
-    
-      <p>一般购买的服务器都自带 yum，但恰好我买的这台就没有，WTF…</p>
-<h2 id="一、创建安装目录"><a href="#一、创建安装目录" class="headerlink" title="一、创建安装目录"></a>一、创建安装目录</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /usr</span><br><span class="line">mkdir yum-install</span><br><span class="line">cd yum-install</span><br></pre></td></tr></table></figure>
-    
-    
-    
-  </div>
-
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  
-  
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-  
-  <h2 class="archive-article-title" itemprop="name">
-    <a href="/2023/02/03/git%E6%89%8B%E5%86%8C/">Git 手册</a>
-  </h2>
-  
-  
-
-      <a href="/2023/02/03/git%E6%89%8B%E5%86%8C/" class="archive-article-date">
-  <time datetime="2023-02-03T06:38:00.000Z" itemprop="datePublished">02/03</time>
-</a>
-    </header>
-    
-      <blockquote>
-<p>以下命令中 [ ] 包裹的值为动态值，需要根据情况替换，比如 <code>git push origin [branchName]</code>，[branchName] 需要根据实际情况的值决定，比如： <code>git push origin master</code></p>
-</blockquote>
-<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><ul>
-<li>创建本地仓库：<code>git init</code></li>
-<li>创建中央仓库：<code>git init --bare</code></li>
-<li>拉取远程分支所有历史提交记录：<code>git pull origin [branch] --allow-unrelated-histories</code></li>
-</ul>
-<h2 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h2><ul>
-<li>快速打标签: <code>git tag [tagName]</code></li>
-<li>推送至远程: <code>git push origin [tagName]</code></li>
-</ul>
-<h2 id="cherry-pick"><a href="#cherry-pick" class="headerlink" title="cherry-pick"></a>cherry-pick</h2><p>将其他分支的 commit 迁移至当前分支(<strong>注意先切换到需要上线的分支</strong>): <code>git cherry-pick [commitid]</code></p>
-<p>一般在热修复，脚本，补丁需要及时上线，但又不能基于开发分支代码部署，将临时代码合并到上个上线的版本部署一版的场景中会用到。</p>
     
     
     
