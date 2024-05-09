@@ -389,11 +389,6 @@
       </tags>
   </entry>
   <entry>
-    <title>hexo提交代码部署</title>
-    <url>/2024/05/09/hexo%E6%8F%90%E4%BA%A4%E4%BB%A3%E7%A0%81%E9%83%A8%E7%BD%B2/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>使用 prettier 脚本命令格式化项目</title>
     <url>/2024/03/29/%E4%BD%BF%E7%94%A8%20prettier%20%E8%84%9A%E6%9C%AC%E5%91%BD%E4%BB%A4%E6%A0%BC%E5%BC%8F%E5%8C%96%E9%A1%B9%E7%9B%AE/</url>
     <content><![CDATA[<h3 id="1-全局安装-prettier"><a href="#1-全局安装-prettier" class="headerlink" title="1. 全局安装 prettier"></a>1. 全局安装 prettier</h3><p><code>npm install -g prettier</code></p>
@@ -1040,6 +1035,15 @@ table th:last-of-type {
       <categories>
         <category>[object Object]</category>
       </categories>
+  </entry>
+  <entry>
+    <title>hexo提交代码部署</title>
+    <url>/2023/05/09/hexo%E6%8F%90%E4%BA%A4%E4%BB%A3%E7%A0%81%E9%83%A8%E7%BD%B2/</url>
+    <content><![CDATA[<p><code>hexo clean &amp;&amp; hexo deploy</code></p>
+]]></content>
+      <tags>
+        <tag>hexo</tag>
+      </tags>
   </entry>
   <entry>
     <title>基于 Angular CDK 实现拖拽复制元素</title>
