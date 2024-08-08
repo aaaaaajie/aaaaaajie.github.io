@@ -8,7 +8,7 @@
   
   
   <title>
-    Sass 中使用 Google icons 和 字体 |
+    免密登录 |
     
     阿杰
   </title>
@@ -33,7 +33,7 @@
   
   <main class="content">
     <section class="outer">
-  <article id="post-使用google矢量图" class="article article-type-post" itemscope
+  <article id="ssh-免密登录" class="article article-type-ssh" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -42,7 +42,7 @@
       
   
   <h1 class="article-title" itemprop="name">
-    Sass 中使用 Google icons 和 字体
+    免密登录
   </h1>
   
   
@@ -52,41 +52,41 @@
 
     
     <div class="article-meta">
-      <a href="/2023/03/05/%E4%BD%BF%E7%94%A8google%E7%9F%A2%E9%87%8F%E5%9B%BE/" class="article-date">
-  <time datetime="2023-03-05T02:55:50.000Z" itemprop="datePublished">2023-03-05</time>
+      <a href="/2024/08/08/%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/" class="article-date">
+  <time datetime="2024-08-08T07:59:09.000Z" itemprop="datePublished">2024-08-08</time>
 </a>
       
+<div class="article-category">
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
+</div>
+
     </div>
     
 
     
     
-<div class="tocbot"></div>
-
     
 
     <div class="article-entry" itemprop="articleBody">
       
       
       
-        <h2 id="1-导入-icon"><a href="#1-导入-icon" class="headerlink" title="1. 导入 icon"></a>1. 导入 icon</h2><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@import</span> <span class="string">&quot;https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&amp;display=swap&quot;</span>;</span><br></pre></td></tr></table></figure>
-
-<span id="more"></span>
-
-<h2 id="2-使用"><a href="#2-使用" class="headerlink" title="2. 使用"></a>2. 使用</h2><p>添加 <code>class=&quot;material-icons&quot;</code></p>
-<p>示例：<code>&lt;i class=&quot;material-icons&quot;&gt;space_dashboard&lt;/i&gt;</code></p>
-<h2 id="图标库"><a href="#图标库" class="headerlink" title="图标库"></a>图标库</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://fonts.google.com/icons?hl=zh-cn">https://fonts.google.com/icons?hl=zh-cn</a></li>
-<li>其他：<a target="_blank" rel="noopener" href="https://developers.google.com/fonts/docs/material_icons?hl=zh-cn">https://developers.google.com/fonts/docs/material_icons?hl=zh-cn</a></li>
-</ul>
+        <ol>
+<li>在本地服务器终端输入 <code>ssh-copy-id [user@host]</code>，示例：<code>ssh-copy-id root@xx.xx.xx</code></li>
+<li>输入以后会提示输入密码，输入后，本地服务器的公钥会复制到远程服务器的 <code>authorized_keys</code> 文件中</li>
+<li>打开新的终端测试：<code>ssh root@xx.xx.xx</code></li>
+</ol>
+<p>不出意外，应该可以免密登录了。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/03/05/%E4%BD%BF%E7%94%A8google%E7%9F%A2%E9%87%8F%E5%9B%BE/" data-id="clzkzy0z10017l184adhgftre" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2024/08/08/%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/" data-id="clzkzy0z10019l1842p55gg17" class="article-share-link">
         分享
       </a>
       
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SSH/" rel="tag">SSH</a></li></ul>
+
     </footer>
 
   </div>
@@ -95,19 +95,10 @@
   
 <nav class="article-nav">
   
-  <a href="/2023/03/10/directive-composition-api/" class="article-nav-link">
-    <strong class="article-nav-caption">前一篇</strong>
-    <div class="article-nav-title">
-      
-      Angular 指令组合 API—hostDirectives
-      
-    </div>
-  </a>
   
-  
-  <a href="/2023/03/03/linux%E8%AF%AD%E6%B3%95%E6%89%8B%E5%86%8C/" class="article-nav-link">
+  <a href="/2024/03/29/%E4%BD%BF%E7%94%A8%20prettier%20%E8%84%9A%E6%9C%AC%E5%91%BD%E4%BB%A4%E6%A0%BC%E5%BC%8F%E5%8C%96%E9%A1%B9%E7%9B%AE/" class="article-nav-link">
     <strong class="article-nav-caption">后一篇</strong>
-    <div class="article-nav-title">Linux/Mac 语法手册</div>
+    <div class="article-nav-title">使用 prettier 脚本命令格式化项目</div>
   </a>
   
 </nav>

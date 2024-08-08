@@ -8,7 +8,6 @@
   
   
   <title>
-    新启程—开篇 |
     
     阿杰
   </title>
@@ -31,9 +30,112 @@
 
 <body>
   
+  <section class="jumbotron">
+    <div class="video">
+      
+      <div class="video-frame">
+        <img src="/images/ocean/overlay-hero.png" alt="Decorative image frame">
+      </div>
+      
+      <div class="video-media">
+        <video playsinline="" autoplay="" loop="" muted="" data-autoplay="" poster="/images/ocean/ocean.png"
+          x5-video-player-type="h5">
+          <source src="/images/ocean/ocean.mp4" type="video/mp4">
+          <source src="/images/ocean/ocean.ogv" type="video/ogg">
+          <source src="/images/ocean/ocean.webm" type="video/webm">
+          <p>Your user agent does not support the HTML5 Video element.</p>
+        </video>
+        <div class="video-overlay"></div>
+      </div>
+      <div class="video-inner text-center text-white">
+        <h1><a href="/">阿杰</a></h1>
+        <p>爱生活｜爱编程｜爱书法</p>
+        <!-- <div><img src="/images/hexo-inverted.svg" class="brand" alt="阿杰"></div> -->
+      </div>
+      <div class="video-learn-more">
+        <a class="anchor" href="#landingpage"><i class="fe fe-mouse"></i></a>
+      </div>
+    </div>
+  </section>
+  
   <main class="content">
-    <section class="outer">
-  <article id="post-开篇" class="article article-type-post" itemscope
+    
+<div id="landingpage" class="page-content">
+  <aside class="aside-categories">
+    <div class="category-title">分类</div>
+    <ul class="category-list-box">
+      
+      
+        
+          <li class="category-name"> <a class="category-link" href="/categories/Angular/">Angular</a></li> 
+        
+      
+        
+          <li class="category-name"> <a class="category-link" href="/categories/RxJS/">RxJS</a></li> 
+        
+      
+        
+          <li class="category-name"> <a class="category-link" href="/categories/Git/">Git</a></li> 
+        
+      
+        
+          <li class="category-name"> <a class="category-link" href="/categories/Linux/">Linux</a></li> 
+        
+      
+        
+          <li class="category-name"> <a class="category-link" href="/categories/Linux/Mac/">Mac</a></li> 
+        
+      
+        
+          <li class="category-name"> <a class="category-link" href="/categories/VSCode/">VSCode</a></li> 
+        
+      
+        
+          <li class="category-name"> <a class="category-link" href="/categories/%E7%BC%96%E8%BE%91%E5%99%A8/">编辑器</a></li> 
+        
+      
+        
+          <li class="category-name"> <a class="category-link" href="/categories/%E6%80%9D%E6%BA%90%E5%9C%B0/">思源地</a></li> 
+        
+      
+        
+          <li class="category-name"> <a class="category-link" href="/categories/%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/">编程思想</a></li> 
+        
+      
+        
+          <li class="category-name"> <a class="category-link" href="/categories/%E8%AF%BB%E4%B9%A6%E6%84%9F%E6%82%9F/">读书感悟</a></li> 
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+      
+       <li> <a class="category-link" href="/categories">更多分类...</a></li> 
+      
+    </ul>
+  </aside>
+  <section class="outer">
+  <article class="articles">
+    
+    <!-- <h1 class="page-type-title"></h1> -->
+    
+    
+    <article id="post-开篇" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -41,9 +143,9 @@
     <header class="article-header">
       
   
-  <h1 class="article-title" itemprop="name">
-    新启程—开篇
-  </h1>
+  <h2 class="article-title" itemprop="name">
+    <a href="/2023/01/17/%E5%BC%80%E7%AF%87/">新启程—开篇</a>
+  </h2>
   
   
 
@@ -60,11 +162,11 @@
     
 
     
-    
-    
 
     <div class="article-entry" itemprop="articleBody">
       
+      
+        
       
       
         <blockquote>
@@ -87,58 +189,21 @@
   </div>
 
   
-  
-<nav class="article-nav">
-  
-  <a href="/2023/01/19/2022%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" class="article-nav-link">
-    <strong class="article-nav-caption">前一篇</strong>
-    <div class="article-nav-title">
-      
-      2022年终总结
-      
-    </div>
-  </a>
-  
-  
-</nav>
-
-  
-
-  
-  
-  
-<div class="gitalk" id="gitalk-container"></div>
-
-<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-
-
-<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-
-
-<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
-
-<script type="text/javascript">
-  var gitalk = new Gitalk({
-    clientID: 'd194952437b67371b253',
-    clientSecret: 'ee8127b1392f7840a0bcded24bd677566b86cbb2',
-    repo: 'comment',
-    owner: 'aaaaaajie',
-    admin: ['aaaaaajie'],
-    // id: location.pathname,      // Ensure uniqueness and length less than 50
-    id: md5(location.pathname),
-    distractionFreeMode: false,  // Facebook-like distraction free mode
-    pagerDirection: 'last',
-    proxy: 'https://strong-caramel-969805.netlify.app/github_access_token',
-    createIssueManually: 'false'
-  })
-
-  gitalk.render('gitalk-container')
-</script>
 
   
 
 </article>
+    
+  </article>
+  
+
+  
+  <nav class="page-nav">
+    <a class="extend prev" rel="prev" href="/page/3/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span>
+  </nav>
+  
 </section>
+</div>
     <footer class="footer">
   <div class="outer">
     <!-- <ul class="list-inline">
@@ -160,9 +225,9 @@
      
     <!-- <p><ul class="list-inline">
   
-  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  <li><i class="fe fe-bar-chart tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_site_pv"></span></li>
   
-  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
   
 </ul></p> -->
     <p>Contact Email: m18210870360@163.com</p>
@@ -253,24 +318,6 @@
 
 
 
-
-
-<script src="/js/tocbot.min.js"></script>
-
-
-<script>
-  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
-  tocbot.init({
-    tocSelector: '.tocbot',
-    contentSelector: '.article-entry',
-    headingSelector: 'h1, h2, h3, h4, h5, h6',
-    hasInnerContainers: true,
-    scrollSmooth: true,
-    positionFixedSelector: '.tocbot',
-    positionFixedClass: 'is-position-fixed',
-    fixedSidebarOffset: 'auto',
-  });
-</script>
 
 
 
