@@ -384,136 +384,289 @@
       <categories>
         <category>RxJS</category>
       </categories>
+      <tags>
+        <tag>RxJS</tag>
+      </tags>
   </entry>
   <entry>
-    <title>编辑器系列—插件注册流程</title>
-    <url>/2023/05/16/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
-    <content><![CDATA[<h2 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h2><p><img src="https://atlas-rc.pingcode.com/files/public/646353137083dd5ecd38a0d5/origin-url" alt="image.png"></p>
+    <title>Centos 安装 Docker，并修改源</title>
+    <url>/2024/11/05/centos7%E5%AE%89%E8%A3%85docker/</url>
+    <content><![CDATA[<h4 id="安装-yum-utils-并添加源"><a href="#安装-yum-utils-并添加源" class="headerlink" title="安装 yum-utils 并添加源"></a>安装 yum-utils 并添加源</h4><p>为了安装 Docker，我们需要首先安装yum-utils，以便添加 Docker 的源。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">yum install -y yum-utils</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
+
+<h4 id="安装-Docker"><a href="#安装-Docker" class="headerlink" title="安装 Docker"></a>安装 Docker</h4><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">yum install docker-ce docker-ce-cli containerd.io</span><br></pre></td></tr></table></figure>
+
+<h4 id="验证-Docker-是否安装成功"><a href="#验证-Docker-是否安装成功" class="headerlink" title="验证 Docker 是否安装成功"></a>验证 Docker 是否安装成功</h4><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker --<span class="built_in">help</span></span><br></pre></td></tr></table></figure>
+<p>如果出现 Docker 相关命令，说明成功了</p>
+<h4 id="运行并设置自启动"><a href="#运行并设置自启动" class="headerlink" title="运行并设置自启动"></a>运行并设置自启动</h4><p>Docker 安装完之后不会自动运行，需要手动运行：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">systemctl start docker</span><br></pre></td></tr></table></figure>
+<p>为了让 Docker 在每次重启系统的时候能自动运行，还需要设置自启动：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> docker</span><br></pre></td></tr></table></figure>
+
+<h4 id="设置-DockerHub-源"><a href="#设置-DockerHub-源" class="headerlink" title="设置 DockerHub 源"></a>设置 DockerHub 源</h4><p>国内拉镜像速度堪忧，设置一下 DockerHub 源就好了：</p>
+<ol>
+<li>创建目录：<code>mkdir -p /etc/docker</code></li>
+<li>创建文件：<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="built_in">tee</span> /etc/docker/daemon.json &lt;&lt;-<span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;registry-mirrors&quot;</span>: [</span><br><span class="line">        <span class="string">&quot;https://docker.m.daocloud.io&quot;</span>,</span><br><span class="line">        <span class="string">&quot;https://dockerhub.azk8s.cn&quot;</span>,</span><br><span class="line">        <span class="string">&quot;https://docker.mirrors.ustc.edu.cn&quot;</span>,</span><br><span class="line">        <span class="string">&quot;https://mirror.ccs.tencentyun.com&quot;</span>,</span><br><span class="line">        <span class="string">&quot;https://dockerproxy.com&quot;</span>,</span><br><span class="line">        <span class="string">&quot;https://mirror.baidubce.com&quot;</span>,</span><br><span class="line">        <span class="string">&quot;https://docker.nju.edu.cn&quot;</span>,</span><br><span class="line">        <span class="string">&quot;https://mirror.iscas.ac.cn&quot;</span></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure></li>
+<li>重启：<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">systemctl daemon-reload</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">systemctl restart docker.service</span><br></pre></td></tr></table></figure></li>
+<li>查看镜像源是否修改成功<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker info|grep Mirrors -A 1</span><br></pre></td></tr></table></figure></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>Docker</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>免密登录</title>
+    <url>/2024/08/08/%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/</url>
+    <content><![CDATA[<ol>
+<li>在本地服务器终端输入 <code>ssh-copy-id [user@host]</code>，示例：<code>ssh-copy-id root@xx.xx.xx</code></li>
+<li>输入以后会提示输入密码，输入后，本地服务器的公钥会复制到远程服务器的 <code>authorized_keys</code> 文件中</li>
+<li>打开新的终端测试：<code>ssh root@xx.xx.xx</code></li>
+</ol>
+<p>不出意外，应该可以免密登录了。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>SSH</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用 prettier 脚本命令格式化项目</title>
+    <url>/2024/03/29/%E4%BD%BF%E7%94%A8%20prettier%20%E8%84%9A%E6%9C%AC%E5%91%BD%E4%BB%A4%E6%A0%BC%E5%BC%8F%E5%8C%96%E9%A1%B9%E7%9B%AE/</url>
+    <content><![CDATA[<h3 id="1-全局安装-prettier"><a href="#1-全局安装-prettier" class="headerlink" title="1. 全局安装 prettier"></a>1. 全局安装 prettier</h3><p><code>npm install -g prettier</code></p>
+<h3 id="2-执行脚本命令"><a href="#2-执行脚本命令" class="headerlink" title="2. 执行脚本命令"></a>2. 执行脚本命令</h3><p><code>prettier --config .prettierrc.js --write ./src/**/*.ts ./test/**/*.ts</code></p>
+<h4 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h4><ol>
+<li>–config .prettierrc.js 指定配置文件</li>
+<li>–write 指定修改文件或目录</li>
+</ol>
+<h3 id="查看更多"><a href="#查看更多" class="headerlink" title="查看更多"></a>查看更多</h3><ul>
+<li><a href="https://www.prettier.cn/docs/cli.html">https://www.prettier.cn/docs/cli.html</a></li>
+<li>命令: <code>prettier --help</code></li>
+</ul>
+]]></content>
+      <categories>
+        <category>工程化</category>
+      </categories>
+      <tags>
+        <tag>工程化</tag>
+        <tag>格式化</tag>
+        <tag>prettier</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>换机软件清单</title>
+    <url>/2024/03/29/%E8%A3%85%E6%9C%BA%E6%B8%85%E5%8D%95/</url>
+    <content><![CDATA[<h3 id="Mac"><a href="#Mac" class="headerlink" title="Mac"></a>Mac</h3><ul>
+<li><a href="https://git-scm.com/downloads">git</a></li>
+<li><a href="https://github.com/nvm-sh/nvm">nvm</a></li>
+<li><a href="https://code.visualstudio.com/Download">vscode</a></li>
+</ul>
+<h3 id="Centos"><a href="#Centos" class="headerlink" title="Centos"></a>Centos</h3><ul>
+<li><a href="https://docs.pingcode.com/ask/55142.html">git</a></li>
+<li><a href="https://cloud.tencent.com/developer/article/1626878">nginx</a></li>
+<li>java <code>yum install -y java-1.8.0-openjdk-devel.x86_64</code></li>
+<li><a href="">mvn</a> +<a href="https://developer.aliyun.com/article/512821">修改 maven 镜像源为阿里</a></li>
+<li><a href="https://tutorials.tinkink.net/zh-hans/linux/how-to-install-docker-on-centos-7.html">docker</a> +<a href="https://gist.github.com/y0ngb1n/7e8f16af3242c7815e7ca2f0833d3ea6">连接不上 docker hub 使用镜像加速</a></li>
+<li><a href="https://www.jianshu.com/p/63422ff9ed0a">docker 安装 redis</a></li>
+<li><a href="https://blog.csdn.net/ling1998/article/details/124809256">docker 安装 mysql</a></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker run --name mysql -p 10000:3306 -d  -v /usr/local/docker/mysql/conf/my.cnf:/etc/mysql/my.cnf -v /usr/local/docker/mysql/data:/var/lib/mysql -v /usr/local/docker/mysql/logs:/logs -e MYSQL_ROOT_PASSWORD=123456 --restart=always  mysql --lower_case_table_names=1</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>工具</category>
+      </categories>
+      <tags>
+        <tag>工具</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>angular使用配置环境变量</title>
+    <url>/2023/07/26/angular%E4%BD%BF%E7%94%A8%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/</url>
+    <content><![CDATA[<p>为了更清晰，更快速的了解 Angular 环境配置的架构，请看此图：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64c0e588bebe86147c5a05b6/origin-url" alt="image.png"></p>
+<p>下面具体内容也会按照图上所示来介绍。</p>
 <span id="more"></span>
 
-<h2 id="创建编辑器"><a href="#创建编辑器" class="headerlink" title="创建编辑器"></a>创建编辑器</h2><h3 id="Slate-createEditor"><a href="#Slate-createEditor" class="headerlink" title="Slate createEditor"></a>Slate createEditor</h3><p>createEditor 是 Slate 提供的创建编辑器对象的函数，编辑器对象的重要性相当于一个系统的核心，后面所有的插件注册&#x2F;声明部分也都必须返回该对象，插件在运行过程中执行完当前插件的逻辑，最终也需要流转到该对象提供的核心函数上。</p>
-<h4 id="核心能力"><a href="#核心能力" class="headerlink" title="核心能力"></a>核心能力</h4><ol>
-<li>数据操作：<ol>
-<li>插入节点&#x2F;文本（insertNode、insertText）</li>
-<li>删除（delete）</li>
-<li>文本数据操作（apply）</li>
-<li>插入或替换文本、节点（insertFragment）</li>
-<li>装饰文本（addMark）</li>
+<h3 id="添加环境配置文件"><a href="#添加环境配置文件" class="headerlink" title="添加环境配置文件"></a>添加环境配置文件</h3><ol>
+<li>创建文件，不过这个步骤在使用 Angular cli 构建的项目的时候已经默认配置好了（如果没有，在项目终端执行   <code>ng generate environments</code>  ），在 src -&gt; environments 目录，并且目录下会有几个不同的文件，如下：<br><img src="https://atlas-rc.pingcode.com/files/public/64c0ec08bebe86147c5a05cd/origin-url" alt="image.png"></li>
+</ol>
+<p>名字可以随便取，默认是 Angular 的命名规范，  <code>目录+环境.ts</code>  ，一般用默认提供的这两到三个文件就够了，当然如果环境多的情况，就复制出来几份，比如图上：  <code>environment.alpha.ts</code>  </p>
+<ol start="2">
+<li>配置文件内容</li>
+</ol>
+<p>默认需要导出一个对象，默认名字为 environment，如果  <strong>想要添加变量，直接在 environment 里添加键值对，比如添加一个baseURL</strong>   ，下图所示：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64c0e4d5bebe86147c5a05b2/origin-url" alt="image.png"></p>
+<p><strong>两点需要注意：</strong></p>
+<ol>
+<li><strong>多个环境配置文件，默认使用 environment.ts 作为默认&#x2F;基础文件配置，就是说在项目中使用的地方导入的是该文件</strong>  ，可能有同学会问：我想以其他文件作为默认配置行吗，我的回答是：行，但是一定要保证在 angular.json 中映射正确，为了避免配置失误，建议还是不要改。</li>
+<li>environment 这个名字也可以修改，但是一定要注意其他引用的地方也要同步修改，比如 main.ts 启动项目时，其他的环境配置文件  <strong>一定要和默认&#x2F;基础文件导出的对象命名保持一致</strong>  。</li>
+</ol>
+<h3 id="映射环境配置文件"><a href="#映射环境配置文件" class="headerlink" title="映射环境配置文件"></a>映射环境配置文件</h3><blockquote>
+<p>angular.json 是项目的基础，它配置了打包、服务启动、代理……等，环境配置也是其中的一项</p>
+</blockquote>
+<ol>
+<li>打开 angular.json 文件，找到节点：”architect” -&gt; “build” -&gt; “configurations”，然后添加环境替换规则，如图：<br><img src="https://atlas-rc.pingcode.com/files/public/64c0ee58bebe86147c5a05d3/origin-url" alt="image.png"></li>
+<li>找到节点：”serve” -&gt; “configurations” 添加 “alpha” 节点（内容复制其他环境的就行），如图：<br><img src="https://atlas-rc.pingcode.com/files/public/64c0ef43bebe86147c5a05d6/origin-url" alt="image.png"></li>
+<li>为了后面测试配置的环境是否生效，这里配置默认按照 alpha 运行。</li>
+</ol>
+<h3 id="使用环境配置文件"><a href="#使用环境配置文件" class="headerlink" title="使用环境配置文件"></a>使用环境配置文件</h3><p>配置结束，使用起来就非常简单了，只需要注意一点，导入的环境文件是基础环境（上面 replace 的文件，通常是 environment.ts），如图：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64c0f02ebebe86147c5a05da/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64c0f05abebe86147c5a05db/origin-url" alt="image.png"></p>
+<p>从页面看下内容：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64c0f084bebe86147c5a05dd/origin-url" alt="image.png"></p>
+<p>OK，大功告成！</p>
+<h3 id="番外篇：合并通用环境变量"><a href="#番外篇：合并通用环境变量" class="headerlink" title="番外篇：合并通用环境变量"></a>番外篇：合并通用环境变量</h3><p>angular 中只提到了配置文件替换规则，可实际开发中有很大部分情况下需要的是合并规则，更详细说：很多环境变量是相同的，我们期望是只写一遍，关于合并规则，angular.json 并没有提供（至少本人没有发现），但是我们可以利用 js 特性手动合并一下，借助一个默认配置文件，配置通用的环境变量，然后在其他文件中做解构合并操作，如图示：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64c0f317bebe86147c5a05e6/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64c0f335bebe86147c5a05e7/origin-url" alt="image.png"></p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://angular.cn/guide/build#configuring-application-environments">Angular 官网环境配置</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Angular</category>
+      </categories>
+      <tags>
+        <tag>Angular</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>基于位掩码权限设计</title>
+    <url>/2023/07/16/%E5%9F%BA%E4%BA%8E%E4%BD%8D%E6%8E%A9%E7%A0%81%E6%9D%83%E9%99%90%E8%AE%BE%E8%AE%A1/</url>
+    <content><![CDATA[<p>在权限设计中有一种非常独特、有意思方案叫  <strong>位掩码权限设计</strong>  ，它在应对一些局部数据权限（权限点不多）的场景下，非常的犀利，比如 PingCode 知识管理页面权限就结合 ACL 对特定人群（用户、用户组、部门）做权限分配，由于权限点只有两个，开发中体现不是非常突出，也没有把这个思维贯彻到底，不过在最近做的一个小项目（业余时间的玩具）中表现比较明显，这篇文章一直是处于未完成的状态 ，做完这个需求后，有触动把它好好写完，分享下。</p>
+<span id="more"></span>
+<h2 id="什么是位掩码权限？"><a href="#什么是位掩码权限？" class="headerlink" title="什么是位掩码权限？"></a>什么是位掩码权限？</h2><p>维基百科搜了一下没有正式对位掩码权限的解释，还得是 ChatGPT：</p>
+<blockquote>
+<p>位掩码权限（Bitmask Permissions）是一种权限管理系统，用于在计算机系统中对资源或操作进行控制和限制。它使用二进制位来表示不同的权限或访问级别。每个二进制位都代表一种权限或操作，可以设置为开启或关闭。</p>
+</blockquote>
+<p>了解过 Linux 权限的应该知道它的一些权限点：r（read 读）、w（write 写）、x（execute 执行），对应的权限值是 4、2、1。</p>
+<p>这是一个标准的位掩码权限设计，其中 1、2、4 对应着基于“位”的二进制，拿 4 位举例：  <code>1 =&gt; 0001</code>  ，  <code>2 =&gt; 0010</code>  ，  <code>4 =&gt; 0100</code>  。</p>
+<blockquote>
+<p>几个名词的小知识：  1. mask 掩码，常表示权限，Worktile 中出现过</p>
+</blockquote>
+<ol>
+<li>x 的全称是 excute，之所以用这个字母表示，起源于 Unix 的设计哲学…… 简单的字母 x 更简洁、可读性高，表示最小单元，最基本的操作。后续业界很多也采用这种方式，我说一种大家就知道了 Lodash 使用回调函数第一个参数   <code>_.map(arr, x=&gt; x.name);</code></li>
+</ol>
+<h2 id="常见权限处理"><a href="#常见权限处理" class="headerlink" title="常见权限处理"></a>常见权限处理</h2><h4 id="1-赋予多种权限"><a href="#1-赋予多种权限" class="headerlink" title="1. 赋予多种权限"></a>1. 赋予多种权限</h4><p>采用累计权限点的方式，比如拥有“读”+“写”，4 + 2 &#x3D; 6，那么最终权限值是 6，拥有“读”+“写”+“执行”，那权限值是：4 + 2 + 1 &#x3D; 7，以此类推，根据场景搭配权限点即可。</p>
+<h4 id="2-判断是否拥有某种权限"><a href="#2-判断是否拥有某种权限" class="headerlink" title="2. 判断是否拥有某种权限"></a>2. 判断是否拥有某种权限</h4><p>使用位运算   <code>&amp;</code>  ，比如现已拥有的权限值是 3，想知道是否有可见（读）权限，那么就执行   <code>!!(3 &amp; 2)</code>  结果是   <code>true</code>  ，  <code>3 &amp; 2</code>   结果是 2，&amp; 的思路是把 10 进制转换成 2 进制比较，二进制”与“的规则是同为 1 则为 1，否则为 0，  <strong>和 2 的指数相与，结果必定只有两种结果：0 或 本身，</strong>  最终得 否则有关于二进制的一些知识更多知识可以看想了解  把二进制的计算结果再转回 10 进制，最终权限值 &amp;  权限点只会返回两种结果 0 或权限点本身，0 代表无权限，权限点代表有此权限，更具体的二进制计算可以点  <a href="https://pingcode.com/pages/tacyd1qSVw">这里</a>  。</p>
+<p>判断只拥有一种权限，全等比较即可，比如只读（除读之外没有其他权限）  <code>inputPermission === 4</code>  ，如果权限值是列表或字符串的情况还需要做排他处理，很是麻烦。</p>
+<h4 id="3-页面展示权限点"><a href="#3-页面展示权限点" class="headerlink" title="3. 页面展示权限点"></a>3. 页面展示权限点</h4><p>页面如何展示这些权限点以及映射也是值得思考的问题，不过在这种权限模式下就比较灵活了，因为权限值是一个数字而非数组或字符串，数组和字符串前后端是必须都要映射索引的，必然会有一套计算权限的逻辑，对于数字来说，是一个无序的，前端配置静态固定位置，映射方式就使用上述的与运算一行代码即可。</p>
+<h2 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h2><p>总的来说，位掩码在局部权限设计的场景下比较突出（权限点少且相互之间依赖性低）：</p>
+<ol>
+<li>简单易用，设置、修改、校验、展示时非常方便</li>
+<li>储存效率高，尤其是在关系型数据库储存结构有限时</li>
+<li>权限点组合灵活性高，比如读+写、读+删除、执行+写……</li>
+</ol>
+<p>但是它不适合权限点多，粒度细的系统，位就不够用了（第 10 个权限点已经是 1024 了）</p>
+<h2 id="实际应用"><a href="#实际应用" class="headerlink" title="实际应用"></a>实际应用</h2><p>下面的场景是业余时间做个低代码的玩具，其中部分场景下包含了一些权限设置，界面是这样的：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64ae72c6bebe86147c59f649/origin-url" alt="image.png"></p>
+<p>对应填写表单是这样的：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64abe0b6a7dae9eff18ccb62/origin-url" alt="image.png"></p>
+<h3 id="选型"><a href="#选型" class="headerlink" title="选型"></a>选型</h3><p>选用哪门技术&#x2F;手段，必然要考虑各种因素（业务场景、已有架构、易用、质量、性能），这里简单介绍一些前置条件：</p>
+<ol>
+<li>低代码场景，主体表（是一个抽象节点，后续简称业务主体）是动态表，动态字段</li>
+<li>关系型数据库（选用的原因是这块业务框架指定了 MySQL）</li>
+<li>权限粒度是字段，且权限点有限</li>
+<li>权限绑定的用户主体（成员&#x2F;部门&#x2F;组织角色&#x2F;应用角色&#x2F;职位）分布于不同的表</li>
+</ol>
+<p>针对于上述条件可以得出的结论就是本文讲的  <strong>位掩码权限的设计方案，</strong>  其实中间环节是可以有很多思考的（不感兴趣的可以跳过）  一些结论：</p>
+<ol>
+<li>关系型数据库，权限值不推荐是列表（对象、数组），一是不支持，存 json 串也比较膈应，最好  <strong>用基本数据类型（字符串、数字）</strong></li>
+<li>权限绑定的用户主体分布多表，需要  <strong>排除关联表的方案，采用关联字段的方式</strong>  ，如果采用关联表方案有以下弊端：<ol>
+<li>分布于多个主体关联权限表，缺点是  <strong>表分散，成本高</strong>  ，在动态表的情况下额外在创建动态表也很费劲，后续根据不同主体找不同的表。</li>
+<li>分布于一张表存多个主体映射权限的数据，缺点是主体（这里是配置的模块）数量不固定，比较  <strong>容易造成数据量大</strong>  ，总数是：业务主体数据量 * 用户主体数量 * 权限点数量，所以后续还要  <strong>考虑分表</strong>  。</li>
+<li>无论上面哪种都需要  <strong>额外多查一次关联表</strong></li>
 </ol>
 </li>
-<li>数据变化：onChange</li>
-<li>检查元素类型：空元素（isVoid）、行内元素（isInline）</li>
-<li>属性：选区（selection）、动作&#x2F;操作（operations）、子数据（children）</li>
+<li>权限值的储存如果是 01 拼接的字符串（0 代表无权限，1 代表有权限），那么需要考虑权限值的展示以及单字段校验等方式，因为字符串一个字符映射一个权限点，所以前端展示时需要知道哪一位对应什么权限，这种情况下前后端都必然要有一个  <strong>权限点索引配置，还得有一套根据索引匹配的逻辑</strong>  。</li>
 </ol>
-<h4 id="源码预览"><a href="#源码预览" class="headerlink" title="源码预览"></a>源码预览</h4><p><img src="https://atlas-rc.pingcode.com/files/public/646349d97083dd5ecd38a0b9/origin-url" alt="image.png"></p>
-<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import &#123; createEditor &#125; from &#x27;slate&#x27;;</span><br><span class="line">const editor = createEditor();</span><br><span class="line">editor.insertText(&#x27;哈哈哈&#x27;);</span><br></pre></td></tr></table></figure>
+<p>选用位掩码权限的方式有这些优势：</p>
+<ol>
+<li>数字作为基本数据类型，  <strong>在任何数据库都支持</strong>  ，而数组或 JSON 需要 NoSQL 类的数据库支撑。</li>
+<li>数字相比列表或字符串更简单，  <strong>不用考虑权限点映射顺序的相关配置和计算程序</strong>  。</li>
+<li>数字相比关联列表更简单  <strong>，减少查表次数，内聚性高（与业务主体绑定更近）</strong>  ，  <strong>更节约内存</strong>  （主要是字段和表之间的对比）  </li>
+<li>权限值用数字更简洁，在多层嵌套的 JSON 下，显然  <strong>数字比对象或数组更清楚</strong>  。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">permissions: &#123;</span><br><span class="line">  read: true,</span><br><span class="line">  write: true,</span><br><span class="line">  require: true</span><br><span class="line">&#125;</span><br><span class="line">// good</span><br><span class="line">permissions: 7</span><br></pre></td></tr></table></figure>
 
-<h3 id="Slate-angular-withAngular"><a href="#Slate-angular-withAngular" class="headerlink" title="Slate-angular withAngular"></a>Slate-angular withAngular</h3><blockquote>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>还是重复两点吧：</p>
 <ol>
-<li>以 withXxx 命名的一般为插件</li>
+<li>权限点较少时，选用此方案非常适合。</li>
+<li>用户主体类型复杂的情况可以结合 ACL 或 RBAC 混合使用。</li>
 </ol>
-</blockquote>
+<p>最后提供可以直接使用的代码片段：</p>
 <ol>
-<li>withAngular 本身也是一个插件</li>
+<li>定义权限点</li>
 </ol>
-<p>withAngular 是 Slate-angular 内置插件，介于框架的限制，该插件大致上做了两件事：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64b3e45bbebe86147c59f95e/origin-url" alt="image.png"></p>
 <ol>
-<li>对于 Slate 部分函数进行了重写（比如 onChange）</li>
-<li>扩展额外的一些能力</li>
+<li>验证工具函数</li>
 </ol>
-<h4 id="核心能力-1"><a href="#核心能力-1" class="headerlink" title="核心能力"></a>核心能力</h4><ol>
-<li>重写数据操作函数：插入、删除、复制&#x2F;粘贴板（insertFragment、setFragment）</li>
-<li>数据变化通知（onChange）</li>
-<li>基础 DOM 事件：onkeydown、onclick</li>
-<li>检查元素类型（isBlockCard）</li>
-<li>错误处理（onError）</li>
-</ol>
-<h4 id="源码预览-1"><a href="#源码预览-1" class="headerlink" title="源码预览"></a>源码预览</h4><p><img src="https://atlas-rc.pingcode.com/files/public/64634a287083dd5ecd38a0bc/origin-url" alt="image.png"></p>
-<h4 id="使用-1"><a href="#使用-1" class="headerlink" title="使用"></a>使用</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import &#123; createEditor &#125; from &#x27;slate&#x27;;</span><br><span class="line">import &#123; withAngular &#125; from &#x27;slate-angular&#x27;;</span><br><span class="line"></span><br><span class="line">const editor = withAngular(createEditor());</span><br></pre></td></tr></table></figure>
-
-<h3 id="Theia-withTheia"><a href="#Theia-withTheia" class="headerlink" title="Theia withTheia"></a>Theia withTheia</h3><p>基于 Slate-angular 进行扩展和复写 editor 对象，提供了更多的特性，同时基于 Worktile 和 PingCode 业务封装了一些更复杂的逻辑。</p>
-<h4 id="核心能力-2"><a href="#核心能力-2" class="headerlink" title="核心能力"></a>核心能力</h4><ol>
-<li>多插件自动组合注册（combinePlugins）</li>
-<li>支持插件的渲染自定义组件（renderElement）</li>
-<li>更多的事件：globalMousedown</li>
-</ol>
-<h4 id="源码预览-2"><a href="#源码预览-2" class="headerlink" title="源码预览"></a>源码预览</h4><p><img src="https://atlas-rc.pingcode.com/files/public/6463519e7083dd5ecd38a0d0/origin-url" alt="image.png"></p>
-<h2 id="构建-x2F-声明插件"><a href="#构建-x2F-声明插件" class="headerlink" title="构建&#x2F;声明插件"></a>构建&#x2F;声明插件</h2><p>上面 withTheia 和 withAngular 已经展示了一个插件的声明流程，那么插件需要到底做了什么事：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64af9f42bebe86147c59f718/origin-url" alt="image.png"></p>
 <ol>
-<li>重写和拦截编辑器对象（editor）提供的能力</li>
-<li>返回编辑器对象，供下一个插件使用继续流转</li>
+<li>HTML 中方便的管道</li>
 </ol>
-<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p><img src="https://atlas-rc.pingcode.com/files/public/646350e97083dd5ecd38a0ce/origin-url" alt="image.png"></p>
-<h2 id="组合-x2F-装载插件"><a href="#组合-x2F-装载插件" class="headerlink" title="组合&#x2F;装载插件"></a>组合&#x2F;装载插件</h2><p>方式：js 高阶函数～</p>
-<p>如：  <code>withInlines(withHistory(withAngular(createEditor())))</code>  </p>
-<p>theia 中组合插件</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/646351457083dd5ecd38a0cf/origin-url" alt="image.png"></p>
-<h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">this.editor = withTheia(</span><br><span class="line">  withHistory(</span><br><span class="line">    withAngular(</span><br><span class="line">      createEditor(),</span><br><span class="line">      CLIPBOARD_FORMAT_KEY)</span><br><span class="line">  ), plugins</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
+<p><img src="https://atlas-rc.pingcode.com/files/public/64af9f90bebe86147c59f71c/origin-url" alt="image.png"></p>
 ]]></content>
       <categories>
-        <category>编辑器</category>
+        <category>权限系统</category>
       </categories>
   </entry>
   <entry>
-    <title>编辑器系列—插件渲染机制</title>
-    <url>/2023/05/18/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89/</url>
-    <content><![CDATA[<h3 id="单个插件渲染流程"><a href="#单个插件渲染流程" class="headerlink" title="单个插件渲染流程"></a>单个插件渲染流程</h3><p><img src="https://atlas-rc.pingcode.com/files/public/6465f1e87083dd5ecd38a428/origin-url" alt="image.png"></p>
-<span id="more"></span>
-<h3 id="多插件"><a href="#多插件" class="headerlink" title="多插件"></a>多插件</h3><p>插件机制有一个关键的问题是：当注册了多个插件，如何正确的找出要渲染的哪个插件。</p>
-<p><strong>插件的冒泡机制：先注册的插件会后执行，这很像数据结构中的“栈”，先入后出。比如，注册了三个插件 [A, B, C]，那么渲染时会优先取出 C，运行预渲染函数（renderElement），然后是 B，最后是 A，每个渲染函数中可以通过插件的类型与当前插件预定义的类型相比较，如果匹配则返回当前预定义插件对应的视图组件，否则流转到下一个插件，继续重复此逻辑</strong>  ，如下图：</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/6465f95f7083dd5ecd38a449/origin-url" alt="image.png"></p>
-<h4 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h4><p><img src="https://atlas-rc.pingcode.com/files/public/6465fd057083dd5ecd38a457/origin-url" alt="image.png"></p>
-]]></content>
-      <categories>
-        <category>编辑器</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>编辑器系列—如何获取光标/元素位置</title>
-    <url>/2023/05/29/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%85%89%E6%A0%87%E5%92%8C%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE/</url>
-    <content><![CDATA[<h3 id="Slate-Selection"><a href="#Slate-Selection" class="headerlink" title="Slate Selection"></a>Slate Selection</h3><p>slate 的 selection 是用来表示一个元素或节点的位置，结构如下：</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64744566e468e3b3652fa138/origin-url" alt="image.png"></p>
-<p>它是基于原生 <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Selection">DOM Selection API</a> 封装的，一些基础概念：</p>
-<span id="more"></span>
-<h4 id="anchor"><a href="#anchor" class="headerlink" title="anchor"></a>anchor</h4><blockquote>
-<p>锚指的是一个选区的起始点。当我们使用鼠标框选一个区域的时候，锚点就是我们鼠标按下瞬间的那个点。在用户拖动鼠标时，锚点是不会变的 <strong>。</strong> ——MDN</p>
+    <title>再谈单元测试</title>
+    <url>/2023/06/07/%E5%86%8D%E8%B0%88%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/</url>
+    <content><![CDATA[<p>曾写过多篇测试相关的文章，都源于每次测试给我带来的触动，这次也不例外，最近在重构复杂逻辑时，再次感谢它为我保驾护航，同时也发现了历史测试中存在的一些问题。</p>
+<h3 id="测试的意义"><a href="#测试的意义" class="headerlink" title="测试的意义"></a>测试的意义</h3><blockquote>
+<p>这是一个认知问题，如果不清楚为何要写测试，那么最终产生的测试大概率是腐烂、或无意义的。</p>
 </blockquote>
-<h4 id="focus"><a href="#focus" class="headerlink" title="focus"></a>focus</h4><blockquote>
-<p>选区的焦点是该选区的终点，当您用鼠标框选一个选区的时候，焦点是你的鼠标松开瞬间所记录的那个点。随着用户拖动鼠标，焦点的位置会随着改变。——MDN</p>
-</blockquote>
-<p>注意的一点是： <strong>anchor 和 focus 的概念不能与选区的起始位置和终止位置混淆，因为 anchor 指向的位置可能在 focus 指向的位置的前面，也可能在 focus 指向位置的后面，这取决于你选择文本时鼠标移动的方向（也就是按下鼠标键和松开鼠标键的位置）</strong></p>
-<h4 id="path"><a href="#path" class="headerlink" title="path"></a>path</h4><p>slate 中 path 的类型： <code>type Path = number[];</code> ，它是一个描述元素的路径。</p>
-<p>看一个例子：</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64216ce4d074dd3307dfb4e9/origin-url" alt="image.png"></p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/642163a5d074dd3307dfb4d0/origin-url" alt="image.png"></p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64216523d074dd3307dfb4d5/origin-url" alt="image.png"></p>
-<ul>
-<li>第一张图，path:[0,0]，无论光标在 1、2、3、4、5、6 它的 path 都是 [0, 0]</li>
-<li>第二张图光标落在行内代码上时，发现 path 变了，变成了 [0, 1, 0]</li>
-<li>第三张图光标落在分隔线元素上，path 是 [1, 0]</li>
-</ul>
-<p>根据以上结果可以推出， <strong>path 第一位是第几行或者独占整行的块级元素，第二位是第几行的第几个元素（不是第几个光标），第三位是指嵌套的元素，</strong> 比如表格中的列填充的就是第三位。</p>
-<h4 id="offset"><a href="#offset" class="headerlink" title="offset"></a>offset</h4><p>指元素的偏移位置，从上面第一张图中还可以看到起始 offset 是 3，结束 offset 是 6，可以推出 offset 指元素的第几个位置，path + offset 可以描述出起始或结束的点，achor + focus 表示从第几个元素第几个位置选到第几个元素第几个位置。</p>
-<h3 id="Selection-是如何构造出来的？"><a href="#Selection-是如何构造出来的？" class="headerlink" title="Selection 是如何构造出来的？"></a><strong>Selection 是如何构造出来的？</strong></h3><p>通过原生的 Selection API 的数据观察，我们很容易知道 offset，如图中的 anchorOffset 和 focusOffset：</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64744883e468e3b3652fa140/origin-url" alt="image.png"></p>
-<p>转换成 Slate Selection：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    anchor: &#123; offset: 9 &#125;,</span><br><span class="line">    focus: &#123; offset: 9 &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>再从上面数据中观察，并没有找到是第几行的信息，为什么？</p>
-<p>行的信息也是比较复杂且灵活的，比如：第二行插入了表格元素，该元素本身就是独占整行，它是第二行，那么表格里的第一行该如何表示呢？我个人猜测原生 API 应该也不知道如何表示，所以把这个问题交给开发者定义，也就有了上述的一些规则，下面从代码层面仔细讲解这个行（path）是如何构建出来的。</p>
-<h4 id="基于插件结构定规则"><a href="#基于插件结构定规则" class="headerlink" title="基于插件结构定规则"></a>基于插件结构定规则</h4><p>selection 的 path 是根据插件数据结构为基础构建的，在另一篇文章讲到的表格数据结构例子：</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64744f7ae468e3b3652fa14b/origin-url" alt="image.png"></p>
-<p>那么数组的第一个元素的默认就是第一行（path 为 0），表格元素的第一行是 (0,0)，第二行是 (0,2)。</p>
-<h4 id="实现规则"><a href="#实现规则" class="headerlink" title="实现规则"></a>实现规则</h4><ol>
-<li>渲染元素时，记录元素和索引。</li>
-<li><strong>当前元素开始从缓存的元素和索引中向上找，找到一级就向 path 数组的开头，临界终止条件：找至顶层。</strong></li>
+<ol>
+<li>保证代码的正确性，提升代码质量是它最高的使命。</li>
+<li>保证代码的安全性&#x2F;稳定性，当对某段代码改动后，测试会告诉哪些代码受到了潜在的问题。</li>
+<li>可以指导写代码的思路，在测试驱动开发（TDD）体现尤为明显。</li>
+<li>更能透彻的理解代码，很多情况下，写代码时常常会陷入自己的世界，从测试相当于站在旁观者的角度审视代码，从而提升可读性和扩展性。<span id="more"></span></li>
 </ol>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64745359e468e3b3652fa14d/origin-url" alt="image.png"></p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/6474522ce468e3b3652fa14c/origin-url" alt="image.png"></p>
+<h3 id="写测试的一些原则"><a href="#写测试的一些原则" class="headerlink" title="写测试的一些原则"></a>写测试的一些原则</h3><blockquote>
+<p>首先必须要有一个态度&#x2F;认知：写测试与写普通代码一样，测试也要很清楚的表达逻辑，不能因为它不体现到产品上就粗糙了事。</p>
+</blockquote>
+<p>有些原则会受不同开发者个人能力影响，所以我的看法是正面原则应该鼓励，反面原则明令禁止。</p>
+<h4 id="不写没有意义的测试"><a href="#不写没有意义的测试" class="headerlink" title="不写没有意义的测试"></a>不写没有意义的测试</h4><p>比如   <code>1 + 2 === 3</code>  ，或者让函数执行一次，而不是验证函数执行的结果，这种无意义的行为，还有一种情况是为了提升测试覆盖率而补充，在我看来更是“本末倒置”。</p>
+<h4 id="不写重复的测试"><a href="#不写重复的测试" class="headerlink" title="不写重复的测试"></a>不写重复的测试</h4><p>相同的逻辑写多遍，当然有可能是不同开发成员测相同的逻辑，如果发现应该删除。</p>
+<h4 id="不写描述与实际逻辑不符的测试"><a href="#不写描述与实际逻辑不符的测试" class="headerlink" title="不写描述与实际逻辑不符的测试"></a>不写描述与实际逻辑不符的测试</h4><p>典型的挂羊头卖狗肉，当修复测试时，通过描述不能准备判断场景，细排查发现并不是预期逻辑，花费了不必要的时间。</p>
+<h4 id="不写上下文依赖的测试"><a href="#不写上下文依赖的测试" class="headerlink" title="不写上下文依赖的测试"></a>不写上下文依赖的测试</h4><p>要保证测试的独立性，就是说单个的测试也可以运行，在工作当中也很多处发现，下一个测试要依赖于上一个测试，这显然是不合理的，如果某天删掉了第一个测试，第二个测试就会挂掉。</p>
+<h4 id="尽可能保证测试的可读性"><a href="#尽可能保证测试的可读性" class="headerlink" title="尽可能保证测试的可读性"></a>尽可能保证测试的可读性</h4><p>最好有递进关系，很容易从测试中看到你的逻辑是什么。</p>
+<h4 id="尽可能保证测试的纯粹性"><a href="#尽可能保证测试的纯粹性" class="headerlink" title="尽可能保证测试的纯粹性"></a>尽可能保证测试的纯粹性</h4><p>一个测试只测一种场景，也可以说编程原则中的“单一原则”，可以正反面断言。</p>
+<h4 id="提取重复的前置条件"><a href="#提取重复的前置条件" class="headerlink" title="提取重复的前置条件"></a>提取重复的前置条件</h4><p>很多时候只为了测关键点，需要配备一些前置条件，当多个测试都有相同逻辑时，应当提取到不同维度。</p>
+<p>比如使用 before、beforeEach、after、afterEach，或者提升至更底层的函数，比如 Helper 类。</p>
+<p>反面示例（下图）很多是本人曾经犯过的问题，自觉公开处刑 🙃</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/648038e2e468e3b3652fab3d/origin-url" alt="image.png"></p>
+<h3 id="应该如何写一个测试？"><a href="#应该如何写一个测试？" class="headerlink" title="应该如何写一个测试？"></a>应该如何写一个测试？</h3><p>关于测试的方法论，本人所知道的是 TDD 和 BDD，也曾查过一些资料，对我至今仍然有非常大的指导意义，不讲过多的概念，回顾一张图吧。</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64801dffe468e3b3652faaab/origin-url" alt="image.png"></p>
+<h4 id="几个例子"><a href="#几个例子" class="headerlink" title="几个例子"></a>几个例子</h4><ol>
+<li><p>开发一个创建用户的 API，我的步骤是：</p>
+<p> a. <strong>编写测试用例</strong>  ：先 http 请求这个 API 的路由，此时路由可能都不存在，没有关系，这一步就是要  <strong>这个测试用例失败</strong>  。<br> <img src="https://atlas-rc.pingcode.com/files/public/64802844e468e3b3652faae5/origin-url" alt="image.png"></p>
+<p> b. <strong>编写代码</strong>  ：解决它为什么失败？原因：没有定义路由和响应数据，OK 解决它，添加一个 POST &#x2F;api&#x2F;user 的路由，并且   <code>response.end(&#39;success&#39;)</code>  。  <strong>这一步让测试用例通过</strong>  。<br> <img src="https://atlas-rc.pingcode.com/files/public/64802959e468e3b3652faae7/origin-url" alt="image.png"></p>
+<p> c. <strong>编写测试用例</strong>  ：制定创建用户的信息：名字（张三）、手机号（xxx）、年龄……，并且期望创建成功，并且判断创建的信息无误，此时运行测试，  <strong>结果应当是失败</strong>  ，因为代码中还没有创建逻辑。<br> <img src="https://atlas-rc.pingcode.com/files/public/64802a36e468e3b3652faaec/origin-url" alt="image.png"></p>
+<p> d. <strong>编写代码：</strong>  解决失败原因，创建响应结果的实体，并且 response.send({ code: 200, data: user })，  <strong>让测试成功。</strong><br> <img src="https://atlas-rc.pingcode.com/files/public/64802c6ee468e3b3652faaf6/origin-url" alt="image.png"></p>
+<p> e. <strong>编写测试用例</strong>  ：输入不合法的信息，让  <strong>测试继续报错</strong>  。</p>
+<p> f. <strong>编写程序：</strong>  加入校验逻辑，解决报错，让  <strong>测试成功。</strong></p>
+<p> g. ……</p>
+</li>
+<li><p>一个缺陷，真实开发的例子：<br><img src="https://atlas-rc.pingcode.com/files/public/64802e2ee468e3b3652faaff/origin-url" alt="image.png"></p>
+</li>
+</ol>
+<p>a. 这个思路应当是先按照描述去模拟场景，验证预期行为和实际行为是否一致，如下：<br><img src="https://atlas-rc.pingcode.com/files/public/64802fe8e468e3b3652fab06/origin-url" alt="image.png"></p>
+<p>b. 这种情况就避免了  <strong>启动前端代码的麻烦事，进行自我验证，驱动排查</strong>  。在解决这个缺陷时，重构了大量的代码，历史的测试一次次告诉我重构逻辑漏掉了哪些场景。</p>
+<p>从上面的两个例子中，可以再次得出它的指导思路：  <strong>让测试失败，改代码修复，在让测试失败，修复……反复验证。</strong></p>
+<h3 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h3><p>好吧，暂时没有其他要说的了，后续有想法，再继续更新。</p>
 ]]></content>
       <categories>
-        <category>编辑器</category>
+        <category>单元测试</category>
       </categories>
   </entry>
   <entry>
@@ -711,139 +864,149 @@ table th:last-of-type {
       <categories>
         <category>编辑器</category>
       </categories>
+      <tags>
+        <tag>富文本编辑器</tag>
+      </tags>
   </entry>
   <entry>
-    <title>基于位掩码权限设计</title>
-    <url>/2023/07/16/%E5%9F%BA%E4%BA%8E%E4%BD%8D%E6%8E%A9%E7%A0%81%E6%9D%83%E9%99%90%E8%AE%BE%E8%AE%A1/</url>
-    <content><![CDATA[<p>在权限设计中有一种非常独特、有意思方案叫  <strong>位掩码权限设计</strong>  ，它在应对一些局部数据权限（权限点不多）的场景下，非常的犀利，比如 PingCode 知识管理页面权限就结合 ACL 对特定人群（用户、用户组、部门）做权限分配，由于权限点只有两个，开发中体现不是非常突出，也没有把这个思维贯彻到底，不过在最近做的一个小项目（业余时间的玩具）中表现比较明显，这篇文章一直是处于未完成的状态 ，做完这个需求后，有触动把它好好写完，分享下。</p>
+    <title>编辑器系列—如何获取光标/元素位置</title>
+    <url>/2023/05/29/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%85%89%E6%A0%87%E5%92%8C%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE/</url>
+    <content><![CDATA[<h3 id="Slate-Selection"><a href="#Slate-Selection" class="headerlink" title="Slate Selection"></a>Slate Selection</h3><p>slate 的 selection 是用来表示一个元素或节点的位置，结构如下：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64744566e468e3b3652fa138/origin-url" alt="image.png"></p>
+<p>它是基于原生 <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Selection">DOM Selection API</a> 封装的，一些基础概念：</p>
 <span id="more"></span>
-<h2 id="什么是位掩码权限？"><a href="#什么是位掩码权限？" class="headerlink" title="什么是位掩码权限？"></a>什么是位掩码权限？</h2><p>维基百科搜了一下没有正式对位掩码权限的解释，还得是 ChatGPT：</p>
-<blockquote>
-<p>位掩码权限（Bitmask Permissions）是一种权限管理系统，用于在计算机系统中对资源或操作进行控制和限制。它使用二进制位来表示不同的权限或访问级别。每个二进制位都代表一种权限或操作，可以设置为开启或关闭。</p>
+<h4 id="anchor"><a href="#anchor" class="headerlink" title="anchor"></a>anchor</h4><blockquote>
+<p>锚指的是一个选区的起始点。当我们使用鼠标框选一个区域的时候，锚点就是我们鼠标按下瞬间的那个点。在用户拖动鼠标时，锚点是不会变的 <strong>。</strong> ——MDN</p>
 </blockquote>
-<p>了解过 Linux 权限的应该知道它的一些权限点：r（read 读）、w（write 写）、x（execute 执行），对应的权限值是 4、2、1。</p>
-<p>这是一个标准的位掩码权限设计，其中 1、2、4 对应着基于“位”的二进制，拿 4 位举例：  <code>1 =&gt; 0001</code>  ，  <code>2 =&gt; 0010</code>  ，  <code>4 =&gt; 0100</code>  。</p>
-<blockquote>
-<p>几个名词的小知识：  1. mask 掩码，常表示权限，Worktile 中出现过</p>
+<h4 id="focus"><a href="#focus" class="headerlink" title="focus"></a>focus</h4><blockquote>
+<p>选区的焦点是该选区的终点，当您用鼠标框选一个选区的时候，焦点是你的鼠标松开瞬间所记录的那个点。随着用户拖动鼠标，焦点的位置会随着改变。——MDN</p>
 </blockquote>
-<ol>
-<li>x 的全称是 excute，之所以用这个字母表示，起源于 Unix 的设计哲学…… 简单的字母 x 更简洁、可读性高，表示最小单元，最基本的操作。后续业界很多也采用这种方式，我说一种大家就知道了 Lodash 使用回调函数第一个参数   <code>_.map(arr, x=&gt; x.name);</code></li>
-</ol>
-<h2 id="常见权限处理"><a href="#常见权限处理" class="headerlink" title="常见权限处理"></a>常见权限处理</h2><h4 id="1-赋予多种权限"><a href="#1-赋予多种权限" class="headerlink" title="1. 赋予多种权限"></a>1. 赋予多种权限</h4><p>采用累计权限点的方式，比如拥有“读”+“写”，4 + 2 &#x3D; 6，那么最终权限值是 6，拥有“读”+“写”+“执行”，那权限值是：4 + 2 + 1 &#x3D; 7，以此类推，根据场景搭配权限点即可。</p>
-<h4 id="2-判断是否拥有某种权限"><a href="#2-判断是否拥有某种权限" class="headerlink" title="2. 判断是否拥有某种权限"></a>2. 判断是否拥有某种权限</h4><p>使用位运算   <code>&amp;</code>  ，比如现已拥有的权限值是 3，想知道是否有可见（读）权限，那么就执行   <code>!!(3 &amp; 2)</code>  结果是   <code>true</code>  ，  <code>3 &amp; 2</code>   结果是 2，&amp; 的思路是把 10 进制转换成 2 进制比较，二进制”与“的规则是同为 1 则为 1，否则为 0，  <strong>和 2 的指数相与，结果必定只有两种结果：0 或 本身，</strong>  最终得 否则有关于二进制的一些知识更多知识可以看想了解  把二进制的计算结果再转回 10 进制，最终权限值 &amp;  权限点只会返回两种结果 0 或权限点本身，0 代表无权限，权限点代表有此权限，更具体的二进制计算可以点  <a href="https://pingcode.com/pages/tacyd1qSVw">这里</a>  。</p>
-<p>判断只拥有一种权限，全等比较即可，比如只读（除读之外没有其他权限）  <code>inputPermission === 4</code>  ，如果权限值是列表或字符串的情况还需要做排他处理，很是麻烦。</p>
-<h4 id="3-页面展示权限点"><a href="#3-页面展示权限点" class="headerlink" title="3. 页面展示权限点"></a>3. 页面展示权限点</h4><p>页面如何展示这些权限点以及映射也是值得思考的问题，不过在这种权限模式下就比较灵活了，因为权限值是一个数字而非数组或字符串，数组和字符串前后端是必须都要映射索引的，必然会有一套计算权限的逻辑，对于数字来说，是一个无序的，前端配置静态固定位置，映射方式就使用上述的与运算一行代码即可。</p>
-<h2 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h2><p>总的来说，位掩码在局部权限设计的场景下比较突出（权限点少且相互之间依赖性低）：</p>
-<ol>
-<li>简单易用，设置、修改、校验、展示时非常方便</li>
-<li>储存效率高，尤其是在关系型数据库储存结构有限时</li>
-<li>权限点组合灵活性高，比如读+写、读+删除、执行+写……</li>
-</ol>
-<p>但是它不适合权限点多，粒度细的系统，位就不够用了（第 10 个权限点已经是 1024 了）</p>
-<h2 id="实际应用"><a href="#实际应用" class="headerlink" title="实际应用"></a>实际应用</h2><p>下面的场景是业余时间做个低代码的玩具，其中部分场景下包含了一些权限设置，界面是这样的：</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64ae72c6bebe86147c59f649/origin-url" alt="image.png"></p>
-<p>对应填写表单是这样的：</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64abe0b6a7dae9eff18ccb62/origin-url" alt="image.png"></p>
-<h3 id="选型"><a href="#选型" class="headerlink" title="选型"></a>选型</h3><p>选用哪门技术&#x2F;手段，必然要考虑各种因素（业务场景、已有架构、易用、质量、性能），这里简单介绍一些前置条件：</p>
-<ol>
-<li>低代码场景，主体表（是一个抽象节点，后续简称业务主体）是动态表，动态字段</li>
-<li>关系型数据库（选用的原因是这块业务框架指定了 MySQL）</li>
-<li>权限粒度是字段，且权限点有限</li>
-<li>权限绑定的用户主体（成员&#x2F;部门&#x2F;组织角色&#x2F;应用角色&#x2F;职位）分布于不同的表</li>
-</ol>
-<p>针对于上述条件可以得出的结论就是本文讲的  <strong>位掩码权限的设计方案，</strong>  其实中间环节是可以有很多思考的（不感兴趣的可以跳过）  一些结论：</p>
-<ol>
-<li>关系型数据库，权限值不推荐是列表（对象、数组），一是不支持，存 json 串也比较膈应，最好  <strong>用基本数据类型（字符串、数字）</strong></li>
-<li>权限绑定的用户主体分布多表，需要  <strong>排除关联表的方案，采用关联字段的方式</strong>  ，如果采用关联表方案有以下弊端：<ol>
-<li>分布于多个主体关联权限表，缺点是  <strong>表分散，成本高</strong>  ，在动态表的情况下额外在创建动态表也很费劲，后续根据不同主体找不同的表。</li>
-<li>分布于一张表存多个主体映射权限的数据，缺点是主体（这里是配置的模块）数量不固定，比较  <strong>容易造成数据量大</strong>  ，总数是：业务主体数据量 * 用户主体数量 * 权限点数量，所以后续还要  <strong>考虑分表</strong>  。</li>
-<li>无论上面哪种都需要  <strong>额外多查一次关联表</strong></li>
-</ol>
-</li>
-<li>权限值的储存如果是 01 拼接的字符串（0 代表无权限，1 代表有权限），那么需要考虑权限值的展示以及单字段校验等方式，因为字符串一个字符映射一个权限点，所以前端展示时需要知道哪一位对应什么权限，这种情况下前后端都必然要有一个  <strong>权限点索引配置，还得有一套根据索引匹配的逻辑</strong>  。</li>
-</ol>
-<p>选用位掩码权限的方式有这些优势：</p>
-<ol>
-<li>数字作为基本数据类型，  <strong>在任何数据库都支持</strong>  ，而数组或 JSON 需要 NoSQL 类的数据库支撑。</li>
-<li>数字相比列表或字符串更简单，  <strong>不用考虑权限点映射顺序的相关配置和计算程序</strong>  。</li>
-<li>数字相比关联列表更简单  <strong>，减少查表次数，内聚性高（与业务主体绑定更近）</strong>  ，  <strong>更节约内存</strong>  （主要是字段和表之间的对比）  </li>
-<li>权限值用数字更简洁，在多层嵌套的 JSON 下，显然  <strong>数字比对象或数组更清楚</strong>  。</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">permissions: &#123;</span><br><span class="line">  read: true,</span><br><span class="line">  write: true,</span><br><span class="line">  require: true</span><br><span class="line">&#125;</span><br><span class="line">// good</span><br><span class="line">permissions: 7</span><br></pre></td></tr></table></figure>
+<p>注意的一点是： <strong>anchor 和 focus 的概念不能与选区的起始位置和终止位置混淆，因为 anchor 指向的位置可能在 focus 指向的位置的前面，也可能在 focus 指向位置的后面，这取决于你选择文本时鼠标移动的方向（也就是按下鼠标键和松开鼠标键的位置）</strong></p>
+<h4 id="path"><a href="#path" class="headerlink" title="path"></a>path</h4><p>slate 中 path 的类型： <code>type Path = number[];</code> ，它是一个描述元素的路径。</p>
+<p>看一个例子：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64216ce4d074dd3307dfb4e9/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/642163a5d074dd3307dfb4d0/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64216523d074dd3307dfb4d5/origin-url" alt="image.png"></p>
+<ul>
+<li>第一张图，path:[0,0]，无论光标在 1、2、3、4、5、6 它的 path 都是 [0, 0]</li>
+<li>第二张图光标落在行内代码上时，发现 path 变了，变成了 [0, 1, 0]</li>
+<li>第三张图光标落在分隔线元素上，path 是 [1, 0]</li>
+</ul>
+<p>根据以上结果可以推出， <strong>path 第一位是第几行或者独占整行的块级元素，第二位是第几行的第几个元素（不是第几个光标），第三位是指嵌套的元素，</strong> 比如表格中的列填充的就是第三位。</p>
+<h4 id="offset"><a href="#offset" class="headerlink" title="offset"></a>offset</h4><p>指元素的偏移位置，从上面第一张图中还可以看到起始 offset 是 3，结束 offset 是 6，可以推出 offset 指元素的第几个位置，path + offset 可以描述出起始或结束的点，achor + focus 表示从第几个元素第几个位置选到第几个元素第几个位置。</p>
+<h3 id="Selection-是如何构造出来的？"><a href="#Selection-是如何构造出来的？" class="headerlink" title="Selection 是如何构造出来的？"></a><strong>Selection 是如何构造出来的？</strong></h3><p>通过原生的 Selection API 的数据观察，我们很容易知道 offset，如图中的 anchorOffset 和 focusOffset：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64744883e468e3b3652fa140/origin-url" alt="image.png"></p>
+<p>转换成 Slate Selection：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    anchor: &#123; offset: 9 &#125;,</span><br><span class="line">    focus: &#123; offset: 9 &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>还是重复两点吧：</p>
-<ol>
-<li>权限点小于 6 个，选用此方案非常适合，否则不要使用。</li>
-<li>用户主体类型复杂的情况可以结合 ACL 或 RBAC 混合使用。</li>
+<p>再从上面数据中观察，并没有找到是第几行的信息，为什么？</p>
+<p>行的信息也是比较复杂且灵活的，比如：第二行插入了表格元素，该元素本身就是独占整行，它是第二行，那么表格里的第一行该如何表示呢？我个人猜测原生 API 应该也不知道如何表示，所以把这个问题交给开发者定义，也就有了上述的一些规则，下面从代码层面仔细讲解这个行（path）是如何构建出来的。</p>
+<h4 id="基于插件结构定规则"><a href="#基于插件结构定规则" class="headerlink" title="基于插件结构定规则"></a>基于插件结构定规则</h4><p>selection 的 path 是根据插件数据结构为基础构建的，在另一篇文章讲到的表格数据结构例子：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64744f7ae468e3b3652fa14b/origin-url" alt="image.png"></p>
+<p>那么数组的第一个元素的默认就是第一行（path 为 0），表格元素的第一行是 (0,0)，第二行是 (0,2)。</p>
+<h4 id="实现规则"><a href="#实现规则" class="headerlink" title="实现规则"></a>实现规则</h4><ol>
+<li>渲染元素时，记录元素和索引。</li>
+<li><strong>当前元素开始从缓存的元素和索引中向上找，找到一级就向 path 数组的开头，临界终止条件：找至顶层。</strong></li>
 </ol>
-<p>最后提供可以直接使用的代码片段：</p>
-<ol>
-<li>定义权限点</li>
-</ol>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64b3e45bbebe86147c59f95e/origin-url" alt="image.png"></p>
-<ol>
-<li>验证工具函数</li>
-</ol>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64af9f42bebe86147c59f718/origin-url" alt="image.png"></p>
-<ol>
-<li>HTML 中方便的管道</li>
-</ol>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64af9f90bebe86147c59f71c/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64745359e468e3b3652fa14d/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6474522ce468e3b3652fa14c/origin-url" alt="image.png"></p>
 ]]></content>
       <categories>
-        <category>权限系统</category>
+        <category>编辑器</category>
       </categories>
+      <tags>
+        <tag>富文本编辑器</tag>
+      </tags>
   </entry>
   <entry>
-    <title>再谈单元测试</title>
-    <url>/2023/06/07/%E5%86%8D%E8%B0%88%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/</url>
-    <content><![CDATA[<p>曾写过多篇测试相关的文章，都源于每次测试给我带来的触动，这次也不例外，最近在重构复杂逻辑时，再次感谢它为我保驾护航，同时也发现了历史测试中存在的一些问题。</p>
-<h3 id="测试的意义"><a href="#测试的意义" class="headerlink" title="测试的意义"></a>测试的意义</h3><blockquote>
-<p>这是一个认知问题，如果不清楚为何要写测试，那么最终产生的测试大概率是腐烂、或无意义的。</p>
-</blockquote>
-<ol>
-<li>保证代码的正确性，提升代码质量是它最高的使命。</li>
-<li>保证代码的安全性&#x2F;稳定性，当对某段代码改动后，测试会告诉哪些代码受到了潜在的问题。</li>
-<li>可以指导写代码的思路，在测试驱动开发（TDD）体现尤为明显。</li>
-<li>更能透彻的理解代码，很多情况下，写代码时常常会陷入自己的世界，从测试相当于站在旁观者的角度审视代码，从而提升可读性和扩展性。<span id="more"></span></li>
-</ol>
-<h3 id="写测试的一些原则"><a href="#写测试的一些原则" class="headerlink" title="写测试的一些原则"></a>写测试的一些原则</h3><blockquote>
-<p>首先必须要有一个态度&#x2F;认知：写测试与写普通代码一样，测试也要很清楚的表达逻辑，不能因为它不体现到产品上就粗糙了事。</p>
-</blockquote>
-<p>有些原则会受不同开发者个人能力影响，所以我的看法是正面原则应该鼓励，反面原则明令禁止。</p>
-<h4 id="不写没有意义的测试"><a href="#不写没有意义的测试" class="headerlink" title="不写没有意义的测试"></a>不写没有意义的测试</h4><p>比如   <code>1 + 2 === 3</code>  ，或者让函数执行一次，而不是验证函数执行的结果，这种无意义的行为，还有一种情况是为了提升测试覆盖率而补充，在我看来更是“本末倒置”。</p>
-<h4 id="不写重复的测试"><a href="#不写重复的测试" class="headerlink" title="不写重复的测试"></a>不写重复的测试</h4><p>相同的逻辑写多遍，当然有可能是不同开发成员测相同的逻辑，如果发现应该删除。</p>
-<h4 id="不写描述与实际逻辑不符的测试"><a href="#不写描述与实际逻辑不符的测试" class="headerlink" title="不写描述与实际逻辑不符的测试"></a>不写描述与实际逻辑不符的测试</h4><p>典型的挂羊头卖狗肉，当修复测试时，通过描述不能准备判断场景，细排查发现并不是预期逻辑，花费了不必要的时间。</p>
-<h4 id="不写上下文依赖的测试"><a href="#不写上下文依赖的测试" class="headerlink" title="不写上下文依赖的测试"></a>不写上下文依赖的测试</h4><p>要保证测试的独立性，就是说单个的测试也可以运行，在工作当中也很多处发现，下一个测试要依赖于上一个测试，这显然是不合理的，如果某天删掉了第一个测试，第二个测试就会挂掉。</p>
-<h4 id="尽可能保证测试的可读性"><a href="#尽可能保证测试的可读性" class="headerlink" title="尽可能保证测试的可读性"></a>尽可能保证测试的可读性</h4><p>最好有递进关系，很容易从测试中看到你的逻辑是什么。</p>
-<h4 id="尽可能保证测试的纯粹性"><a href="#尽可能保证测试的纯粹性" class="headerlink" title="尽可能保证测试的纯粹性"></a>尽可能保证测试的纯粹性</h4><p>一个测试只测一种场景，也可以说编程原则中的“单一原则”，可以正反面断言。</p>
-<h4 id="提取重复的前置条件"><a href="#提取重复的前置条件" class="headerlink" title="提取重复的前置条件"></a>提取重复的前置条件</h4><p>很多时候只为了测关键点，需要配备一些前置条件，当多个测试都有相同逻辑时，应当提取到不同维度。</p>
-<p>比如使用 before、beforeEach、after、afterEach，或者提升至更底层的函数，比如 Helper 类。</p>
-<p>反面示例（下图）很多是本人曾经犯过的问题，自觉公开处刑 🙃</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/648038e2e468e3b3652fab3d/origin-url" alt="image.png"></p>
-<h3 id="应该如何写一个测试？"><a href="#应该如何写一个测试？" class="headerlink" title="应该如何写一个测试？"></a>应该如何写一个测试？</h3><p>关于测试的方法论，本人所知道的是 TDD 和 BDD，也曾查过一些资料，对我至今仍然有非常大的指导意义，不讲过多的概念，回顾一张图吧。</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64801dffe468e3b3652faaab/origin-url" alt="image.png"></p>
-<h4 id="几个例子"><a href="#几个例子" class="headerlink" title="几个例子"></a>几个例子</h4><ol>
-<li><p>开发一个创建用户的 API，我的步骤是：</p>
-<p> a. <strong>编写测试用例</strong>  ：先 http 请求这个 API 的路由，此时路由可能都不存在，没有关系，这一步就是要  <strong>这个测试用例失败</strong>  。<br> <img src="https://atlas-rc.pingcode.com/files/public/64802844e468e3b3652faae5/origin-url" alt="image.png"></p>
-<p> b. <strong>编写代码</strong>  ：解决它为什么失败？原因：没有定义路由和响应数据，OK 解决它，添加一个 POST &#x2F;api&#x2F;user 的路由，并且   <code>response.end(&#39;success&#39;)</code>  。  <strong>这一步让测试用例通过</strong>  。<br> <img src="https://atlas-rc.pingcode.com/files/public/64802959e468e3b3652faae7/origin-url" alt="image.png"></p>
-<p> c. <strong>编写测试用例</strong>  ：制定创建用户的信息：名字（张三）、手机号（xxx）、年龄……，并且期望创建成功，并且判断创建的信息无误，此时运行测试，  <strong>结果应当是失败</strong>  ，因为代码中还没有创建逻辑。<br> <img src="https://atlas-rc.pingcode.com/files/public/64802a36e468e3b3652faaec/origin-url" alt="image.png"></p>
-<p> d. <strong>编写代码：</strong>  解决失败原因，创建响应结果的实体，并且 response.send({ code: 200, data: user })，  <strong>让测试成功。</strong><br> <img src="https://atlas-rc.pingcode.com/files/public/64802c6ee468e3b3652faaf6/origin-url" alt="image.png"></p>
-<p> e. <strong>编写测试用例</strong>  ：输入不合法的信息，让  <strong>测试继续报错</strong>  。</p>
-<p> f. <strong>编写程序：</strong>  加入校验逻辑，解决报错，让  <strong>测试成功。</strong></p>
-<p> g. ……</p>
-</li>
-<li><p>一个缺陷，真实开发的例子：<br><img src="https://atlas-rc.pingcode.com/files/public/64802e2ee468e3b3652faaff/origin-url" alt="image.png"></p>
-</li>
-</ol>
-<p>a. 这个思路应当是先按照描述去模拟场景，验证预期行为和实际行为是否一致，如下：<br><img src="https://atlas-rc.pingcode.com/files/public/64802fe8e468e3b3652fab06/origin-url" alt="image.png"></p>
-<p>b. 这种情况就避免了  <strong>启动前端代码的麻烦事，进行自我验证，驱动排查</strong>  。在解决这个缺陷时，重构了大量的代码，历史的测试一次次告诉我重构逻辑漏掉了哪些场景。</p>
-<p>从上面的两个例子中，可以再次得出它的指导思路：  <strong>让测试失败，改代码修复，在让测试失败，修复……反复验证。</strong></p>
-<h3 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h3><p>好吧，暂时没有其他要说的了，后续有想法，再继续更新。</p>
+    <title>编辑器系列—插件渲染机制</title>
+    <url>/2023/05/18/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89/</url>
+    <content><![CDATA[<h3 id="单个插件渲染流程"><a href="#单个插件渲染流程" class="headerlink" title="单个插件渲染流程"></a>单个插件渲染流程</h3><p><img src="https://atlas-rc.pingcode.com/files/public/6465f1e87083dd5ecd38a428/origin-url" alt="image.png"></p>
+<span id="more"></span>
+<h3 id="多插件"><a href="#多插件" class="headerlink" title="多插件"></a>多插件</h3><p>插件机制有一个关键的问题是：当注册了多个插件，如何正确的找出要渲染的哪个插件。</p>
+<p><strong>插件的冒泡机制：先注册的插件会后执行，这很像数据结构中的“栈”，先入后出。比如，注册了三个插件 [A, B, C]，那么渲染时会优先取出 C，运行预渲染函数（renderElement），然后是 B，最后是 A，每个渲染函数中可以通过插件的类型与当前插件预定义的类型相比较，如果匹配则返回当前预定义插件对应的视图组件，否则流转到下一个插件，继续重复此逻辑</strong>  ，如下图：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6465f95f7083dd5ecd38a449/origin-url" alt="image.png"></p>
+<h4 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h4><p><img src="https://atlas-rc.pingcode.com/files/public/6465fd057083dd5ecd38a457/origin-url" alt="image.png"></p>
 ]]></content>
       <categories>
-        <category>单元测试</category>
+        <category>编辑器</category>
       </categories>
+      <tags>
+        <tag>富文本编辑器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>编辑器系列—插件注册流程</title>
+    <url>/2023/05/16/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
+    <content><![CDATA[<h2 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h2><p><img src="https://atlas-rc.pingcode.com/files/public/646353137083dd5ecd38a0d5/origin-url" alt="image.png"></p>
+<span id="more"></span>
+
+<h2 id="创建编辑器"><a href="#创建编辑器" class="headerlink" title="创建编辑器"></a>创建编辑器</h2><h3 id="Slate-createEditor"><a href="#Slate-createEditor" class="headerlink" title="Slate createEditor"></a>Slate createEditor</h3><p>createEditor 是 Slate 提供的创建编辑器对象的函数，编辑器对象的重要性相当于一个系统的核心，后面所有的插件注册&#x2F;声明部分也都必须返回该对象，插件在运行过程中执行完当前插件的逻辑，最终也需要流转到该对象提供的核心函数上。</p>
+<h4 id="核心能力"><a href="#核心能力" class="headerlink" title="核心能力"></a>核心能力</h4><ol>
+<li>数据操作：<ol>
+<li>插入节点&#x2F;文本（insertNode、insertText）</li>
+<li>删除（delete）</li>
+<li>文本数据操作（apply）</li>
+<li>插入或替换文本、节点（insertFragment）</li>
+<li>装饰文本（addMark）</li>
+</ol>
+</li>
+<li>数据变化：onChange</li>
+<li>检查元素类型：空元素（isVoid）、行内元素（isInline）</li>
+<li>属性：选区（selection）、动作&#x2F;操作（operations）、子数据（children）</li>
+</ol>
+<h4 id="源码预览"><a href="#源码预览" class="headerlink" title="源码预览"></a>源码预览</h4><p><img src="https://atlas-rc.pingcode.com/files/public/646349d97083dd5ecd38a0b9/origin-url" alt="image.png"></p>
+<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import &#123; createEditor &#125; from &#x27;slate&#x27;;</span><br><span class="line">const editor = createEditor();</span><br><span class="line">editor.insertText(&#x27;哈哈哈&#x27;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="Slate-angular-withAngular"><a href="#Slate-angular-withAngular" class="headerlink" title="Slate-angular withAngular"></a>Slate-angular withAngular</h3><blockquote>
+<ol>
+<li>以 withXxx 命名的一般为插件</li>
+</ol>
+</blockquote>
+<ol>
+<li>withAngular 本身也是一个插件</li>
+</ol>
+<p>withAngular 是 Slate-angular 内置插件，介于框架的限制，该插件大致上做了两件事：</p>
+<ol>
+<li>对于 Slate 部分函数进行了重写（比如 onChange）</li>
+<li>扩展额外的一些能力</li>
+</ol>
+<h4 id="核心能力-1"><a href="#核心能力-1" class="headerlink" title="核心能力"></a>核心能力</h4><ol>
+<li>重写数据操作函数：插入、删除、复制&#x2F;粘贴板（insertFragment、setFragment）</li>
+<li>数据变化通知（onChange）</li>
+<li>基础 DOM 事件：onkeydown、onclick</li>
+<li>检查元素类型（isBlockCard）</li>
+<li>错误处理（onError）</li>
+</ol>
+<h4 id="源码预览-1"><a href="#源码预览-1" class="headerlink" title="源码预览"></a>源码预览</h4><p><img src="https://atlas-rc.pingcode.com/files/public/64634a287083dd5ecd38a0bc/origin-url" alt="image.png"></p>
+<h4 id="使用-1"><a href="#使用-1" class="headerlink" title="使用"></a>使用</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import &#123; createEditor &#125; from &#x27;slate&#x27;;</span><br><span class="line">import &#123; withAngular &#125; from &#x27;slate-angular&#x27;;</span><br><span class="line"></span><br><span class="line">const editor = withAngular(createEditor());</span><br></pre></td></tr></table></figure>
+
+<h3 id="Theia-withTheia"><a href="#Theia-withTheia" class="headerlink" title="Theia withTheia"></a>Theia withTheia</h3><p>基于 Slate-angular 进行扩展和复写 editor 对象，提供了更多的特性，同时基于 Worktile 和 PingCode 业务封装了一些更复杂的逻辑。</p>
+<h4 id="核心能力-2"><a href="#核心能力-2" class="headerlink" title="核心能力"></a>核心能力</h4><ol>
+<li>多插件自动组合注册（combinePlugins）</li>
+<li>支持插件的渲染自定义组件（renderElement）</li>
+<li>更多的事件：globalMousedown</li>
+</ol>
+<h4 id="源码预览-2"><a href="#源码预览-2" class="headerlink" title="源码预览"></a>源码预览</h4><p><img src="https://atlas-rc.pingcode.com/files/public/6463519e7083dd5ecd38a0d0/origin-url" alt="image.png"></p>
+<h2 id="构建-x2F-声明插件"><a href="#构建-x2F-声明插件" class="headerlink" title="构建&#x2F;声明插件"></a>构建&#x2F;声明插件</h2><p>上面 withTheia 和 withAngular 已经展示了一个插件的声明流程，那么插件需要到底做了什么事：</p>
+<ol>
+<li>重写和拦截编辑器对象（editor）提供的能力</li>
+<li>返回编辑器对象，供下一个插件使用继续流转</li>
+</ol>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p><img src="https://atlas-rc.pingcode.com/files/public/646350e97083dd5ecd38a0ce/origin-url" alt="image.png"></p>
+<h2 id="组合-x2F-装载插件"><a href="#组合-x2F-装载插件" class="headerlink" title="组合&#x2F;装载插件"></a>组合&#x2F;装载插件</h2><p>方式：js 高阶函数～</p>
+<p>如：  <code>withInlines(withHistory(withAngular(createEditor())))</code>  </p>
+<p>theia 中组合插件</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/646351457083dd5ecd38a0cf/origin-url" alt="image.png"></p>
+<h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">this.editor = withTheia(</span><br><span class="line">  withHistory(</span><br><span class="line">    withAngular(</span><br><span class="line">      createEditor(),</span><br><span class="line">      CLIPBOARD_FORMAT_KEY)</span><br><span class="line">  ), plugins</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>编辑器</category>
+      </categories>
+      <tags>
+        <tag>富文本编辑器</tag>
+      </tags>
   </entry>
   <entry>
     <title>编辑器系列—什么是插件</title>
@@ -864,6 +1027,18 @@ table th:last-of-type {
       <categories>
         <category>编辑器</category>
       </categories>
+      <tags>
+        <tag>富文本编辑器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>hexo提交代码部署</title>
+    <url>/2023/05/09/hexo%E6%8F%90%E4%BA%A4%E4%BB%A3%E7%A0%81%E9%83%A8%E7%BD%B2/</url>
+    <content><![CDATA[<p><code>hexo clean &amp;&amp; hexo deploy</code></p>
+]]></content>
+      <tags>
+        <tag>hexo</tag>
+      </tags>
   </entry>
   <entry>
     <title>基于 Angular CDK 实现拖拽复制元素</title>
@@ -918,6 +1093,9 @@ table th:last-of-type {
       <categories>
         <category>Angular</category>
       </categories>
+      <tags>
+        <tag>Angular</tag>
+      </tags>
   </entry>
   <entry>
     <title>js 修改伪类元素的样式</title>
@@ -1042,9 +1220,6 @@ table th:last-of-type {
 <li>其他：<a href="https://developers.google.com/fonts/docs/material_icons?hl=zh-cn">https://developers.google.com/fonts/docs/material_icons?hl=zh-cn</a></li>
 </ul>
 ]]></content>
-      <categories>
-        <category>icon</category>
-      </categories>
   </entry>
   <entry>
     <title>Linux/Mac 语法手册</title>
@@ -1063,6 +1238,10 @@ table th:last-of-type {
         <category>Linux</category>
         <category>Mac</category>
       </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Mac</tag>
+      </tags>
   </entry>
   <entry>
     <title>使用镜像下载 vscode</title>
@@ -1077,63 +1256,6 @@ table th:last-of-type {
 ]]></content>
       <categories>
         <category>VSCode</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>论读书</title>
-    <url>/2023/03/03/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/</url>
-    <content><![CDATA[<blockquote>
-<p> 怎么算一本好书</p>
-</blockquote>
-<p>自从看了一本《沧浪之水》的书之后就有点入迷小说类的书了，家里的书也不算少，但最近能找到自己看得上眼的书，基本没有（《人类简史》勉强算是），其他书并非不好，只是不符合自己的标准。所有有时自己就会想，什么样的书才算称得上是好书？自己心里的标准是啥样的？</p>
-<p>针对书架上现有的书做个分类，也大致说下标准：</p>
-<span id="more"></span>
-
-<ol>
-<li>工具类的书，通常  <strong>这类书字字珠玑，均是干货</strong>  ，这种书对  <strong>知识的准确性必须过关</strong>  ，否则难以称得上好书。例如字典、文档、手册之类的，如大犀牛《Javascript 权威指南》、《说文解字》。</li>
-<li>理论类的书，这类书往往是富含真理，  <strong>有理论，有实践示例</strong>  可称得上好书。如《代码整洁之道》。</li>
-<li>哲理类的书，这类的书往往是人生前行路上的路灯，  <strong>能说明问题，并且对接下来行动产生指导价值的算得上好书，但有一条原则是正能量</strong>  ，心灵毒鸡汤的书不可算。如《道德经》、《素书》、《王阳明心学》。</li>
-<li>小说类的书，这类书主要是以故事情节表达出真理，让读者自己感悟和体会，往往引人发省，个人感觉跟哲理类的书的标准差不多，  <strong>评判标准包含上条（哲理类），还有一条是能够吸引读者，令人回味，</strong>  网文玄幻花里胡哨的且不论，如《钢铁是怎样炼成的》、《平凡的世界》、《人生》、《沧浪之水》、《瓦尔登湖》。</li>
-<li>议论文的书，这类书的作者能够站在现如今已产生的哲理或现象，  <strong>表达出独特的观点，观点能得到大部分人认可的可称得上是好书</strong>  。如《容忍与自由》、《人类简史》。</li>
-<li>科普类的书，这类书  <strong>只需要描述出已存在的事实、道理或知识即可</strong>  ，不一定必须深入。如历史书《历代皇帝大全》、《中国历史故事》。</li>
-<li>人物传记类，通过人物的事迹和思想表达成功的原因，  <strong>能应用到现实中</strong>  的可为好书。当然，出于兴趣乐呵除外。如《为什么是毛泽东》。</li>
-</ol>
-<p>太过硬核&#x2F;干货的书直接排除，因为工作完会累，脑子会拒绝；自控力差枯燥，脑子会拒绝，所以符合自己标准基本算是小说了，大概有这么几条：</p>
-<ol>
-<li>情节吸引人。</li>
-<li>符合如今社会，能对接下来的人生带来指导原则。</li>
-<li>触及内心情感，令人发省。</li>
-</ol>
-<p>能全部符合三条的小说不多，尤其是第二条，所以上知乎 Up 主推荐的那些书，从书评中并没有特别符合标准的，例如著名小说，有些还曾获得诺贝尔文学奖，矛盾文学奖的：《活着》、《平凡的世界》等，反正一时想不起来那么多了……。</p>
-<p>最近，买了一本《约翰·克里斯多夫》的小说，大概说是这个人的传奇人生，净化心灵等，这本书足够长，可以消遣一阵子了，希望这本书不会让自己失望    </p>
-]]></content>
-      <categories>
-        <category>读书感悟</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>编程角度谈抽象</title>
-    <url>/2023/03/03/%E7%BC%96%E7%A8%8B%E8%A7%92%E5%BA%A6%E8%B0%88%E6%8A%BD%E8%B1%A1/</url>
-    <content><![CDATA[<h4 id="什么是抽象？"><a href="#什么是抽象？" class="headerlink" title="什么是抽象？"></a>什么是抽象？</h4><p>抽象就是从不同的事物之间抽取出相同点。往往能力越强，抽象能力就越强，认知的维度就越高。</p>
-<span id="more"></span>
-
-<h4 id="为什么要抽象？"><a href="#为什么要抽象？" class="headerlink" title="为什么要抽象？"></a>为什么要抽象？</h4><p>世间万物都在变化，如果具有了抽象能力，在变化中找到不变，那么在解决问题中只需要更改那些需要变化的元素，从而减少工作量。</p>
-<p>例如，软件开发中的需求不断变化。有人说，杀死一个程序员，不是给他一把刀，而只需要改3次需求。程序员设计程序时，能够把这些变化的需求和不变的本质分析出来，设计出相对抽象的程序，选择适当的数据结构和设计模式，来进行对可变的元素进行重写而不用改其他依赖，那么是否能避免一部分全部推倒重来的事情发生呢？</p>
-<h4 id="抽象的应用或表现"><a href="#抽象的应用或表现" class="headerlink" title="抽象的应用或表现"></a>抽象的应用或表现</h4><p>软件工程学中OOAD(objectorientanalysisdesign)，软件编程思想中的OOP(objectorientprogram)。<br>他们的第一要素都是抽象，抽象的维度越合适，设计的程序就越易用。</p>
-<p>例如，一个小超市要做一款对商品的管理系统，商品暂时只有白酒。</p>
-<p>程序员A针对<strong>白酒</strong>进行分析了属性并设计了一个白酒类</p>
-<p>程序员B针对<strong>酒</strong>分析属性设计了一个酒类并加入了<strong>type</strong>属性来区分白酒或其他类型的酒。</p>
-<p>程序员C针对<strong>饮品</strong>分析属性设计了一个饮品类加入了<strong>type</strong>区分是酒还是其他饮品，并将原来的type变为<strong>color，</strong>只有是type是酒的时候才拥有color属性。</p>
-<p>程序员D针对<strong>商品</strong>分析了属性设计了商品类加入了商品类型<strong>type</strong>区分是饮品还是其他商品，将C的type变为drinkType，只有type是饮品的时候才拥有drinkType属性。</p>
-<p>later……，超市挣钱了变成了大超市，不仅卖白酒也开始卖啤酒和红酒了，那么程序员A的程序设计的程序很遗憾的就被淘汰了！</p>
-<p>又later……，超市继续扩大，不仅卖酒，而且开始卖奶，矿泉水，饮料等饮品，程序员B设计的程序淘汰！<br>又又later……，不仅卖饮品，还卖起了水果，日用品，程序员C设计的程序淘汰！</p>
-<p>从上面的例子中就可以看到，程序员D的程序最棒，因为他抽象的层级比其他三个都要高，所以面对变化也可以从容应对，调整不会太大！</p>
-<h4 id="抽象的维度越高越好吗？"><a href="#抽象的维度越高越好吗？" class="headerlink" title="抽象的维度越高越好吗？"></a>抽象的维度越高越好吗？</h4><p>这个要根据场景选择合适的抽象维度，并不完全是越抽象越好，因为抽象最终要应用到使用，使用必然要具体，要找具体，步骤就会<strong>繁琐</strong>，会<strong>增加复杂度。</strong></p>
-<p>从上面的例子中来说，超市老板的需求最大就是超市可以满足的特征，衣食、日用等商品，他不可能超市卖所有种类东西，不然世界就是这个老板的了，如果程序员的抽象维度是商品(非上面商品)，那么他就要包括其他类型商品：飞机、大炮、汽车、绣花针等，程序员就要分n种类型，那么他这个程序要操作一个商品需要检查n个层级才能找到对应的商品，程序会很慢甚至超出等待，过几天老板就不用这个系统了，因为还没有自己找的快呢！</p>
-<p>所以，抽象能力是必不可少的，抽象能力越高说明你站的角度越高，思考的就越高，这在你的生活和工作当中很有帮助！不然孔子，老子这样的人能够成为大智者呢，老子的道你又是否懂呢？</p>
-]]></content>
-      <categories>
-        <category>思源地</category>
       </categories>
   </entry>
   <entry>
@@ -1182,8 +1304,11 @@ table th:last-of-type {
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>总结就是<strong>能不用 –legacy-peer-deps</strong>的就不用，求其次用 <strong>–force</strong>。</p>
 ]]></content>
       <categories>
-        <category>Npm</category>
+        <category>NPM</category>
       </categories>
+      <tags>
+        <tag>NPM</tag>
+      </tags>
   </entry>
   <entry>
     <title>hexo ocean 主题集成 mermaid</title>
@@ -1216,7 +1341,7 @@ table th:last-of-type {
 <p>参考：<a href="https://github.com/webappdevelp/hexo-filter-mermaid-diagrams">https://github.com/webappdevelp/hexo-filter-mermaid-diagrams</a></p>
 ]]></content>
       <categories>
-        <category>hexo</category>
+        <category>Hexo</category>
       </categories>
   </entry>
   <entry>
@@ -1290,6 +1415,44 @@ table th:last-of-type {
       </categories>
   </entry>
   <entry>
+    <title>论读书</title>
+    <url>/2023/02/06/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/</url>
+    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="4cbb4b7b2306d363ad416704a66392dd9c576d17f9f586da296db4bd1adf3499">5b45b2886d298a7453f8a0d9655aadb337598089fa8910e517b17d73c71d66cb851f08e286143c71fdeb7fa52eeb0af0c413d1560395ae9adac6cd3b3bc944161d1a06462a3bd91f25e28e39e69189258abef99535cf9e58950aea35d2931b68663835a9a11362d1536d2d7b811661f5ce0dddf5a174a2697b2fc55fbf0c8c2ecfa019405dd23a390e2726d5705cfa6964c0b605ad4e22948bfc4cb230ca056ca503fc239e972e0d74d69ca58b95587cf652990d95f580f474c4c7731fdb7c700d6689caf08b9150d075214f55d550d2e1479964684b6fc10ddef232fb51af0c7862eb2c113a6c630cabd6f406c7459385203ba6f60d21fcb051c476713f1ab62fd9c0faa65eb8ffcfcc2b6ce2740c529dc854ca7607443b9e37ceedfa8c3fbbb3be3a05fb3c57777de296b95defb8db733901c8b2272ea789d3d8ab93d17b51e9caabfd3e71a2740406b63948947c20a52654fb3641b35ada9423a69c6a10ac27dab399b07be209ee778c46d257d16d4ad15eeb2a6b16ae1c1db12be6c8085903b2dbd0a43c832538a2dcf6975c848343d482a592495af79c0c112f81366a3cabca4ae2eed867d8549aa0b1fca674e0bfdd0e88b3aa56f52147816895ad29468b2e6b1411cbc328d7856adac72d034decd4b01909f3a0bcce92b3e79c65dd3c80b9b236f657f60897402d1e1c58815268621e14c1bfb6e2f1b2538b9e7d27b5b8e4f2aab1c4103dfa46344d5758d0f31f41878d53b525f223c41bf78933a0a2f69cb3d6db6dc98b6fd6dc08a72c5216c24a098cd1757715ba9fd3f93cf4271aedab8fdcb4e6346ca11ae19be44f57d4ac655626ee6af9753b5d01f39020fbb616586e95504777ce94f6290b1b246220d7a180019e1ef8d249902cfc20fe825ac0e079b9ede92f11e838ba7b5a266ae4fff9f45f8e7747dca97b35394ca71eda76ff5a32e216883b7b1aaaebb3e15a764e1f5369d95d5c23fb8a404ec093ff40d952521144a3873b97ebc53dbb0a2e5269689b25e699c6677473dadd64a24d2e564e7ff55a25ced6859888369aeeae898eca52e128b762652bbfe6576b24b4e0e7602cfb6e163b8a000ee3e73fb16768a3645fc05cecbc45803f0e67352e5af5dd8465a38f1246d966aa17b9b79681e058567e15694dc01d40051ef8b723d423edb2016534850a806516fd477a6fce64942d325e83c3625c1959a6284a57a7b40e195159f77e93ba80341efffe593b92c92e8c014b82462dc6af8fce88b1801b2516368bc67c8bf155dd484c80184331d6ebe57ffb6538f0241f3e1439e5e8e694efb05f8c9730f1bcb9ee503c1d2a14a6a3f58eb8c456d63971c216ddd84eff690896071b7392446105aa322aedc2b4fde83f0734e52cbd026e64aa4ab5cb45cafa12dbff6d9facf8ba3b1f2a5af25d589aca06a4b4159fea93bc84f4c379049b09709eb5fc60f4da39d890423c40390a502a62bccb35f721f9b0be952482ab903ed51b851ef43a3f29d76ce7836a27fd32f400746b74a49c793da8cd41803459fb8926fe8007b3e6890962462a8b0d482fb1ae8dea315545a522008d2481b24de6ff848f33b288fae0662851beb5057f57851b79e5362239ec91578190633d490cf9d30045d1c3f558286c320471a1c119b72ea1cf0f9e3da64df2f2880231058b0d0876f68120b3f8c874bc6bce7d572c91550fd1bbce90554b14cc927c5f469886ea2d4984b3962620480798db87890d7f2634646d6d284b8bfa3521371803b82d3149ac58c8b67cdef0b4bbcdb95cb9e85445c19692e3e80055589d2bd58ba8465e1b147679731e166611b74dfdbedf6d338a36105079b1ea9ff3bb8c7a22e874fe9d3b0c242410014f99096bc469f76423a2d9c3f4b5aae1036c99e19610abc28f6604b3381ac06b9fd00c77e326ca843787621759924e1bb5bc7df2d6b1bf961f3508b66e435f2aeb51bf27434f07fa2b8fbdc7a0ede01598e4366f3b4bf2abf928ebf93930b3dfcca98976c98c5af772036bd223bae9c9e37d915df8ae2acb7cab4360de61f93cb2026f7ea63b9f08f7454e99a00a39f781f4727054d32d5f5fe082b3e8593237fac9d6b1417817f8e3739209a605b0f4ab4225ea093517caeab5cbeab8f9dabfef06961d441e2d411d461fdb32ff26ee747e2047f621d2bc10654540358cc79ae8e36b035c5d2d1005cfebd5111cb18cabf9481882e009c26f378e9c89ea36100206cebe96eee55e1267822a8719422b14024eedb0c7c4c817e6fa6180f7635fe052d0fddb6ded4ccbfac3d89d3054f9e1f3f65f4e7a44332c334f9308e7ce4c52e0a8c18ef49dbd74b357a407a20f1a228eedd108788f1fa1d0b9a3c2636d3b2c0a826ee65211234e57ec0360132956fc3c0f3a4978e3cd386e145d1193d0f5a965475ec2dd29edd26b53ab509d783dcacfc179389b51fcf34e8537e6781d5b4e06cb0100f6367325edad5aa8b8a72744e426611ad9d1699989b6db32c0875f1c2a44a29c05ae031bcafa89adba076fe0cae05a2eae923dc3ba9d538c427abbd950032973afa4f18f855f042cc55ce4b4655ab75078d8825281f7ce9f7208aec69f843539cb57d2796773ac38d915fe09546dcca5e351abdc1461daca451f12440220c504efbdf827bf6d9caa2160a75dd6fd0c3ce3f609c2db571c9a65e22808663d8d70a17fe224a4689fe13e292fcf5207db18c6d52c4347bd882479b9c3733fe3f4a56c57971918842f35f7c0994cf64a5bfdb5854d4dd40f52fe59a96a5bbe3036d1b3a431b60bb4be06cde9a581edb7c5bc7dd8e14fd3175de29c8c2c18947231fb756684f3f5e948616f26263567039802df9cb160c3ce32dbc14336105a60fa30e9527a516e3ac8dfe43a5cd674a78708713575076209813dadc2a9ef695477bfa429c2b63830d74609e164744729682d1c98fa4799470139144f8bbf276465a85cc0ada1726c56a231fa3bfcb0ce598f2f5c6136b68588e6e18e9fcd27a40e714bc1343d8a8ce7a369d897d9c86e0c2c64c85d0f3f85735b4ce9a85e3a198746dcc3eebf8454d674bc2aae0f974a2c9a1dfad66c0ca99bfd83c8d51e832a7361f56553f4373823750d65ff2eaa7a3978ec2df2f320cef60a8fe5110726ec3c0d7bd466d90b6f9aa19d2b5571837fae73a094cfa5843d4adbb82505d2152e70077c1f95f0ade3dd6529970d685704d5f07e9d390fa7751b347f69abf11718b3eb7cae7ff5b4d67a071af752b6a37c2fd2fff78370f6e03d7e755e4ed0178924d959714e07c397f7997c83b12dc8f6102c3c6de562c317caf94e3565fbfec1b5b37a0e9c65d740b495c00d99768e0f3ba2f8e3b03de7d3d938fd5539187045360e3ff860a428a19d5b2ee14a4235bf0fb32eadb00a5f215941c6719de50415ef461ff031f341dce700e7911f5d70f6c2d7b47c6869445a2931e0f3dc9c7245afb5bcf1820dd058a2f89b397cf22adc9d94307893920e2fa26c0ffc4ec806d27c780b28e93d8f9545617f9ad6795e0cc4f10c75e13718e51e2c6feadeeb2246824e313415acff4f0629efd96b9f23fc48a0398e18eebdbbf2bf1c56fa9fdf13096b57c1a3b6a8e9cbd27752f5e11b8c4338145fab7b1799e53051fc8f1cc2dafd297b730077dc9e045fb6f932f981e957cb8d4e1722f2eba676f2de9ba2a7db437ea1bcc36d86bc49f8b212810c7210b2f5bc1c726d3252b4ca6a8ec30e0b279e87208b6fb3be511bf7c8166c429c2d375bfcf34fee2c8396610e4dbef8e154a1bd76fbf93d20c175af86804d04cb98f2254b6cbe1a5a9116338c2137737c044e47a32f214695d4cbf40ba6e7ae6829ed14d3c2c9a34119d416d39481cbd9913b582666f84517c2c92dc15f09e7d78c9f778cbcc22c072b27d787c60ad8851377cc43804826a63537fc49f80c4e41e7194f6c38ca7b0d18c42a10ce57bb75a0be74bb628fce548182d8648321bac14d45c37f279e210f171809770f04b42faa25a18df67e243fb3afbf4bdf29349a026de05946c7d16ff8b404c2548d35655fa3f47baed8849696d5212d52af7e52c4ff2da907e24469ef2f442a651ec9f98c90f9320625d3d2487a5bfe43bfa174cd872f881fc77336e40dbdb01f3c9d8a64d8a95f6a7a2ef86dae3e8edd3aa06bc529c23539aafa0d31e35147952f879dde160bc64c0eb5ef8b0861dd5fbd7c25a2f6eac1ae9f576fa22875a80da37cd45bf08644d3d32db4bf859998330e2ff0f2159210fbe4482af050bed06d1c0529204c322a855d59da4966d4621f256da7090c2630ae12239b87bb960c5d1061b10b51484667a2446c2b0feb9b478b6880716d4fce902df78f192cfc55a2161de52f5ca38b80c993bf8394137e26402a6c1cdac354c098ce74a2d52e05c648df8c169b5f816645d90f3f6a1fa5c6c622aa5fba3b3230fb292499fe574c4e3b4999b6015d201a702e35545eb167f6ec4e4cd6f58e8d653d9560b3c59a98b4f0041d8661ba8e2c437c2cf70d8596a959dfe1987bb6a2eb4759854090c3d409d5068696b50060eafd48872d7e40f05a49849e50587914667d6e94d4d06aeab2a2b97a9548696f32335be9b7d30d12b0a3857a02ce67e3d790fa74ac29ffa63d5fd88aced99817b8cb0283ea535de4016982a4871fea5fd6c75d065cc935a561794e9355a7f3163e5ac6e41c1cfabc9bd588f90ccac2ec2f9f6dcf210116be70f68f383ffa75c8acda2dad7148e4d35596ac687ac2a27da5949ca59c893516cfcddef21ced5c</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">还是别出招了，反正是我赢！</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
+      <categories>
+        <category>读书感悟</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>编程角度谈抽象</title>
+    <url>/2023/02/06/%E7%BC%96%E7%A8%8B%E8%A7%92%E5%BA%A6%E8%B0%88%E6%8A%BD%E8%B1%A1/</url>
+    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="da73c4824aca97feb774686cfdd21fc8dd9a8666563de5c2cc12532f2add3b3b">5b45b2886d298a7453f8a0d9655aadb3203769014c2692d0bdeb09b0c9d5f574db4ab28c862267cb263948e32d928381e9c2c4b1f6479f1bff8b79f8ce0ca7eb5446682c789e8948cdf3fbddbf684c8b0fffa1fe4ab1372904ada3139f25c783a26ed2396f96a327b8f7970bfd3effd2ba9b7ba7cfb5eb95a3749bf4309fd1da14d37b016208875fe93ffa9c5aa935edcfec88d200b8f5540ffafb1fbba4ddb21889a9f19a0d24cf1aadbab930ace25e5e88d188e9b3b0c00d95e3948c360a110caf2d5162a36c06663a0b441b97e75c511ef4677f7c9f7b0d3ade21d80dae92e052e8bd4cb2e3dd740e1ab2c58e105e50d24b0569a963a752ae5904cf4a12829ae91ac1e146e999c36c5e8c24625dbc7d4c0c26333795cf1a969c8106fe436da53e3559274c5d7f361ccc1572435a601e9053935b349533eb1f72fd83a65bef2891d52b97dda491aa9829b2312c519fbc98f0061822724b25474e573abab7f307be2a56776f99a6f15b3918b95ed126b1c0659cf4982c7f97b35b0006e889e42663cdd3ce7f4ba73de6fae519a4574ab85cd9ba53927474408e2e55c6671b02abbcf45e788c1654401b4d31f3b3e8d7709aa96cad819875d2fd18530deb2cd62da4b34a4e06a648ecf888d964a4dbba1a3ccca081e11490b8c9117a28ad6d0d39bdbea034dc5f42e65942749680412b0c7f62cc05a653820586edaf48f3d7534f7fca7a8bdbe47b9516d95cfbdf374cd3d0d7cae02baee2dec68cfb00645d8cff2efc080946e84372a79ee75ccc6943bf73cc81dfd67cebc1b992b4f9cb6d573841174b7c05ea7e5865aa836c8f39a00476b97629f469f89e41d3a6ffc30735cae0d3e7c898e09b3dca92ae5e41c0cd9d352163d1192313cda6e98ad1f51aa6efb01f7ed027a836e61fa73f55cb4e109f690d948ccffb911b2cf4372960a1c656e44d17fd19fa63c9bc6f85a69fe40e9f1322e3ab0d5addeb7fee3a168d5f73c78da91668006e176a3c9b1a7a1fc7ce2f5e60c295fb63f7ccc273ece8731592cd71f9c178f37b668ae23e9a8226e54a9ac6b3d4c7f2b5ab9c82532931ce5e900a17c6706c1a09e9155de7e20b5eb3ec0e322a69a93d0312c07d589778ff38746a369c044e40e8de1605a0da80f503dc1403b159eb2f9000acfbb8f98b2f260b0c1263e56ead3126eb4ba6078d3a869f5be8c8f9261eb6c91b2563ef4bea8d44bf1ca4dabdf1d40c310ddf20095c89c01fc61465f4af106ea58ff5db008e8b1af4647cefb5da4fbf9af1a942af4074a033c3348040ce502bcfd166dae38f3c54d8cf2b7bce7b2c46810fe94f64eb5b815e8bce1344a335b154bfec5d0716a69cbe6412ac184a4121bbd8a61dc1822b1b29f0ecbca13a9ac9b6d876f39a0dcab7bae6ba926fa75064c76aacdcfd390fee2d268c56f9291b446f61288f7a2e28026e61183461787065a8c70afaa3864c3dea0998148433b8e090165b5849d4ae79dfc08a98b8f76e01bb30d56905d2a3036d3632f466ce88dfb2000e337238bfe0bb8997ab3b1d4f21d58a5349f6582cb31d2e295e15b7c1b6782a12a82a7541ff956dc7961a4fac308cd4bf6ec0e9682d29f537b9927cb585c6c08fa29e62a0476d6d5a3bca90ba208f615803b366c38b20b883568e3a764b3e7f876207c67724509d36337b16c37915cd0fc9fe14827491a2e0bef0f7535d8094c6f61fccab51ad54479cf83bc36e2da223aa754e78465273613fcaef3a0fff38ccd8374adf8e5388920486828e9ab7a351c7af65b5ebde8f3ecfbebec95eb43cfa4205795d60f35aec3a894748cac9b57cc0360f36827ded15ce5be63def2b4ef3c7f78f1a29013887ac39dc92402bc67835c025cea7f0f63b3c614267e0d57aa7881e054c679ac3fbe422b8657d9829618e3d04f443f3ece9cde33309ee2585cff715c920c02489bdc2206a893e52c8323b1aecde25f6f1acdba12358ade99a5e7432527e6890d64d7ca7e0096d3ed9ba86368b8f30a5827ccc30d92fd2fb763e3be36152894d11d605dd3135e74f5b7e6f82050e1a043eed61f2075f51fbc64a3c42c8d81ddf066efacdcb61182866417598b859674085fbb798861183f2b998cd24bea52f4b789494757604a4303b89b3678c8adbb7635cf7b2ef6fc6f16dba3af161924f1e6e1483bbb93955524dc47aecb47863af04ec23a4b3774b591b166e01ef89f7cc0354d8f3fecf92fb43cebc02587931ee4ee24221024db9ece348ff63f7d72767ab6200f6784949ed14f608f17358741eb35ca522ebbfeb67e37dc2a8e63097690a966c02e20f62ab53abc14c8c9c48b145c467561b86e2df8a78851ab487a9d546d732dedf56af0c2495f4afe45fd0a584e8a5e6d91c60299387e01150e5f16138d87ccc3774edcc74acf36163617e8a14b858d4f56254431ca8d2e37a903986e7db199575c7284d4dd26a3b041fe2bc9c2585fed50a26170d4ac9d5177b3f1c274cb08c7a5be657d12989a9ef4a00c4b28bec6bc55f01e80eed9df2c4abe1862fa76f965c4a2407e9fb1893e6d7cbc076e8fd61478d791b0bd37da3c9701ac14fe1821b40abd6ab654e7549bd251e9cd31bdbd3702953d86fd2328599e4d9b2c28039fa3cb3a91e75952f0b2f2efdbb8ce281673347c163959ba347ec2dac6589af17ca9929245aa3447009f00ccef9f6cb1dbfe6b6f80a5ed17d34a2f9c7fbc0a80381922807ca0564e7e7a84f1f346667d27a6cb33686c9270c1430931b07072677a1bc698728c8e1f9df298374a60bcde84d858b178fe57ebdd3c57ab1aed9d7ac6ee534fcc19acbb09e06fa9b2906284f3d4d3f8c6bc74c37fe9fea51b0f4f5a11b1b73f071295ea6be41f9bedfb8f404fb37a53cefec3fd0b0bfdca8320448ca090c1181f9209effa0454392abb9c1c350ad50b29565782be05925c267cfff48bc803d7d552e58d2ffa05e41ab94cd98773a82259129dc6febeaf23a41f0eea881e226cf56f61c3fd80d9492da1a0f3597a647d3985c925bf249f2763bd5bbd9ca157a3802ae6576fb124914bf376d2dea8eb29b5a69fa7b3a06f281a97936ef7cd12d7edba492a6bfb97231c39acb6a5ae2a91881c6f9443e1e2614e5280b27e39ed7e9cd5bc776395198189ee5453b78170d158ce102337075df20cedd10fd5fd2802758ff1354470d9b4b40add588e06e438e6068f689573014f4e75d62173de82e5ca78bbbab06e33cf2991eb915d8ba7cd7a01950a4d826002bfe4076798d71828d48133695a39c07f19804dbf9bf0b5b6a968c89265c9231c7b3c215c520e023f174583de1756a2cb82e973ab4e8957ba1042d9791c6c40725a586bc3a65d04f58b6cb03c1d559145a759bd1f916dbfbef70cd1f7863efaa3c4eba1b81cdffd4a6e41e2c1bf6a1edb18383c46be1f285226b2928ea4ae62bdff01153e76b8c66579512e589c4109d2567d5b02f78e2c6aeea2d5257d62a87b9de8ca8ce7635273b8be33ee30a85c6d38479573f8877eda00fc38ca0d2be88f576f85c5154f4b9d53591d07ca72c1916ba7609642b5b6c34774df7071ef824f7f51fcd5231093c43e0edf73f35cb8b5ec214bce5f9506f35cdabc223a068d27454b2aa413a5e9325d599c7047806d0e3e74c0d8eeab16a5f61a0b91b76d7f507724754a15c9d3d981ebf2e82bc3b1a2c84b168f5b7c8c4e246919662fd2cb37ff2376a262598f4a03f0b03bedf88b38ae6c7733e5acd5f1296c84a500c7d533e5ebf9800dd28e90184f2ad2418e57b1df5355d6afe0c591cf4cb12e0d6c4873fd9c572bff8ab02f2311b0ff867851466a418cf2013d5f7f609bb1318919d743c6545c6d7da6108c728247e3247c96c5c0db1b7f9ea833bb057c314a39e5afacc20bc973c853aa240673c0d62e50663d6e300216ad744f9420fc9a1bb4f5fe48ecf00367c3dbf69cc181b0453f090b255ae1e1c76f6026b6587302fc0a9f044e625b03e55b0d8773f4e162cbf1b91353cbd3bb0b1f1428f26161c1dbe58f22cd247c7eac274b2cbc1feb4c5f9ae57b27dd6b407e1b4a3adf1686d5af1b1cf28fd07544c701922c110b628df5976da56bc121b1c10f2297375ec9f7a7d5fa2769d7cf9d56afbf71ab53d310f7d40e02e866b322fbbc848db7164950a396bb251d5a041af104c265cd6c1c63abeab00c574ba49a3e3a44b8e514b3ea952ce2b339e4e2a7eeb6f218f07ecb79716e134ecbff30313b8a6d2493c163a6c12aba8cb97c7e428ce2ed651b3e3795e2069e812c61fdbca6205629754253bdb1ed21f4a544e21040a9769c2dd4bb8019366c6338b64e5878df9430c7547919e9796f339a014fb535954d52ee294b8944747a8e14efa38a10103e19e9a2249a1e29c06a8e0a3c0544556da9717620c5528327d59f7db218ff663ac3e865a1ee67676dc23858f2d79e86f76dc1cf4861e401b2c4e6c8288f3454c6d722d0423234518973a4df2635e47aa4b145b4cfb957412efd5ac455e4dde54c01bf718d041b477c3b0a5f02ba8b4bc1e696bbb6e1ed3d68f2ab0d2c3a2faae9f7d8551778e6c5a93a439a41e1983db94976cbaeeba2cf53486d77c20b54d4efb54ce88ae7a635880c9fed63bbe910873aa165b98a2e162e1e417e47f4d1c2eacca44be40d57964884adf1136b6f3186631b1df6935ce0c69f8d633baf214451e336c9c311952e427e0ec0b684b4af1b7141fcf6e1049694bb8c20e679429aba0bb7545221c9169a3e79554032cb4c53cbf82416252c045f64e96cf99e1fb3894b71bcb62d53933cb328bec920b20cdae6ddfa6e8c9475dbe0bf7a2fabecda3716a62cbc5239eda9ccd5adc51d5a24a7a38f76eb321fdde72320f681dcc219fb7280e38604340c6cab751d208bd37e8d5eaa5fe67efceb9d43aa8ccf0212de5e0ff25986e1cbe9c89970e5f3fc7529067c75212b6e943f11e95c9324953a354d2e9b18d9f01ebf5b6d089a07643d4651448d7427cff112d8398cc7a9617d0e99b6cf7fcfd034316cbde752998c73719336b54c32b5869b6e22502387732f4696052b4f6dcb0b596fba0a49ce73a3b29e9172e8b98ceb77aa2f66adf88f2a9b37fce76776a79f5d0e344a68648548c893c67a7758673bdb465177f117d8699bb46ba6b87cc977c9d6d3fc5a9ccb7e3221f1b4a3e9e060876f5f462f5856192b6ccd92c0c2502efda6f2a8da32288b09e2fc2374c57d41d346bd163bc4951ad398ec6510455e06a8d2beca0aa920e9c880eef29f802e306609432b83bbff656e506195ac2b4d32eebe022e6040f6a480807361534b010bf28014a35047a705308ef459afed7b5f31c8a86954bf970c85bb8d8fb0d5b52104585d5661e83958526550746e516d5f276061097c86d7f3b2b518936e618fa5a03ff54233cbcb12b25927616785cca75daa7bb64429b633f0d8d0a4796cd1bd1f75da228f186d1449b326b74867a740983166958efa425eada40cc3b2b6d8886edd69fe7ec4534e86eec7c8470e22feae765f6adf6f474438442e1e128057dff61183927e9213eee4f8990c83cf3c184ffc008b895bc8f41be59f5244b3b15c6420e2f186ed200aeb7564f58aafe10ac357fa78d6c11175802c52c21e0fe9bbf5761314a138bdf063b8fcc8187c5c36844ba67b621c775328b0fcfa33c9c4652800cdd9bf1ff30c2f65e51318dea4f8836bc6843296b5997b6da6a42481c0035585f48e7367b4a289f1a79c5a9c19fe781970e3029e5af834eebb1018acef3bfb99b2295a394c65e06b77810ec98eb25e1661b1fb6bedf1e75ebea2cdab7fee6705fe4f8ffb98fe43555a54ecf050c656a53b976cc9a958960b682fb7070e16e19541c75eea450d06e367ddc2f85c386c67c7f8910169c0be7eea24f77da2b42169ac561f87a8a6656f5eb680c3fc4040abba7303cd1e678632b69b2fb295a584641d7a5</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">还是别出招了，反正是我赢！</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
+      <categories>
+        <category>思源地</category>
+      </categories>
+  </entry>
+  <entry>
     <title>一剑，一念</title>
     <url>/2023/02/06/%E9%9D%A2%E5%AF%B9%E7%96%BE%E9%A3%8E%E5%90%A7/</url>
     <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
@@ -1344,6 +1507,14 @@ table th:last-of-type {
 <li>创建本地仓库：<code>git init</code></li>
 <li>创建中央仓库：<code>git init --bare</code></li>
 <li>拉取远程分支所有历史提交记录：<code>git pull origin [branch] --allow-unrelated-histories</code></li>
+</ul>
+<h3 id="撤销暂存文件"><a href="#撤销暂存文件" class="headerlink" title="撤销暂存文件"></a>撤销暂存文件</h3><ul>
+<li>撤销所有：<code>git restore --staged .</code></li>
+<li>撤销文件：<code>git restore ---staged [filename]</code></li>
+</ul>
+<h3 id="撤销工作区文件"><a href="#撤销工作区文件" class="headerlink" title="撤销工作区文件"></a>撤销工作区文件</h3><ul>
+<li>撤销所有：<code>git restore .</code></li>
+<li>撤销文件(多个文件可以用空格隔开)：<code>git restore [filename]</code></li>
 </ul>
 <h2 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h2><ul>
 <li>快速打标签: <code>git tag [tagName]</code></li>
