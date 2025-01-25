@@ -77,13 +77,14 @@
 <p><img src="https://atlas-rc.pingcode.com/files/public/63f5a12ea299063b352a91dd/origin-url" alt="image.png"></p>
 <p>刚开始是根据报错提示给出的解决方案：  <code>npm install --legacy-peer-deps</code>  ，这个用过很多次了，也解决过大多数场景，但最近一次却栽到了这上面。</p>
 <span id="more"></span>
-
-<h3 id="为什么会出现-unable-to-resolve-dependency-tree"><a href="#为什么会出现-unable-to-resolve-dependency-tree" class="headerlink" title="为什么会出现 unable to resolve dependency tree ?"></a>为什么会出现 unable to resolve dependency tree ?</h3><p>简单说，  <strong>安装包的依赖出现了不对等</strong>  。具体解释看下面：</p>
+<h3 id="为什么会出现-unable-to-resolve-dependency-tree">为什么会出现 unable to resolve dependency tree ?</h3>
+<p>简单说，  <strong>安装包的依赖出现了不对等</strong>  。具体解释看下面：</p>
 <blockquote>
 <p>前几天还和同事聊这个问题：A 依赖了 C，版本是 1.0，B 也依赖了 C，版本是 2.0，那么最终 npm 安装的 C 是 1.0 还是 2.0，甚至说 C 本身就被项目依赖，版本是 4.0，此时安装的又是什么版本或者以上情况 均不处理报错终止安装，当然这些都是假设自己是 npm 的一些设想，从实际结果来看是终止安装。</p>
 </blockquote>
-<p>所以要处理这个问题就会产生一个用来维护依赖版本的东西，这就是 peerDependencies，peerDependencies 叫对等依赖关系，在 npm 7 才允许显示设置的，再此之前应该是默认始终安装（npm 6 的文档是没有 peerDependencies 相关资料的，也没有 legacy-peer-deps 参数标识），但实际情况我用 node 14.x 却没有此错误（node 14 配套的 npm 是 6.x）……</p>
-<h4 id="dependencies-和-peerDependencies-有什么区别？"><a href="#dependencies-和-peerDependencies-有什么区别？" class="headerlink" title="dependencies 和 peerDependencies 有什么区别？"></a>dependencies 和 peerDependencies 有什么区别？</h4><table>
+<p>所以要处理这个问题就会产生一个用来维护依赖版本的东西，这就是 peerDependencies，peerDependencies 叫对等依赖关系，在 npm 7 才允许显示设置的，再此之前应该是默认始终安装（npm 6 的文档是没有 peerDependencies 相关资料的，也没有 legacy-peer-deps 参数标识），但实际情况我用 node 14.x 却没有此错误（node 14 配套的 npm 是 6.x）…</p>
+<h4 id="dependencies-和-peerDependencies-有什么区别？">dependencies 和 peerDependencies 有什么区别？</h4>
+<table>
 <thead>
 <tr>
 <th></th>
@@ -91,7 +92,8 @@
 <th>peerDependencies</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>描述</td>
 <td>项目运行时所需的依赖库</td>
 <td>指定我们的包与特定版本的npm包兼容</td>
@@ -106,19 +108,24 @@
 <td>包括在最终代码包中</td>
 <td>只有在发布自己的包时才能包含</td>
 </tr>
-</tbody></table>
-<h3 id="legacy-peer-deps"><a href="#legacy-peer-deps" class="headerlink" title="legacy-peer-deps"></a>legacy-peer-deps</h3><p><strong>–legacy-peer-deps 参数是代表忽略 peerDependencies 设置的依赖版本并继续安装</strong>  ，这样产生的结果是，所有依赖会被打乱（具体安装策略还不是很清楚），这有时候没问题有时候就会出错，这取决于项目中是否用到了不同版本库的特性，向这次就栽到这上面了    ，很多库版本不一致，导致某些包已经不支持现有代码引用的一些特性而报错。</p>
-<p>所以，综上所述，  <strong>不要轻易加上 –legacy-peer-deps</strong>  ，这也是官方的警告⚠️  ** 。**</p>
+</tbody>
+</table>
+<h3 id="legacy-peer-deps">legacy-peer-deps</h3>
+<p><strong>–legacy-peer-deps 参数是代表忽略 peerDependencies 设置的依赖版本并继续安装</strong>  ，这样产生的结果是，所有依赖会被打乱（具体安装策略还不是很清楚），这有时候没问题有时候就会出错，这取决于项目中是否用到了不同版本库的特性，向这次就栽到这上面了    ，很多库版本不一致，导致某些包已经不支持现有代码引用的一些特性而报错。</p>
+<p>所以，综上所述，  <strong>不要轻易加上 --legacy-peer-deps</strong>  ，这也是官方的警告⚠️  ** 。**</p>
 <p><img src="https://atlas-rc.pingcode.com/files/public/63f5a895a299063b352a91e3/origin-url" alt="image.png"><img src="https://atlas-rc.pingcode.com/files/public/63f5a8eaa299063b352a91e4/origin-url" alt="image.png"></p>
-<h3 id="其他解决办法"><a href="#其他解决办法" class="headerlink" title="其他解决办法"></a>其他解决办法</h3><ul>
-<li>使用 –force ，代表强制继续安装。<br>–omit&#x3D;peer 这个倒还没有试过。</li>
+<h3 id="其他解决办法">其他解决办法</h3>
+<ul>
+<li>使用 --force ，代表强制继续安装。<br>
+–omit=peer 这个倒还没有试过。</li>
 </ul>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>总结就是<strong>能不用 –legacy-peer-deps</strong>的就不用，求其次用 <strong>–force</strong>。</p>
+<h3 id="总结">总结</h3>
+<p>总结就是<strong>能不用 --legacy-peer-deps</strong>的就不用，求其次用 <strong>–force</strong>。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/02/22/npm%20legacy-peer-deps%20%E5%8F%82%E6%95%B0%E6%A0%87%E8%AF%86/" data-id="cm5shib6g0012386cg6ue7v5v" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/02/22/npm%20legacy-peer-deps%20%E5%8F%82%E6%95%B0%E6%A0%87%E8%AF%86/" data-id="cm6chr9um001d1i6cchd0afum" class="article-share-link">
         分享
       </a>
       

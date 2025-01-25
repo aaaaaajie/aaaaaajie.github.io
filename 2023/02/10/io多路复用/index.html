@@ -73,11 +73,13 @@
       
       
       
-        <h2 id="什么是-IO-多路复用"><a href="#什么是-IO-多路复用" class="headerlink" title="什么是 IO 多路复用"></a>什么是 IO 多路复用</h2><p>IO 多路复用指的是<strong>一个线程去监听和管理多个文件句柄</strong>的同步 IO 模型。一旦有其中一个文件句柄完成就绪，就会通知应用程序进行相应的读写操作，如果没有任何文件句柄就会阻塞应用程序，交出 CPU。</p>
+        <h2 id="什么是-IO-多路复用">什么是 IO 多路复用</h2>
+<p>IO 多路复用指的是<strong>一个线程去监听和管理多个文件句柄</strong>的同步 IO 模型。一旦有其中一个文件句柄完成就绪，就会通知应用程序进行相应的读写操作，如果没有任何文件句柄就会阻塞应用程序，交出 CPU。</p>
 <blockquote>
-<p>文件句柄：在文件I&#x2F;O中，要从一个文件读取数据，应用程序首先要调用操作系统函数并传送文件名，并选一个到该文件的路径来打开文件。该函数取回一个顺序号，即文件句柄（file handle），该文件句柄对于打开的文件是唯一的识别依据。<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%96%87%E4%BB%B6%E5%8F%A5%E6%9F%84/3978023">更多点这里</a></p>
+<p>文件句柄：在文件I/O中，要从一个文件读取数据，应用程序首先要调用操作系统函数并传送文件名，并选一个到该文件的路径来打开文件。该函数取回一个顺序号，即文件句柄（file handle），该文件句柄对于打开的文件是唯一的识别依据。<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%96%87%E4%BB%B6%E5%8F%A5%E6%9F%84/3978023">更多点这里</a></p>
 </blockquote>
-<h2 id="IO-多路复用的三种实现"><a href="#IO-多路复用的三种实现" class="headerlink" title="IO 多路复用的三种实现"></a>IO 多路复用的三种实现</h2><ul>
+<h2 id="IO-多路复用的三种实现">IO 多路复用的三种实现</h2>
+<ul>
 <li>select</li>
 <li>poll</li>
 <li>epoll</li>
@@ -86,7 +88,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/02/10/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/" data-id="cm5shib6f000p386c0f14893x" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/02/10/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/" data-id="cm6chr9uj000u1i6cb29p4mwj" class="article-share-link">
         分享
       </a>
       

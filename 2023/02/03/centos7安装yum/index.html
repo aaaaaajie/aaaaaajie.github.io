@@ -74,31 +74,35 @@
       
       
         <p>一般购买的服务器都自带 yum，但恰好我买的这台就没有，WTF…</p>
-<h2 id="一、创建安装目录"><a href="#一、创建安装目录" class="headerlink" title="一、创建安装目录"></a>一、创建安装目录</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /usr</span><br><span class="line">mkdir yum-install</span><br><span class="line">cd yum-install</span><br></pre></td></tr></table></figure>
+<h2 id="一、创建安装目录">一、创建安装目录</h2>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /usr</span><br><span class="line">mkdir yum-install</span><br><span class="line">cd yum-install</span><br></pre></td></tr></table></figure>
 <span id="more"></span>
-
-<h2 id="二、wget-下载所有需要的-package"><a href="#二、wget-下载所有需要的-package" class="headerlink" title="二、wget 下载所有需要的 package"></a>二、wget 下载所有需要的 package</h2><p>在安装yum之前需要安装的依赖包</p>
+<h2 id="二、wget-下载所有需要的-package">二、wget 下载所有需要的 package</h2>
+<p>在安装yum之前需要安装的依赖包</p>
 <ul>
 <li>python-iniparse-0.4-9.el7.noarch.rpm</li>
 <li>yum-metadata-parser-1.1.4-10.el7.x86_64.rpm</li>
 <li>yum-3.4.3-168.el7.centos.noarch.rpm</li>
 <li>yum-plugin-fastestmirror-1.1.31-54.el7_8.noarch.rpm</li>
 </ul>
-<p>具体package的仓储： <a target="_blank" rel="noopener" href="http://mirrors.163.com/centos/7/os/x86_64/Packages/">http://mirrors.163.com/centos/7/os/x86_64/Packages/</a> </p>
+<p>具体package的仓储： <a target="_blank" rel="noopener" href="http://mirrors.163.com/centos/7/os/x86_64/Packages/">http://mirrors.163.com/centos/7/os/x86_64/Packages/</a></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget http://mirrors.163.com/centos/7/os/x86_64/Packages/python-iniparse-0.4-9.el7.noarch.rpm</span><br><span class="line">wget http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-metadata-parser-1.1.4-10.el7.x86_64.rpm</span><br><span class="line">wget http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-3.4.3-168.el7.centos.noarch.rpm</span><br><span class="line">wget http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-plugin-fastestmirror-1.1.31-54.el7_8.noarch.rpm</span><br></pre></td></tr></table></figure>
-
-<h2 id="三、rpm-安装"><a href="#三、rpm-安装" class="headerlink" title="三、rpm 安装"></a>三、rpm 安装</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rpm -ivh --force --nodeps python-iniparse-0.4-9.el7.noarch.rpm</span><br><span class="line">rpm -ivh --force --nodeps yum-metadata-parser-1.1.4-10.el7.x86_64.rpm</span><br><span class="line">rpm -ivh --force --nodeps yum-3.4.3-168.el7.centos.noarch.rpm</span><br><span class="line">rpm -ivh --force --nodeps yum-plugin-fastestmirror-1.1.31-54.el7_8.noarch.rpm</span><br></pre></td></tr></table></figure>
-<h2 id="四、安装-yum"><a href="#四、安装-yum" class="headerlink" title="四、安装 yum"></a>四、安装 yum</h2><p>包地址： <a target="_blank" rel="noopener" href="http://yum.baseurl.org/wiki.html">http://yum.baseurl.org/wiki.html</a></p>
+<h2 id="三、rpm-安装">三、rpm 安装</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rpm -ivh --force --nodeps python-iniparse-0.4-9.el7.noarch.rpm</span><br><span class="line">rpm -ivh --force --nodeps yum-metadata-parser-1.1.4-10.el7.x86_64.rpm</span><br><span class="line">rpm -ivh --force --nodeps yum-3.4.3-168.el7.centos.noarch.rpm</span><br><span class="line">rpm -ivh --force --nodeps yum-plugin-fastestmirror-1.1.31-54.el7_8.noarch.rpm</span><br></pre></td></tr></table></figure>
+<h2 id="四、安装-yum">四、安装 yum</h2>
+<p>包地址： <a target="_blank" rel="noopener" href="http://yum.baseurl.org/wiki.html">http://yum.baseurl.org/wiki.html</a></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http://yum.baseurl.org/download/3.4/yum-3.4.3.tar.gz</span><br></pre></td></tr></table></figure>
-
-<h2 id="五、测试"><a href="#五、测试" class="headerlink" title="五、测试"></a>五、测试</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum --help</span><br></pre></td></tr></table></figure>
+<h2 id="五、测试">五、测试</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum --help</span><br></pre></td></tr></table></figure>
 <p>能出来命令，说明安装成功！</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p> <a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1720868">https://cloud.tencent.com/developer/article/1720868</a> <br>⚠️ 注意：上面博客里面的有些包已经升级了，推荐使用本文的链接或官方的链接寻找资源</p>
+<h2 id="参考">参考</h2>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1720868">https://cloud.tencent.com/developer/article/1720868</a> <br>
+⚠️ 注意：上面博客里面的有些包已经升级了，推荐使用本文的链接或官方的链接寻找资源</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/02/03/centos7%E5%AE%89%E8%A3%85yum/" data-id="cm5shib6c000e386c1vsz2pf5" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/02/03/centos7%E5%AE%89%E8%A3%85yum/" data-id="cm6chr9uj000o1i6cf14x5yy9" class="article-share-link">
         分享
       </a>
       

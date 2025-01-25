@@ -130,6 +130,8 @@
       
         
       
+        
+      
       
        <li> <a class="category-link" href="/categories">更多分类...</a></li> 
       
@@ -140,6 +142,66 @@
     
     <!-- <h1 class="page-type-title"></h1> -->
     
+    
+    <article id="post-使用google矢量图" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h2 class="article-title" itemprop="name">
+    <a href="/2023/03/05/%E4%BD%BF%E7%94%A8google%E7%9F%A2%E9%87%8F%E5%9B%BE/">Sass 中使用 Google icons 和 字体</a>
+  </h2>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/03/05/%E4%BD%BF%E7%94%A8google%E7%9F%A2%E9%87%8F%E5%9B%BE/" class="article-date">
+  <time datetime="2023-03-05T02:55:50.000Z" itemprop="datePublished">2023-03-05</time>
+</a>
+      
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+        
+      
+      
+        <h2 id="1-导入-icon">1. 导入 icon</h2>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@import</span> <span class="string">&quot;https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&amp;display=swap&quot;</span>;</span><br></pre></td></tr></table></figure>
+        
+          <p>
+            <a class="article-more-link" href="/2023/03/05/%E4%BD%BF%E7%94%A8google%E7%9F%A2%E9%87%8F%E5%9B%BE/">
+              阅读全文...
+            </a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/03/05/%E4%BD%BF%E7%94%A8google%E7%9F%A2%E9%87%8F%E5%9B%BE/" data-id="cm6chr9um001a1i6c0whqetvn" class="article-share-link">
+        分享
+      </a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
     
     <article id="post-linux语法手册" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
@@ -179,11 +241,12 @@
         
       
       
-        <h2 id="查看端口占用"><a href="#查看端口占用" class="headerlink" title="查看端口占用"></a>查看端口占用</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsof -i:端口号</span><br></pre></td></tr></table></figure>
-
-<h2 id="杀死进程"><a href="#杀死进程" class="headerlink" title="杀死进程"></a>杀死进程</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -9 PID</span><br></pre></td></tr></table></figure>
-
-<h2 id="查看内存占用情况-前10位"><a href="#查看内存占用情况-前10位" class="headerlink" title="查看内存占用情况(前10位)"></a>查看内存占用情况(前10位)</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps aux --<span class="built_in">sort</span> -rss | <span class="built_in">head</span> -n 10</span><br></pre></td></tr></table></figure>
+        <h2 id="查看端口占用">查看端口占用</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsof -i:端口号</span><br></pre></td></tr></table></figure>
+<h2 id="杀死进程">杀死进程</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -9 PID</span><br></pre></td></tr></table></figure>
+<h2 id="查看内存占用情况-前10位">查看内存占用情况(前10位)</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps aux --<span class="built_in">sort</span> -rss | <span class="built_in">head</span> -n 10</span><br></pre></td></tr></table></figure>
         
           <p>
             <a class="article-more-link" href="/2023/03/03/linux%E8%AF%AD%E6%B3%95%E6%89%8B%E5%86%8C/">
@@ -194,7 +257,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/03/03/linux%E8%AF%AD%E6%B3%95%E6%89%8B%E5%86%8C/" data-id="cm5shib6g0010386c7j56bb68" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/03/03/linux%E8%AF%AD%E6%B3%95%E6%89%8B%E5%86%8C/" data-id="cm6chr9ul00141i6c4pup3i76" class="article-share-link">
         分享
       </a>
       
@@ -249,7 +312,8 @@
       
       
         <p>从官网下载 vscode 会特别的慢，所以利用镜像可以提高下载速度。</p>
-<h2 id="1-打开vscode官网"><a href="#1-打开vscode官网" class="headerlink" title="1. 打开vscode官网"></a>1. 打开vscode官网</h2><p>打开官网： <a target="_blank" rel="noopener" href="https://code.visualstudio.com/Download/">https://code.visualstudio.com/Download/</a></p>
+<h2 id="1-打开vscode官网">1. 打开vscode官网</h2>
+<p>打开官网： <a target="_blank" rel="noopener" href="https://code.visualstudio.com/Download/">https://code.visualstudio.com/Download/</a></p>
         
           <p>
             <a class="article-more-link" href="/2023/03/03/vscode%E9%95%9C%E5%83%8F%E4%B8%8B%E8%BD%BD/">
@@ -260,7 +324,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/03/03/vscode%E9%95%9C%E5%83%8F%E4%B8%8B%E8%BD%BD/" data-id="cm5shib6h0018386c66ke3dj5" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/03/03/vscode%E9%95%9C%E5%83%8F%E4%B8%8B%E8%BD%BD/" data-id="cm6chr9ul00171i6c7x7f6nde" class="article-share-link">
         分享
       </a>
       
@@ -325,7 +389,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/02/22/npm%20legacy-peer-deps%20%E5%8F%82%E6%95%B0%E6%A0%87%E8%AF%86/" data-id="cm5shib6g0012386cg6ue7v5v" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/02/22/npm%20legacy-peer-deps%20%E5%8F%82%E6%95%B0%E6%A0%87%E8%AF%86/" data-id="cm6chr9um001d1i6cchd0afum" class="article-share-link">
         分享
       </a>
       
@@ -390,7 +454,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/02/08/mermaid/" data-id="cm5shib6g000v386c43jv9aad" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/02/08/mermaid/" data-id="cm6chr9uk000x1i6cayzue9r4" class="article-share-link">
         分享
       </a>
       
@@ -453,70 +517,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/02/07/%E5%88%87%E9%9D%A2%E7%BC%96%E7%A8%8B/" data-id="cm5shib6i001g386cblkxfx5w" class="article-share-link">
-        分享
-      </a>
-      
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-    
-    <article id="post-怎么才算一本好书" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-      
-  
-  <h2 class="article-title" itemprop="name">
-    <a href="/2023/02/06/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/">论读书</a>
-  </h2>
-  
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2023/02/06/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/" class="article-date">
-  <time datetime="2023-02-06T15:20:00.000Z" itemprop="datePublished">2023-02-06</time>
-</a>
-      
-<div class="article-category">
-  <a class="article-category-link" href="/categories/%E8%AF%BB%E4%B9%A6%E6%84%9F%E6%82%9F/">读书感悟</a>
-</div>
-
-    </div>
-    
-
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-      
-        
-      
-      
-        长路漫漫，唯剑作伴
-        
-          <p>
-            <a class="article-more-link" href="/2023/02/06/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/">
-              阅读全文...
-            </a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/02/06/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/" data-id="cm5shib6k001u386c3yahhoyd" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/02/07/%E5%88%87%E9%9D%A2%E7%BC%96%E7%A8%8B/" data-id="cm6chr9un001m1i6c0in127d1" class="article-share-link">
         分享
       </a>
       
@@ -579,7 +580,70 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/02/06/%E7%BC%96%E7%A8%8B%E8%A7%92%E5%BA%A6%E8%B0%88%E6%8A%BD%E8%B1%A1/" data-id="cm5shib6k001z386cf5wsdzvy" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/02/06/%E7%BC%96%E7%A8%8B%E8%A7%92%E5%BA%A6%E8%B0%88%E6%8A%BD%E8%B1%A1/" data-id="cm6chr9uo00201i6c8eir2p8t" class="article-share-link">
+        分享
+      </a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+    
+    <article id="post-怎么才算一本好书" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h2 class="article-title" itemprop="name">
+    <a href="/2023/02/06/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/">论读书</a>
+  </h2>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/02/06/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/" class="article-date">
+  <time datetime="2023-02-06T15:20:00.000Z" itemprop="datePublished">2023-02-06</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/%E8%AF%BB%E4%B9%A6%E6%84%9F%E6%82%9F/">读书感悟</a>
+</div>
+
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+        
+      
+      
+        长路漫漫，唯剑作伴
+        
+          <p>
+            <a class="article-more-link" href="/2023/02/06/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/">
+              阅读全文...
+            </a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/02/06/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/" data-id="cm6chr9uo00211i6cb7wp78sh" class="article-share-link">
         分享
       </a>
       
@@ -638,7 +702,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/02/06/%E9%9D%A2%E5%AF%B9%E7%96%BE%E9%A3%8E%E5%90%A7/" data-id="cm5shib6m002g386c7g2rcuiq" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/02/06/%E9%9D%A2%E5%AF%B9%E7%96%BE%E9%A3%8E%E5%90%A7/" data-id="cm6chr9uq002l1i6c73h74cok" class="article-share-link">
         分享
       </a>
       
@@ -691,7 +755,8 @@
       
       
         <p>一般购买的服务器都自带 yum，但恰好我买的这台就没有，WTF…</p>
-<h2 id="一、创建安装目录"><a href="#一、创建安装目录" class="headerlink" title="一、创建安装目录"></a>一、创建安装目录</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /usr</span><br><span class="line">mkdir yum-install</span><br><span class="line">cd yum-install</span><br></pre></td></tr></table></figure>
+<h2 id="一、创建安装目录">一、创建安装目录</h2>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /usr</span><br><span class="line">mkdir yum-install</span><br><span class="line">cd yum-install</span><br></pre></td></tr></table></figure>
         
           <p>
             <a class="article-more-link" href="/2023/02/03/centos7%E5%AE%89%E8%A3%85yum/">
@@ -702,91 +767,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/02/03/centos7%E5%AE%89%E8%A3%85yum/" data-id="cm5shib6c000e386c1vsz2pf5" class="article-share-link">
-        分享
-      </a>
-      
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-    
-    <article id="post-git手册" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-      
-  
-  <h2 class="article-title" itemprop="name">
-    <a href="/2023/02/03/git%E6%89%8B%E5%86%8C/">Git 手册</a>
-  </h2>
-  
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2023/02/03/git%E6%89%8B%E5%86%8C/" class="article-date">
-  <time datetime="2023-02-03T06:38:00.000Z" itemprop="datePublished">2023-02-03</time>
-</a>
-      
-<div class="article-category">
-  <a class="article-category-link" href="/categories/Git/">Git</a>
-</div>
-
-    </div>
-    
-
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-      
-        
-      
-      
-        <blockquote>
-<p>以下命令中 [ ] 包裹的值为动态值，需要根据情况替换，比如 <code>git push origin [branchName]</code>，[branchName] 需要根据实际情况的值决定，比如： <code>git push origin master</code></p>
-</blockquote>
-<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><ul>
-<li>创建本地仓库：<code>git init</code></li>
-<li>创建中央仓库：<code>git init --bare</code></li>
-<li>拉取远程分支所有历史提交记录：<code>git pull origin [branch] --allow-unrelated-histories</code></li>
-</ul>
-<h3 id="撤销暂存文件"><a href="#撤销暂存文件" class="headerlink" title="撤销暂存文件"></a>撤销暂存文件</h3><ul>
-<li>撤销所有：<code>git restore --staged .</code></li>
-<li>撤销文件：<code>git restore ---staged [filename]</code></li>
-</ul>
-<h3 id="撤销工作区文件"><a href="#撤销工作区文件" class="headerlink" title="撤销工作区文件"></a>撤销工作区文件</h3><ul>
-<li>撤销所有：<code>git restore .</code></li>
-<li>撤销文件(多个文件可以用空格隔开)：<code>git restore [filename]</code></li>
-</ul>
-<h2 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h2><ul>
-<li>快速打标签: <code>git tag [tagName]</code></li>
-<li>推送至远程: <code>git push origin [tagName]</code></li>
-</ul>
-<h2 id="cherry-pick"><a href="#cherry-pick" class="headerlink" title="cherry-pick"></a>cherry-pick</h2><p>将其他分支的 commit 迁移至当前分支(<strong>注意先切换到需要上线的分支</strong>): <code>git cherry-pick [commitid]</code></p>
-<p>一般在热修复，脚本，补丁需要及时上线，但又不能基于开发分支代码部署，将临时代码合并到上个上线的版本部署一版的场景中会用到。</p>
-        
-          <p>
-            <a class="article-more-link" href="/2023/02/03/git%E6%89%8B%E5%86%8C/">
-              阅读全文...
-            </a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/02/03/git%E6%89%8B%E5%86%8C/" data-id="cm5shib6e000k386ceibq5w27" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/02/03/centos7%E5%AE%89%E8%A3%85yum/" data-id="cm6chr9uj000o1i6cf14x5yy9" class="article-share-link">
         分享
       </a>
       

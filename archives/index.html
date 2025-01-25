@@ -45,6 +45,58 @@
   
   <div class="archives-wrap">
     <div class="archive-year-wrap">
+      <a href="/archives/2025" class="archive-year">2025</a>
+    </div>
+    <div class="archives">
+      
+      <article class="archive-article archive-type-post">
+  
+  
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      
+  
+  <h2 class="archive-article-title" itemprop="name">
+    <a href="/2025/01/24/Stripe-%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97/">Stripe 接入指南</a>
+  </h2>
+  
+  
+
+      <a href="/2025/01/24/Stripe-%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97/" class="archive-article-date">
+  <time datetime="2025-01-24T13:26:00.000Z" itemprop="datePublished">01/24</time>
+</a>
+    </header>
+    
+      <h2 id="前言">前言</h2>
+<blockquote>
+<p>Stripe 是一家全球领先的支付处理平台，适合各种规模和行业的企业，相当于国内的微信、支付宝。</p>
+</blockquote>
+<p>Stripe 功能非常强大，但其官方文档以平铺式为主，对于新手接入来说，可能缺少一个完整的流程指引。因此，本篇旨在为首次接入 Stripe 的开发者提供一份简单易懂的指南。尽管官方提供了丰富且灵活的事件和 API，组合方式多种多样，玩法也十分多样化，但本文的重点在于梳理支付的基本流程，帮助大家以最短路径实现接入。</p>
+<h2 id="准备工作">准备工作</h2>
+<blockquote>
+<p>以下均为测试环境，也建议大家在测试环境准备</p>
+</blockquote>
+<p>大概分为两部分：</p>
+<ul>
+<li>Stripe 商家端管理后台</li>
+<li>初始化 sdk</li>
+</ul>
+    
+    
+    
+  </div>
+
+</article>
+      
+  
+  
+  
+  </div>
+  </div>
+  
+  
+  <div class="archives-wrap">
+    <div class="archive-year-wrap">
       <a href="/archives/2024" class="archive-year">2024</a>
     </div>
     <div class="archives">
@@ -70,8 +122,9 @@
       <blockquote>
 <p>前置条件： 已经注册了 <a target="_blank" rel="noopener" href="https://www.iconfont.cn/">iconfont</a></p>
 </blockquote>
-<h3 id="第一步，复制项目-symbol-路径"><a href="#第一步，复制项目-symbol-路径" class="headerlink" title="第一步，复制项目 symbol 路径"></a>第一步，复制项目 symbol 路径</h3><p><img src="https://raw.githubusercontent.com/aaaaaajie/blog-images/refs/heads/main/iconfont.jpg"></p>
-<h3 id="第二步，在-next-项目集成"><a href="#第二步，在-next-项目集成" class="headerlink" title="第二步，在 next 项目集成"></a>第二步，在 next 项目集成</h3>
+<h3 id="第一步，复制项目-symbol-路径">第一步，复制项目 symbol 路径</h3>
+<p><img src="https://raw.githubusercontent.com/aaaaaajie/blog-images/refs/heads/main/iconfont.jpg" alt=""></p>
+<h3 id="第二步，在-next-项目集成">第二步，在 next 项目集成</h3>
     
     
     
@@ -99,7 +152,8 @@
 </a>
     </header>
     
-      <h4 id="安装-yum-utils-并添加源"><a href="#安装-yum-utils-并添加源" class="headerlink" title="安装 yum-utils 并添加源"></a>安装 yum-utils 并添加源</h4><p>为了安装 Docker，我们需要首先安装yum-utils，以便添加 Docker 的源。</p>
+      <h4 id="安装-yum-utils-并添加源">安装 yum-utils 并添加源</h4>
+<p>为了安装 Docker，我们需要首先安装yum-utils，以便添加 Docker 的源。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y yum-utils</span><br></pre></td></tr></table></figure>
     
     
@@ -282,14 +336,16 @@
     </header>
     
       <p>曾写过多篇测试相关的文章，都源于每次测试给我带来的触动，这次也不例外，最近在重构复杂逻辑时，再次感谢它为我保驾护航，同时也发现了历史测试中存在的一些问题。</p>
-<h3 id="测试的意义"><a href="#测试的意义" class="headerlink" title="测试的意义"></a>测试的意义</h3><blockquote>
+<h3 id="测试的意义">测试的意义</h3>
+<blockquote>
 <p>这是一个认知问题，如果不清楚为何要写测试，那么最终产生的测试大概率是腐烂、或无意义的。</p>
 </blockquote>
 <ol>
 <li>保证代码的正确性，提升代码质量是它最高的使命。</li>
-<li>保证代码的安全性&#x2F;稳定性，当对某段代码改动后，测试会告诉哪些代码受到了潜在的问题。</li>
+<li>保证代码的安全性/稳定性，当对某段代码改动后，测试会告诉哪些代码受到了潜在的问题。</li>
 <li>可以指导写代码的思路，在测试驱动开发（TDD）体现尤为明显。</li>
-<li>更能透彻的理解代码，很多情况下，写代码时常常会陷入自己的世界，从测试相当于站在旁观者的角度审视代码，从而提升可读性和扩展性。
+<li>更能透彻的理解代码，很多情况下，写代码时常常会陷入自己的世界，从测试相当于站在旁观者的角度审视代码，从而提升可读性和扩展性。</li>
+</ol>
     
     
     
@@ -304,7 +360,7 @@
   
     <div class="archive-article-gallery">
       
-        <a class="article-gallery-img" href="/2023/06/04/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%89%AA%E8%B4%B4%E6%9D%BF/" rel="gallery_cm5shib6k001x386c4fubdekb">
+        <a class="article-gallery-img" href="/2023/06/04/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%89%AA%E8%B4%B4%E6%9D%BF/" rel="gallery_cm6chr9uo00231i6cchplhfuv">
           <img src="https://atlas-rc.pingcode.com/files/public/647b02e1e468e3b3652fa6da/origin-url" itemprop="image">
         </a>
       
@@ -324,36 +380,6 @@
   <time datetime="2023-06-04T07:01:42.000Z" itemprop="datePublished">06/04</time>
 </a>
     </header>
-    
-    
-    
-  </div>
-
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  
-  
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-  
-  <h2 class="archive-article-title" itemprop="name">
-    <a href="/2023/05/29/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%85%89%E6%A0%87%E5%92%8C%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE/">编辑器系列—如何获取光标/元素位置</a>
-  </h2>
-  
-  
-
-      <a href="/2023/05/29/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%85%89%E6%A0%87%E5%92%8C%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE/" class="archive-article-date">
-  <time datetime="2023-05-29T07:30:42.000Z" itemprop="datePublished">05/29</time>
-</a>
-    </header>
-    
-      <h3 id="Slate-Selection"><a href="#Slate-Selection" class="headerlink" title="Slate Selection"></a>Slate Selection</h3><p>slate 的 selection 是用来表示一个元素或节点的位置，结构如下：</p>
-<p><img src="https://atlas-rc.pingcode.com/files/public/64744566e468e3b3652fa138/origin-url" alt="image.png"></p>
-<p>它是基于原生 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Selection">DOM Selection API</a> 封装的，一些基础概念：</p>
     
     
     

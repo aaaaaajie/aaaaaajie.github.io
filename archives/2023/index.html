@@ -126,14 +126,16 @@
     </header>
     
       <p>曾写过多篇测试相关的文章，都源于每次测试给我带来的触动，这次也不例外，最近在重构复杂逻辑时，再次感谢它为我保驾护航，同时也发现了历史测试中存在的一些问题。</p>
-<h3 id="测试的意义"><a href="#测试的意义" class="headerlink" title="测试的意义"></a>测试的意义</h3><blockquote>
+<h3 id="测试的意义">测试的意义</h3>
+<blockquote>
 <p>这是一个认知问题，如果不清楚为何要写测试，那么最终产生的测试大概率是腐烂、或无意义的。</p>
 </blockquote>
 <ol>
 <li>保证代码的正确性，提升代码质量是它最高的使命。</li>
-<li>保证代码的安全性&#x2F;稳定性，当对某段代码改动后，测试会告诉哪些代码受到了潜在的问题。</li>
+<li>保证代码的安全性/稳定性，当对某段代码改动后，测试会告诉哪些代码受到了潜在的问题。</li>
 <li>可以指导写代码的思路，在测试驱动开发（TDD）体现尤为明显。</li>
-<li>更能透彻的理解代码，很多情况下，写代码时常常会陷入自己的世界，从测试相当于站在旁观者的角度审视代码，从而提升可读性和扩展性。
+<li>更能透彻的理解代码，很多情况下，写代码时常常会陷入自己的世界，从测试相当于站在旁观者的角度审视代码，从而提升可读性和扩展性。</li>
+</ol>
     
     
     
@@ -148,7 +150,7 @@
   
     <div class="archive-article-gallery">
       
-        <a class="article-gallery-img" href="/2023/06/04/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%89%AA%E8%B4%B4%E6%9D%BF/" rel="gallery_cm5shib6k001x386c4fubdekb">
+        <a class="article-gallery-img" href="/2023/06/04/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%89%AA%E8%B4%B4%E6%9D%BF/" rel="gallery_cm6chr9uo00231i6cchplhfuv">
           <img src="https://atlas-rc.pingcode.com/files/public/647b02e1e468e3b3652fa6da/origin-url" itemprop="image">
         </a>
       
@@ -195,7 +197,8 @@
 </a>
     </header>
     
-      <h3 id="Slate-Selection"><a href="#Slate-Selection" class="headerlink" title="Slate Selection"></a>Slate Selection</h3><p>slate 的 selection 是用来表示一个元素或节点的位置，结构如下：</p>
+      <h3 id="Slate-Selection">Slate Selection</h3>
+<p>slate 的 selection 是用来表示一个元素或节点的位置，结构如下：</p>
 <p><img src="https://atlas-rc.pingcode.com/files/public/64744566e468e3b3652fa138/origin-url" alt="image.png"></p>
 <p>它是基于原生 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Selection">DOM Selection API</a> 封装的，一些基础概念：</p>
     
@@ -225,7 +228,8 @@
 </a>
     </header>
     
-      <h3 id="单个插件渲染流程"><a href="#单个插件渲染流程" class="headerlink" title="单个插件渲染流程"></a>单个插件渲染流程</h3><p><img src="https://atlas-rc.pingcode.com/files/public/6465f1e87083dd5ecd38a428/origin-url" alt="image.png"></p>
+      <h3 id="单个插件渲染流程">单个插件渲染流程</h3>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6465f1e87083dd5ecd38a428/origin-url" alt="image.png"></p>
     
     
     
@@ -253,7 +257,8 @@
 </a>
     </header>
     
-      <h2 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h2><p><img src="https://atlas-rc.pingcode.com/files/public/646353137083dd5ecd38a0d5/origin-url" alt="image.png"></p>
+      <h2 id="概览">概览</h2>
+<p><img src="https://atlas-rc.pingcode.com/files/public/646353137083dd5ecd38a0d5/origin-url" alt="image.png"></p>
     
     
     
@@ -284,8 +289,8 @@
       <blockquote>
 <p>插件（Plugin）是指一种可以增强或扩展已有软件功能的组件或模块。它们通常是以独立的方式编写，可以被动态地添加到主应用程序中，从而提供额外的功能和特性。                                                                                                          —— ChatGPT</p>
 </blockquote>
-<p>个人理解：插件是一个相对的名词，它必须有一个主体容器&#x2F;应用，其他独立的组件以插入的形式扩展主体容器&#x2F;应用。</p>
-<p>在 Slate 中，插件是一等公民，连编辑器都是以插件的形式创建的，其中编辑器对象扮演着主体容器&#x2F;应用的角色，提供核心功能，每个插件可以基于 Editor 提供的核心能力去拦截改写或扩展自己的功能&#x2F;逻辑。</p>
+<p>个人理解：插件是一个相对的名词，它必须有一个主体容器/应用，其他独立的组件以插入的形式扩展主体容器/应用。</p>
+<p>在 Slate 中，插件是一等公民，连编辑器都是以插件的形式创建的，其中编辑器对象扮演着主体容器/应用的角色，提供核心功能，每个插件可以基于 Editor 提供的核心能力去拦截改写或扩展自己的功能/逻辑。</p>
     
     
     
@@ -341,7 +346,9 @@
 </a>
     </header>
     
-      <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>有这样一个需求：<br><img src="https://atlas.pingcode.com/files/public/642cdbc113b2732f78dd3cff"></p>
+      <h2 id="背景">背景</h2>
+<p>有这样一个需求：<br>
+<img src="https://atlas.pingcode.com/files/public/642cdbc113b2732f78dd3cff" alt=""></p>
     
     
     
