@@ -1,0 +1,2109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>RxJS “道” 与 “术”</title>
+    <url>/2023/01/19/RxJS%E9%81%93%E4%B8%8E%E6%9C%AF/</url>
+    <content><![CDATA[<blockquote>
+<p>首发于<a href="https://zhuanlan.zhihu.com/p/583539989">知乎 PingCode 专栏</a>。</p>
+</blockquote>
+<h1>前言</h1>
+<p>打开此文的小伙伴想必对 RxJS 已经有了或多或少的了解，如果没有倒也无妨，因为下面会从零开始讲起；如果你带着几个问题来翻阅，本人也希望此文可以带你找到答案。</p>
+<p>温馨提示：文章内容较长，建议收藏反复观看。</p>
+<span id="more"></span>
+<h1>概览</h1>
+<p>从我个人的学习 RxJS 的历程来看，最开始是“照猫画虎”能够基本使用，随后是研究部分操作符和使用场景，最后了解产生背景、设计思想以及实现原理。在这期间有过很多疑问，也曾从不同角度理解 RxJS，最终总结了认为比较系统的知识图谱（下图）。</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6334fa685a7447c844d806c4/origin-url" alt="image.png"></p>
+<h1>深入理解 RxJS</h1>
+<h2 id="大“道”——响应式编程">大“道”——响应式编程</h2>
+<p>全面理解一个事物，追溯其历史是一种好的方式，RxJS 的起源需要追溯到  <strong>响应式编程（RP）</strong>  ，后续发展了一系列基于响应式编程范式的语言扩展（Rx，RxJS 就是其中之一），请看历史简谱（左向右延续）。</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/631a8fa22ce1c1a732e1147d/origin-url" alt="image.png"></p>
+<h3 id="何为响应式">何为响应式</h3>
+<blockquote>
+<p>响应式是学习 RxJS 必须要理解的概念，本人用了大量的文字来解释，如果您已经深刻理解，可直接跳过。如果您是第一次接触这个名词，也不要先给自己心里暗示它有多么的高深和难以理解，也许你天天在使用。</p>
+</blockquote>
+<h4 id="一个例子">一个例子</h4>
+<p>为了避免上来就接触晦涩的概念，先来举个例子：  <strong>博客平台关注功能</strong>  。话说你偶然浏览到阿杰的文章，觉得写的很赞，于是你  <strong>关注</strong>  了他的博客账号，以便不会错过之后的干货，在以后的日子里阿杰  <strong>每发布一篇文章博客平台都会给你推送一条消息</strong>  ，提醒你来给他点点赞，假设博客平台没有关注的功能，那么你需要想知道他的最新动态就只能打开他的个人主页查看文章列表来确认，也许稍不留意就会错过他的文章。这个例子出现了  <strong>粉丝关注博主、博主发布博客、平台自动推送给粉丝消息、给文章点赞</strong>  ，这就形成了响应式闭环，平台在观察到博主粉丝只需要关注一下就能收到博主以后的动态，这就是响应式带来的好处。</p>
+<h4 id="另一个例子">另一个例子</h4>
+<p>再举一个贴近我们开发的例子：假设有一个更新某用户密码的需求，A 同事负责调用更新逻辑并在更新后执行其他任务（比如提醒用户更新成功或失败），B 同事负责具体更新密码的逻辑，下图描述了完成整个任务的流程：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6309ab9951ba5c30098e82c6/origin-url" alt="image.png"></p>
+<p>实际情况更新逻辑比较复杂，有以下逻辑：</p>
+<ol>
+<li>验证一下用户信息的真实性</li>
+<li>验证密码是否合法</li>
+<li>最终把新的密码入库</li>
+</ol>
+<p>上述的每个环节都有可能是异步耗时任务，比如用户的真实性是第三方平台验证的，入库的过程中网络非常慢，再比如…等等，诸如此类的各种不确定性，这对于 B 同事做后续任务就有了一个关键性条件，  <strong>确定/等待更新结果</strong>  ，这种情况有一种做法是：定期轮询重试，B 每隔一段时间执行一次，直到确定 A 已经修改成功，再去执行后续操作。逻辑中定时 A 逻辑结束这种做法明显有一个弊端是执行多次，对于 B 显然不是好的做法，好的做法是：  <strong>B 的更新逻辑执行完后通知 A，</strong>  甚至 B 可以先把更新后的事准备好，让 A 决定后续逻辑的执行时机。</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6309ac7651ba5c30098e82c7/origin-url" alt="image.png"></p>
+<p>流程如图示：  <strong>订阅/执行更新逻辑、更新逻辑结束、将结果通知调用者、执行后续逻辑</strong>  。这就是响应式的做法，它带来的好处是  <strong>：当更新结果发生变化时自动通知调用者，而不用轮询重试</strong>  。</p>
+<h3 id="了解响应式宣言">了解响应式宣言</h3>
+<p>相信你已经明白了响应式，并能发现生活/工作中到处可见，下面了解一下设计响应式模块/系统遵循的原则：</p>
+<ul>
+<li>即时响应性：只要有可能，就要及时地做出响应。</li>
+<li>回弹性  <strong>：</strong>  执行过程中在出现失败时依然保持即时响应性。</li>
+<li>弹性  <strong>：</strong>   在不断变化的工作负载之下依然保持即时响应性。</li>
+<li>消息驱动  <strong>：</strong>  反应式依赖异步的消息传递，从而确保了松耦合、隔离、位置透明的组件之间有着明确边界。</li>
+</ul>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6332abe95a7447c844d804b3/origin-url" alt="image.png"></p>
+<h3 id="响应式编程">响应式编程</h3>
+<p>下面我们正式的介绍响应式编程：</p>
+<p><strong>响应式编程，</strong>  Reactive Programing，又称反应式编程  <strong>，</strong>  简称 RP，是一种以传播数据流（数据流概念戳  <a href="https://baike.baidu.com/item/%E6%95%B0%E6%8D%AE%E6%B5%81/3002243">这里</a>   ）的编程范式。</p>
+<blockquote>
+<p><strong>响应式编程</strong>  或  <strong>反应式编程</strong>  （英语：Reactive programming）是一种面向数据流和变化传播的声明式编程范式。这意味着可以在编程语言中很方便地表达静态或动态的数据流，而相关的计算模型会自动将变化的值通过数据流进行传播。                                                                                                                 —— 维基百科</p>
+</blockquote>
+<p>优势：</p>
+<ol>
+<li><strong>声明式</strong>  ，方便地表达静态或动态的数据流</li>
+<li><strong>自动化</strong>  ，自动将变化的值通过数据流进行传播</li>
+</ol>
+<p><strong>核心思想：</strong>  从传统的调用方“拉”数据的思维模式转变为被调用方“推”数据的思维模式。</p>
+<h3 id="JS-异步编程史">JS 异步编程史</h3>
+<blockquote>
+<p>众所周知，JS 执行环境是单线程的，在事件监听，异步的处理，响应式编程毋庸置疑是其中一大主力。</p>
+</blockquote>
+<h4 id="Callback-时代">Callback 时代</h4>
+<p>回调函数延续至今，JS 的运用高阶函数巧妙地将异步后的逻辑进行托管，以  <strong>事件驱动</strong>  的方式来解决异步编程，但它有一个“臭名昭著”的问题：  <strong>回调嵌套</strong>  ，耦合度高。本来很简单的逻辑但为了控制执行流程却不得不写大量的代码，当时产生了一些知名的库：async、bluebrid，它们封装和处理了嵌套问题，暴露出更为简单好用的 API，额外还可以优雅地处理流程控制相关场景，但所做的只是划分了逻辑，依旧没有解决代码臃肿的问题。</p>
+<h4 id="Promise-时代">Promise 时代</h4>
+<p>ES6 纳入 Promise 之后可谓一大喜讯，因为它解决了回调嵌套的问题，虽然它只是回调的语法糖，但在处理流程和捕获错误（外层处理）已经非常的优雅了，但它的弊端是：  <strong>无法监听和打断 Promise 的状态</strong>  。这意味着一旦声明它会立即执行并修改它的执行状态，这源于它的实现。</p>
+<h4 id="Generator">Generator</h4>
+<p>Generator 是处于 Promise 和 Async/await 之间的产物，它给我们带来了写异步语法像写同步一般，只需在函数前加  <code>*</code>  修饰，这样就可以在函数内部使用一个   <code>yield</code>  关键字返回结果，类似于   <code>await</code>  ，但它也并非完美，不然也不会有后面的 Async/await 了，它的主要问题是  <strong>流程管理不方便（迭代器模式实现，主动调 next 执行器流转游标）。</strong></p>
+<h4 id="Async-await">Async/await</h4>
+<p>Async/await 是 Generator 语法糖，既保留了语法上的优势，也解决了 Generator 每步要调一下 next 执行器的弊端，是现阶段的最佳方案，就是得吐槽一下 Top-level await 到 ES2022  才出现。</p>
+<p><strong>其中 Generator 和 Async/await 在异步编程是以等待的方式处理。</strong></p>
+<h3 id="ReactiveX">ReactiveX</h3>
+<blockquote>
+<p>业界一致认为正统的响应式实现/扩展是 ReactiveX 系列。</p>
+</blockquote>
+<p>ReactiveX，简称 Rx，是基于响应式的扩展，是各种语言实现的一个统称，除了我们所知道的 RxJS，还有 RxJava、<a href="http://Rx.NET">Rx.NET</a>、RxKotlin、RxPHP…它最早是由微软提出并引入到 .NET 平台中，随后 ES6 也引入了类似的技术。</p>
+<p>它扩展了观察者模式，以支持数据序列和/或事件，并添加了操作符，允许您以声明的方式将序列组合在一起，同时  <strong>抽象出诸如低级线程、同步、线程安全、并发数据结构和非阻塞I/O等问题。</strong></p>
+<h3 id="RxJS">RxJS</h3>
+<p>RxJS 全称 Reactive Extensions for JavaScript，翻译过来是 Javascript 的响应式扩展，它是一个采用流来处理异步和事件的工具库，简单来说   <strong>Rx(JS) = Observables + Operator + Scheduler</strong>  。</p>
+<h4 id="擅长做的事">擅长做的事</h4>
+<ul>
+<li>UI 事件：例如鼠标移动、按钮单击…</li>
+<li>状态管理：例如属性更改、集合更新等事件</li>
+<li>IO 消息事件：服务监听</li>
+<li>广播/通知：消息总线（Event bus）</li>
+<li>网络消息/事件：例如 HTTP、WebSockets API 或其他低延迟中间件</li>
+</ul>
+<p>最大的优势：  异步事件的抽象，这意味着可以把很多事统一起来当作一种方式处理，从而让问题变得更简单，同时也降低了学习成本。</p>
+<p>注意：RxJS 擅长做异步的事，不代表不可以做同步或不擅长同步的事。</p>
+<h3 id="RxJS-在-Angular-中的应用">RxJS 在 Angular 中的应用</h3>
+<p>RxJS 在 Angular 中及其重要，很多核心模块都是由 RxJS 实现的，比如：</p>
+<ul>
+<li>响应式表单</li>
+<li>路由</li>
+<li>HttpClient（封装的 ajax，类似于 axios）</li>
+<li>async 管道符</li>
+<li>状态管理</li>
+</ul>
+<p>更多：  <a href="https://angular.io/guide/observables-in-angular">https://angular.io/guide/observables-in-angular</a></p>
+<h1>RxJS 核心概念—— Observables</h1>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6332cf215a7447c844d8051c/origin-url" alt="image.png"></p>
+<p>RxJS 中的 Observables 系列是围绕观察者模式来实现的，基本角色：</p>
+<ol>
+<li>Observable：被观察者，用来产生消息/数据。</li>
+<li>Observer：观察者，用来消费消息/数据。</li>
+</ol>
+<h2 id="Observable">Observable</h2>
+<p>Observeable 是观察者模式中的被观察者，它维护一段执行函数，提供了  <strong>惰性执行的能力</strong>  （subscribe）。</p>
+<h3 id="核心函数"><strong>核心函数</strong></h3>
+<ul>
+<li>constructor(_subscribe) : 创建 Observeable</li>
+<li>static create(_subscribe)：静态函数创建 Observeable</li>
+<li>pipe()：管道</li>
+<li>subscribe()：执行初始化传入的 _subscribe</li>
+</ul>
+<blockquote>
+<p>RxJS 中 Observeable 是一等公民，将一切问题都转化为 Observable 去处理。转换的操作符有   <code>from</code>  、  <code>fromEvent</code>  、  <code>of</code>  、  <code>timer</code>  等等，更多戳  <a href="https://cn.rx.js.org/manual/overview.html#h39">这里。</a>    注意的是：只有   <a href="https://cn.rx.js.org/class/es6/MiscJSDoc.js~ObservableInputDoc.html">ObservableInput</a>   或   <a href="https://cn.rx.js.org/class/es6/MiscJSDoc.js~SubscribableOrPromiseDoc.html">SubscribableOrPromise</a>   类型的值才可以转化为 Observable。</p>
+</blockquote>
+<h3 id="基本使用">基本使用</h3>
+<p><img src="https://atlas-rc.pingcode.com/files/public/631ad4c12ce1c1a732e114df/origin-url" alt="image.png"></p>
+<h3 id="源码实现">源码实现</h3>
+<p>本人写（抽取）了一套 RxJS Observable 源码中的核心实现</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/631af91f2ce1c1a732e11520/origin-url" alt="image.png"></p>
+<h2 id="Observable-与-Promise">Observable 与 Promise</h2>
+<blockquote>
+<p>用过两者的同学可能会有疑问为什么采用 Observable 而不直接用 Promise 或 Async/await，这两者在业界也常常用来做对比。</p>
+</blockquote>
+<p>它们关键性的不同点：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Observable</th>
+<th>Promise</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>使用场景</td>
+<td>同步、异步均可使用</td>
+<td>用 Promise 包裹的多数是异步场景</td>
+</tr>
+<tr>
+<td>执行时机</td>
+<td>声明式惰性执行，只有在订阅后才会执行</td>
+<td>创建时就立即执行</td>
+</tr>
+<tr>
+<td>执行次数</td>
+<td>多次调用 subscribe 函数会执行多次</td>
+<td>只有第一次执行，后续都是取值</td>
+</tr>
+<tr>
+<td>流程控制</td>
+<td>相较于 Promise 有更为全面的操作符</td>
+<td>提供串行、并行的函数</td>
+</tr>
+<tr>
+<td>错误处理</td>
+<td>subscribe 函数捕获错误</td>
+<td>.catch 捕获</td>
+</tr>
+</tbody>
+</table>
+<p>总的来说，  <strong>Promise 可读性更优，Observable 从使用场景更为全面</strong>  。</p>
+<h3 id="两者的相互转换">两者的相互转换</h3>
+<p>在既使用了 RxJS 又引用了用 Promise 封装的库时，两者相互转换是容易碰到的问题，RxJS 提供了两者转换的函数。</p>
+<h4 id="Promise-转-Observable"><strong>Promise 转 Observable</strong></h4>
+<p>from 或 fromPromise（弃用） 操作符</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">const observable$ = from(fetch(&#x27;http://xxx.com/&#x27;));</span><br></pre></td></tr></table></figure>
+<h4 id="Observable-转-Promise"><strong>Observable 转 Promise</strong></h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">const promise = of(42).toPromise();</span><br><span class="line">const errorPromise = throw(new Error(&#x27;woops&#x27;)).toPromise();</span><br><span class="line">errorPromise.catch(err=&gt; console.error);</span><br></pre></td></tr></table></figure>
+<h2 id="Subscriber-Observer">Subscriber/Observer</h2>
+<p>Subscriber/Observer 是观察者模式中的观察者/消费者，它用来消费/执行 Observable 创建的函数。</p>
+<h3 id="核心能力"><strong>核心能力</strong></h3>
+<ol>
+<li><code>next</code>  （传值）</li>
+<li><code>error</code>  （错误处理）</li>
+<li><code>complete</code>  （完成/终止）</li>
+<li><img src="https://atlas-rc.pingcode.com/files/public/631b066a2ce1c1a732e1158f/origin-url" alt="image.png"></li>
+</ol>
+<h3 id="实现">实现</h3>
+<p><img src="https://atlas-rc.pingcode.com/files/public/631b065a2ce1c1a732e1158e/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/631b07082ce1c1a732e11590/origin-url" alt="image.png"></p>
+<p>白话描述：</p>
+<ol>
+<li>将 subscribe 传进去一个 next 函数赋给 Observer 的 next 函数。</li>
+<li>将 Observer 传给 Observable 初始化的预加载函数 _subscribe。</li>
+<li>执行 Observable 初始化的预加载函数</li>
+</ol>
+<h3 id="工作流程">工作流程</h3>
+<p><img src="https://atlas-rc.pingcode.com/files/public/630364d1aae45a607c402e62/origin-url" alt="image.png"></p>
+<h2 id="Subscription">Subscription</h2>
+<p>上面的 Observable 和 Observer 已经完成了观察者模式的核心能力，但是引发的一个问题是，每次执行一个流创建一个 Observable，这可能会创建多个对象（尤其是大量使用操作符时，会创建多个 Observable 对象，这个我们后面再说），此时需要外部去销毁此对象，不然会造成内存泄露。</p>
+<p>为了解决这个问题，所以产生了一个   <strong>Subscription</strong>   的对象，Subscription 是表示可清理资源的对象，它是由 Observable 执行之后产生的。</p>
+<h3 id="核心能力-2">核心能力</h3>
+<ol>
+<li><code>unsubcribe</code>  （取消订阅）</li>
+<li><code>add</code>  （分组或在取消订阅之前插入一段逻辑）</li>
+</ol>
+<p><img src="https://atlas-rc.pingcode.com/files/public/631b0bd12ce1c1a732e115b4/origin-url" alt="image.png"></p>
+<p>注意：调用  <code>unsubcribe</code>  后（包含  <code>add</code>  传入的其它 Subscription）不会再接收到它们的数据。</p>
+<h3 id="使用">使用</h3>
+<p><img src="https://atlas-rc.pingcode.com/files/public/631b0b9c2ce1c1a732e115b3/origin-url" alt="image.png"></p>
+<h3 id="实现-2">实现</h3>
+<p><img src="https://atlas-rc.pingcode.com/files/public/631b0c332ce1c1a732e115b7/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/631b0c0e2ce1c1a732e115b6/origin-url" alt="image.png"></p>
+<p>白话描述：</p>
+<ol>
+<li>调用 Observable 的 subscribe 后会添加（add 方法）到 Subscription（这里有个关系 Subscriber 继承了 Subscription） 中，并把 Subscriber（也是 Subscription）返出去。</li>
+<li>调用 Subscription 的 unsubscribe 方法。</li>
+<li>unsubscribe 把该对象置空回收。</li>
+</ol>
+<h3 id="完整工作流程">完整工作流程</h3>
+<p><img src="https://atlas-rc.pingcode.com/files/public/63036b23aae45a607c402e67/origin-url" alt="image.png"></p>
+<h2 id="Subject">Subject</h2>
+<p>上述的 Observable 归根到底就是一个惰性执行的过程，当遇到以下两种情况就显得偏弱：</p>
+<ol>
+<li><strong>推送多条数据时，需要就要创建多个对象。</strong></li>
+<li><strong>做状态管理或消息通讯，监听数据变化并实时推送。</strong></li>
+</ol>
+<p>基于这两个方面，所以产生了 Subject，Subject 是一个特殊的 Observable，更像一个 EventEmitter，它既可以是被观察者/生产者也可以是观察者/消费者。</p>
+<h3 id="优势"><strong>优势</strong></h3>
+<ol>
+<li>减少开销和提高性能</li>
+<li>数据实时推送</li>
+</ol>
+<h3 id="场景"><strong>场景</strong></h3>
+<p>消息传递或广播。</p>
+<h3 id="与-Observable-的区别">与 Observable 的区别</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Observable</th>
+<th>Subject</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>角色</td>
+<td>生产者（单向）</td>
+<td>生产者、消费者（双向）</td>
+</tr>
+<tr>
+<td>消费策略</td>
+<td>单播</td>
+<td>多播</td>
+</tr>
+<tr>
+<td>流转方式</td>
+<td>内部发送/接收数据</td>
+<td>外部发送/接收数据</td>
+</tr>
+<tr>
+<td>数据特性</td>
+<td>冷数据流</td>
+<td>热数据流</td>
+</tr>
+<tr>
+<td>消费时机</td>
+<td>调用 subscribe</td>
+<td>调用 next</td>
+</tr>
+</tbody>
+</table>
+<p>重点解释一下消费策略和消费时机两块：</p>
+<p><strong>冷数据流：</strong>  可以订阅任意时间的数据流。</p>
+<p><strong>热数据流</strong>  ：只给已订阅的消费者发送消息，定阅之前的消费者，不会收到消息。</p>
+<p>用一个示例来演示：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/631b19f42ce1c1a732e115cc/origin-url" alt="image.png"></p>
+<h3 id="工作原理">工作原理</h3>
+<p><img src="https://atlas-rc.pingcode.com/files/public/62e9e3d394d1376ff02bb5c7/origin-url" alt="image.png"></p>
+<p>PS：忘记了该图出自哪篇文章，画的挺不错的，这里直接引用了，如有侵权，还望联系作者。</p>
+<h3 id="源码实现-2">源码实现</h3>
+<ul>
+<li>observers 订阅者集合</li>
+<li>_subscribe 添加订阅者</li>
+<li>next 函数将所有订阅者推送相同的数据</li>
+</ul>
+<p><img src="https://atlas-rc.pingcode.com/files/public/63317ad05a7447c844d803d6/origin-url" alt="image.png"></p>
+<h3 id="其他-Subject">其他 Subject</h3>
+<table>
+<thead>
+<tr>
+<th>种类</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BehaviorSubject</code></td>
+<td>回放数据，如果是订阅前推送的数据，只回放最新的值</td>
+</tr>
+<tr>
+<td><code>ReplaySubject</code></td>
+<td>回放数据，初始化设定要缓存多少次的值，然后将这批消息推送</td>
+</tr>
+<tr>
+<td><code>AsyncSubject</code></td>
+<td>只有调用 complete 后才会推送数据</td>
+</tr>
+</tbody>
+</table>
+<h1>操作符（Operator）</h1>
+<blockquote>
+<p>由于篇幅问题，本节并不会细化到讲每个操作符</p>
+</blockquote>
+<h2 id="理解操作符">理解操作符</h2>
+<p>Operator 本质上是一个纯函数 (pure function)，  <strong>它接收一个 Observable 作为输入，并生成一个新的 Observable 作为输出。</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">export interface Operator&lt;T, R&gt; &#123;</span><br><span class="line">  call(subscriber: Subscriber&lt;R&gt;, source: any): TeardownLogic;</span><br><span class="line">&#125;</span><br><span class="line">// 等价于</span><br><span class="line">function Operator(subscriber: Subscriber&lt;R&gt;, source: any)&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="遵循的小道">遵循的小道</h2>
+<p>迭代器模式和集合的函数式编程模式以及管道思想（pipeable）</p>
+<h3 id="函数式编程">函数式编程</h3>
+<p>操作符的实现以及使用均依照函数式的编程范式，Functional Programing，简称 FP，函数式编程范式，它的思维就是一切用函数表达和解决问题，避免用命令式。</p>
+<p>优点：</p>
+<ul>
+<li>链式调用/组合开发</li>
+<li>简单易写易读（声明式）</li>
+<li>可靠性（纯函数不存在依赖）</li>
+<li>惰性求值（高阶函数）</li>
+<li>易于测试</li>
+</ul>
+<p>更多详细看这篇  <a href="https://pingcode.com/pages/taOxc8Afhg#%20%E3%80%8A%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%E3%80%8B">不完全指南🧭</a></p>
+<h3 id="pipe">pipe</h3>
+<p>管道，用来承载数据流的容器，相信大家一定用过 Lodash 的chain，原生 js 数组，NodeJS 开发者 也许还知道 async/bluebird 的 waterfall，Mongodb 的 pipe，它们都遵循管道思想，最直接的好处是  链式调用  ，还可以用来  划分逻辑  ，在异步的场景中还可以做流程控制（串行、并行、竞速等等）。</p>
+<h2 id="为什么要有操作符？">为什么要有操作符？</h2>
+<p>遵循符合响应式宣言，单向线性的通讯或传输数据，pipe 可以  降低耦合度以便于阅读和维护  ，把复杂的问题分解成多个简单的问题，最后在组合起来。</p>
+<h2 id="操作符与数据流">操作符与数据流</h2>
+<p>在 RxJS 的世界解决问题的方式是抽象为数据流，整个闭环是围绕数据流进行的，所以我们再来理解一下数据流：流，可以把数据可以想像成现实中的水流，河流，流有上游、下游每个阶段处理不同的事情，在这过程避免不了要操作流，比如合并、流程控制、频率控制等等，所以操作符就扮演了此角色。</p>
+<p>生命周期：创建流（create、new、创建类操作符）——&gt; 执行流（subscribe） ——&gt; 销毁流（unsubscribe）</p>
+<h2 id=""></h2>
+<h2 id="分类">分类</h2>
+<p><img src="https://atlas-rc.pingcode.com/files/public/62ff2e90da981d95b9627cd4/origin-url" alt="image.png"></p>
+<h2 id="工作原理-2">工作原理</h2>
+<p>迭代器模式：当多个操作符时，组合成多个可迭代对象的集合，执行时依次调用 next 函数。</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/630488acaae45a607c402f2b/origin-url" alt="image.png"></p>
+<h2 id="源码实现-3">源码实现</h2>
+<ol>
+<li>操作符传入 pipe</li>
+<li>pipe 将操作符转换成可迭代的 Array</li>
+<li>subscribe（执行流）时消费操作符逻辑</li>
+</ol>
+<p>如图</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/633172935a7447c844d803c7/origin-url" alt="image.png"></p>
+<p>操作符转换 Array 源码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">export function pipeFromArray(fns: Array&lt;Function&gt;): Function &#123;</span><br><span class="line">    if (fns.length === 0) &#123;</span><br><span class="line">        return (x: any) =&gt; x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (fns.length === 1) &#123;</span><br><span class="line">        return fns[0];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return (input: any) =&gt; &#123;</span><br><span class="line">        return fns.reduce((prev: any, fn: Function) =&gt; fn(prev), input);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="创建自定义操作符">创建自定义操作符</h2>
+<h3 id="方式一">方式一</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">const isEven = () =&gt; &#123;</span><br><span class="line">    return (source: Observable&lt;any&gt;) =&gt; &#123;</span><br><span class="line">        return new Observable&lt;any&gt;(observer =&gt; &#123;</span><br><span class="line">            const subscription = source.subscribe((x) =&gt; &#123;</span><br><span class="line">                observer.next(x % 2 === 0);</span><br><span class="line">                observer.complete();</span><br><span class="line">            &#125;)</span><br><span class="line">            return () =&gt; subscription.unsubscribe();</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">new Observable(observer =&gt; &#123;</span><br><span class="line">    observer.next(7);</span><br><span class="line">&#125;)</span><br><span class="line">    .pipe(isEven())</span><br><span class="line">    .subscribe(console.log);</span><br><span class="line">// 执行结果：false</span><br></pre></td></tr></table></figure>
+<h3 id="方式二：基于-lift">方式二：基于 lift</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">const odd = () =&gt; &#123;</span><br><span class="line">    const operator: Operator&lt;any, any&gt; = &#123;</span><br><span class="line">        call(subscriber: Subscriber&lt;any&gt;, source: any) &#123;</span><br><span class="line">            const subscription = source.subscribe((x: any) =&gt; subscriber.next(x % 2 !== 0));</span><br><span class="line">            return () =&gt; &#123;</span><br><span class="line">                subscription.unsubscribe();</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;</span><br><span class="line">    return operator;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">new Observable(observer =&gt; &#123;</span><br><span class="line">    observer.next(7);</span><br><span class="line">&#125;)</span><br><span class="line">    .lift(odd())</span><br><span class="line">    .subscribe(console.log)</span><br><span class="line">// 执行结果 true</span><br></pre></td></tr></table></figure>
+<h4 id="lift-源码">lift 源码</h4>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6331747e5a7447c844d803cb/origin-url" alt="image.png"></p>
+<h2 id="阅读弹珠-大理石图">阅读弹珠/大理石图</h2>
+<p>学会阅读弹珠图是快速理解 Rx 操作符的手段之一，有些操作符需要描述时间流逝以及序列，所以弹珠图有很多的标识和符号，如下图。</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6333b44c5a7447c844d805a9/origin-url" alt="image.png"></p>
+<p>这里有几个用来理解大理石图的网站：</p>
+<ul>
+<li><a href="https://rxviz.com/">https://rxviz.com/</a></li>
+<li><a href="https://rxmarbles.com/">https://rxmarbles.com/</a></li>
+</ul>
+<h2 id="学习参考">学习参考</h2>
+<ul>
+<li>Async.js</li>
+<li>Lodash</li>
+</ul>
+<h1>调度器（Scheduler）</h1>
+<h2 id="何为调度器">何为调度器</h2>
+<blockquote>
+<p>也许你在使用操作符的过程中从未在意过它，但它在 Rx 起着至关重要的作用，在异步中如何调度异步任务是很复杂的事情（尤其是以线程为核心处理异步任务的语言），很庆幸的是我们用使用的 JS ，所以不需要过多的关注线程问题，更友好的是大多数操作符默认帮开发者选中了合适的调度模式（下文会讲到），以至于我们从忽略了它，但无论如何我们都应该对调度器有基本的了解。</p>
+</blockquote>
+<p>调度器，  <code>**Scheduler**</code>  ** 用来控制数据推送节奏的**  ，RxJS 有自己的基准时钟和一套的执行规则，来安排多个任务/数据该如何执行  。</p>
+<p>官方定义：</p>
+<ul>
+<li>Scheduler 是一种数据结构</li>
+<li>Scheduler 是一个执行环境</li>
+<li>Scheduler 是一个虚拟时钟</li>
+</ul>
+<h2 id="种类-模式">种类/模式</h2>
+<table>
+<thead>
+<tr>
+<th>种类</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>null</code></td>
+<td>不传递或 null 或 undefined，表示同步执行</td>
+</tr>
+<tr>
+<td><code>queue</code></td>
+<td>使用队列的方式执行</td>
+</tr>
+<tr>
+<td><code>asap</code></td>
+<td>全称：as soon as possible ，表示尽快执行</td>
+</tr>
+<tr>
+<td><code>async</code></td>
+<td>使用   <code>setInterval</code>   的调度。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="示例">示例</h2>
+<p>下面我们举例略窥一下各个模式的表现。</p>
+<h3 id="null-undefined-sync">null/undefined/sync</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import &#123; asapScheduler, asyncScheduler, from &#125; from &#x27;rxjs&#x27;;</span><br><span class="line">function syncSchedulerMain() &#123;</span><br><span class="line">    console.log(&#x27;before&#x27;);</span><br><span class="line">    from([1, 2, 3]).subscribe(console.log)</span><br><span class="line">    console.log(&#x27;after&#x27;);</span><br><span class="line">&#125;</span><br><span class="line">syncSchedulerMain();</span><br><span class="line">// 执行结果：</span><br><span class="line">// before</span><br><span class="line">// 1</span><br><span class="line">// 2</span><br><span class="line">// 3</span><br><span class="line">// after</span><br></pre></td></tr></table></figure>
+<h3 id="asap">asap</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">function asyncSchedulerMain() &#123;</span><br><span class="line">    console.log(&#x27;asyncScheduler: before&#x27;);</span><br><span class="line">    from([1, 2], asyncScheduler).subscribe(console.log)</span><br><span class="line">    Promise.resolve(&#x27;asyncScheduler: promise&#x27;).then(console.log);</span><br><span class="line">    console.log(&#x27;asyncScheduler: after&#x27;);</span><br><span class="line">&#125;</span><br><span class="line">// 执行结果：</span><br><span class="line">// asapScheduler: before</span><br><span class="line">// asapScheduler: after</span><br><span class="line">// 1</span><br><span class="line">// 2</span><br><span class="line">// asapScheduler: promise</span><br></pre></td></tr></table></figure>
+<p>从结果示，from 的数据的输出顺序是  <strong>在 console.log（同步代码）之后，promise.then 之前的</strong>  。</p>
+<h3 id="async">async</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">function asapSchedulerMain() &#123;</span><br><span class="line">    console.log(&#x27;asapScheduler: before&#x27;);</span><br><span class="line">    from([1, 2, 3], asapScheduler).subscribe(console.log)</span><br><span class="line">    Promise.resolve(&#x27;asapScheduler: promise&#x27;).then(console.log);</span><br><span class="line">    console.log(&#x27;asapScheduler: after&#x27;);</span><br><span class="line">&#125;</span><br><span class="line">// 执行结果：</span><br><span class="line">// asyncScheduler: before</span><br><span class="line">// asyncScheduler: after</span><br><span class="line">// asyncScheduler: promise</span><br><span class="line">// 1</span><br><span class="line">// 2</span><br></pre></td></tr></table></figure>
+<p>结果示，  <strong>from 数据输出顺序是在 console.log（同步代码）和 Promise.then 之后的</strong>  。</p>
+<h2 id="工作原理-3">工作原理</h2>
+<p>Scheduler 工作原理可以类比 JS 中的调用栈和事件循环，从实现上   <code>aspa</code>  和   <code>async</code>  也的确交给事件循环来处理。  <code>null /undefined</code>  相当于调用栈，  <code>aspa</code>  相当于事件循环中的微任务，  <code>async</code>  相当于宏任务，可以肯定的是微任务执行时机的优先级比宏任务要高，所以从执行时机来看 null &gt; aspa &gt; async。  <code>queue</code>  运行模式根据 delay 的参数来决定，如果是 0，那么就用同步的方式执行，如果大于 0，就以 async 模式执行。</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6305a0fbaae45a607c40301b/origin-url" alt="image.png"></p>
+<h2 id="使用原则-策略">使用原则/策略</h2>
+<p>RxJS Scheduler 的原则是：尽量减少并发运行。</p>
+<ol>
+<li>对于返回有限和少量消息的 observable 的操作符，RxJS 不使用调度器，即   <code>null</code>   或   <code>undefined</code>   。</li>
+<li>对于返回潜在大量的或无限数量的消息的操作符，使用   <code>queue</code>   调度器。</li>
+<li>对于使用定时器的操作符，使用   <code>aysnc</code>   调度器。</li>
+</ol>
+<h2 id="支持调度器的操作符">支持调度器的操作符</h2>
+<p><code>of</code>  、  <code>from</code>  、  <code>timer</code>  、  <code>interval</code>  、  <code>concat</code>  、  <code>merge</code>  、  <code>combineLatest</code>  ，更多戳  <a href="https://cn.rx.js.org/manual/overview.html#h17">这里。</a></p>
+<p><code>bufferTime</code>  、  <code>debounceTime</code>  、  <code>delay</code>  、  <code>auditTime</code>  、  <code>sampleTime</code>  、  <code>throttleTime</code>  、  <code>timeInterval</code>  、  <code>timeout</code>  、  <code>timeoutWith</code>  、  <code>windowTime</code>   这样时间相关的操作符全部接收调度器作为最后的参数，并且默认的操作是在   <code>Scheduler.async</code>   调度器上。</p>
+<p>OK，关于调度器我们先了解到这里。</p>
+<h1>最后</h1>
+<p>至此，RxJS 内容已经讲解完毕，文中概念较多，若大家都能够理解，就可以对 RxJS 的认知拉到同一个维度，后续需要做的就是玩转各种操作符，解决实际问题，学以致用才可达到真正的精通。</p>
+<p>最后如果觉得文章不错，点个赞再走吧！</p>
+<p>附文中完整代码与示例：  <a href="https://github.com/aaaaaajie/simple-rxjs">https://github.com/aaaaaajie/simple-rxjs</a></p>
+<h1>推荐阅读</h1>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/543483225">玩转 RxJS 操作符 ——流程控制篇</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/553188292">玩转 RxJS 操作符——回压控制篇</a></li>
+</ul>
+<h1>参考</h1>
+<ul>
+<li><a href="https://www.reactivemanifesto.org/zh-CN">反应式宣言</a></li>
+<li><a href="https://cn.rx.js.org/">RxJS 中文文档</a></li>
+<li><a href="https://reactivex.io/intro.html">Reactive X 文档</a></li>
+<li><a href="https://robin-front.github.io/RxJS-doc-chinese/">RxJS 入门指南</a></li>
+<li><a href="https://juejin.cn/post/6910943445569765384">RxJS 给你丝滑般的编程体验</a></li>
+<li><a href="https://stackoverflow.com/questions/47537934/what-is-the-difference-between-observable-and-a-subject-in-rxjs">Observable vs Subject</a></li>
+<li>《RxJS 深入浅出》——程墨</li>
+</ul>
+<h2 id="-2"></h2>
+]]></content>
+      <categories>
+        <category>RxJS</category>
+      </categories>
+      <tags>
+        <tag>RxJS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2025/04/14/postgres%20%E6%95%B0%E6%8D%AE%E5%BA%93/</url>
+    <content><![CDATA[<p>title: Postgres 数据库<br>
+tags:</p>
+<ul>
+<li>Postgres<br>
+categories:</li>
+<li>Postgres<br>
+date: 2025-04-14 17:30</li>
+</ul>
+<h2 id="删除数据库">删除数据库</h2>
+<p>问题：数据库锁住了<br>
+SELECT pg_terminate_backend(pid)<br>
+FROM pg_stat_activity<br>
+WHERE datname = ‘test’<br>
+AND pid &lt;&gt; pg_backend_pid();</p>
+]]></content>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2025/03/28/typescript%E7%B1%BB%E5%9E%8B%E5%B7%A5%E5%85%B7/</url>
+    <content><![CDATA[<p>title: TypeScript常用类型工具包<br>
+tags:</p>
+<ul>
+<li>TypeScript<br>
+categories:</li>
+<li>TypeScript<br>
+date: 2025-03-28 17:30</li>
+</ul>
+<h2 id="推导所有Object的可选值">推导所有Object的可选值</h2>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">Fruits</span> = &#123;</span><br><span class="line">    <span class="variable constant_">APPLE</span> = <span class="string">&#x27;apple&#x27;</span>,</span><br><span class="line">    <span class="variable constant_">ORANGE</span> = <span class="string">&#x27;orange&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> <span class="title class_">Fruits</span> = <span class="keyword">typeof</span> <span class="title class_">Fruits</span>[keyof <span class="keyword">typeof</span> <span class="title class_">Fruits</span>]; <span class="comment">// apple, orange</span></span><br></pre></td></tr></table></figure>]]></content>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2025/03/26/mssql%E4%BD%BF%E7%94%A8%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<p>title: SQL Server(MSSQL)踩坑记录<br>
+tags:</p>
+<ul>
+<li>MSSQL</li>
+<li>SQL Server<br>
+categories:</li>
+<li>MSSQL</li>
+<li>SQL Server<br>
+date: 2025-03-26 16:30</li>
+</ul>
+<blockquote>
+<p>MSSQL 出的比较早，遵循严格的 SQL 语法，并不像 MySQL 和 PostgreSQL 那样宽松，也不支持存储 JSON 字段，里面有坑。</p>
+</blockquote>
+<blockquote>
+<p>别名提示： SQL Server = MSSQL = mssql, MySQL = mysql, PostgreSQL = pg</p>
+</blockquote>
+<h1>索引</h1>
+<h2 id="NULL-是有效值">NULL 是有效值</h2>
+<p>mssql 中 NULL 是有效值，设置唯一索引的字段只能有一个 NULL。但在 pg 和 mysql 中，多个 NULL 视为不同的值。</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Email</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>NULL（插入成功）</td>
+</tr>
+<tr>
+<td>2</td>
+<td>NULL (插入失败，重复)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="删除索引">删除索引</h2>
+<p>在 MSSQL 中，UNIQUE 约束会自动创建一个唯一索引，索引不能直接通过 DROP INDEX 删除，需要先删除 UNIQUE 约束。</p>
+<h1>视图</h1>
+<h2 id="创建视图">创建视图</h2>
+<p>注意：必须得有指定列名</p>
+<ul>
+<li>CREATE VIEW test1 AS SELECT 1 ❌</li>
+<li>CREATE VIEW test1 AS SELECT 1 as value ✅</li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
+    <title>Stripe 接入指南</title>
+    <url>/2025/01/24/Stripe-%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97/</url>
+    <content><![CDATA[<h2 id="前言">前言</h2>
+<blockquote>
+<p>Stripe 是一家全球领先的支付处理平台，适合各种规模和行业的企业，相当于国内的微信、支付宝。</p>
+</blockquote>
+<p>Stripe 功能非常强大，但其官方文档以平铺式为主，对于新手接入来说，可能缺少一个完整的流程指引。因此，本篇旨在为首次接入 Stripe 的开发者提供一份简单易懂的指南。尽管官方提供了丰富且灵活的事件和 API，组合方式多种多样，玩法也十分多样化，但本文的重点在于梳理支付的基本流程，帮助大家以最短路径实现接入。</p>
+<h2 id="准备工作">准备工作</h2>
+<blockquote>
+<p>以下均为测试环境，也建议大家在测试环境准备</p>
+</blockquote>
+<p>大概分为两部分：</p>
+<ul>
+<li>Stripe 商家端管理后台</li>
+<li>初始化 sdk</li>
+</ul>
+<span id="more"></span>
+<h3 id="Stripe-商家端管理后台">Stripe 商家端管理后台</h3>
+<ol>
+<li>注册 Stripe 账户：前往[Stripe 官网]((<a href="https://dashboard.stripe.com/register">https://dashboard.stripe.com/register</a>)注册一个开发者账户。</li>
+<li>配置公私钥（复制下来后面会用到）<br>
+<img src="/images/stripe-dashboard.png" alt="upload successful"></li>
+<li>配置 Webhook
+<ul>
+<li>URL 是 Stripe 平台回调己方服务器端的 API 地址</li>
+<li>事件至少配置checkout.session.completed 和 charge.refuned，其他的可以根据自己需要配置，具体事件说明后面会介绍<br>
+<img src="/images/stripe-dashboard-webhook.png" alt="upload successful"></li>
+</ul>
+</li>
+</ol>
+<h3 id="初始化-Sdk">初始化 Sdk</h3>
+<ol>
+<li>安装 Stripe sdk：<code>npm install stripe</code></li>
+<li>初始化 Stripe：</li>
+</ol>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="variable constant_">STRIPE_SECRET_KEY</span> = 使用上面的密钥</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> stripe = <span class="keyword">new</span> <span class="title class_">Stripe</span>(<span class="variable constant_">STRIPE_SECRET_KEY</span>, &#123;</span><br><span class="line">		<span class="attr">apiVersion</span>: <span class="string">&#x27;2022-11-15&#x27;</span> <span class="comment">/* 最好填上图中对应 API 版本 */</span>,</span><br><span class="line">		<span class="attr">typescript</span>: <span class="literal">true</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<h2 id="接入流程">接入流程</h2>
+<p>业务一般有 3到4 种：</p>
+<ul>
+<li>一次性付款</li>
+<li>订阅/取消订阅</li>
+<li>退款</li>
+</ul>
+<h3 id="一次性付款">一次性付款</h3>
+<p>大致流程如下图</p>
+<p><img src="/images/stripe-access-purchase.png" alt="upload successful"></p>
+<ol>
+<li>用户访问己方购买页面，选择要付费的产品</li>
+<li>己方客户端/浏览器通知己方服务端去创建一个购买的会话（session），己方需要存一下自己的订单，关联上 sessionId，后面会用到</li>
+</ol>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> session = <span class="keyword">await</span> stripe.<span class="property">checkout</span>.<span class="property">sessions</span>.<span class="title function_">create</span>(&#123;</span><br><span class="line">    <span class="attr">payment_method_types</span>: [<span class="string">&#x27;card&#x27;</span>],</span><br><span class="line">    <span class="attr">line_items</span>: [</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">price_data</span>: &#123;</span><br><span class="line">          <span class="attr">currency</span>: <span class="string">&#x27;usd&#x27;</span>,</span><br><span class="line">          <span class="attr">product_data</span>: &#123;</span><br><span class="line">            name,</span><br><span class="line">            description,</span><br><span class="line">          &#125;,</span><br><span class="line">          <span class="attr">unit_amount</span>: <span class="number">41.9</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">quantity</span>: <span class="number">1</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">client_reference_id</span>: userId,</span><br><span class="line">	<span class="attr">mode</span>: <span class="string">&#x27;payment&#x27;</span>, <span class="comment">// mode 是一次性支付</span></span><br><span class="line">    <span class="attr">success_url</span>: <span class="string">&#x27;https://baidu.com&#x27;</span>,</span><br><span class="line">    <span class="attr">cancel_url</span>: <span class="string">&#x27;https://google.com&#x27;</span>,</span><br><span class="line">  &#125;)</span><br><span class="line"><span class="comment">// 创建订单，和 sessionId 关联起来</span></span><br><span class="line"><span class="keyword">await</span> <span class="title function_">createOrder</span>(&#123; userId, productId, sessionId &#125;)</span><br><span class="line">res.<span class="title function_">send</span>(&#123;<span class="attr">url</span>: session.<span class="property">url</span> &#125;)</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>服务端使用 stripe sdk 调用 <code>checkout.session.create</code>，stripe 会返回一个支付链接，最后将支付链接再返回给己方客户端</li>
+<li>客户端访问此链接会自动跳转到第三方的支付页面<br>
+<img src="/images/stripe-payment-page.png" alt="upload successful"></li>
+<li>用户填完信息，购买产品</li>
+<li>stripe 收完款同时回调己方服务端 webhook 事件，<code>checkout.session.completed</code>，己方服务端处理业务，比如更新用户权益，创建订单等等…</li>
+</ol>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line">app.<span class="title function_">post</span>(<span class="string">&#x27;/stripe/webhook&#x27;</span>, <span class="title function_">async</span>(req,res)=&gt; &#123;</span><br><span class="line">	<span class="keyword">const</span> event = stripe.<span class="property">webhooks</span>.<span class="title function_">constructEvent</span>(</span><br><span class="line">    rawBody,</span><br><span class="line">    req.<span class="property">headers</span>[<span class="string">&#x27;stripe-signature&#x27;</span>],</span><br><span class="line">    <span class="variable constant_">STRIPE_WEBHOOK_SECRET</span></span><br><span class="line">  ) <span class="keyword">as</span> <span class="title class_">Stripe</span>.<span class="property">DiscriminatedEvent</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">switch</span> (event.<span class="property">type</span>) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;checkout.session.completed&#x27;</span>:</span><br><span class="line">    <span class="keyword">const</span> session = event.<span class="property">data</span>.<span class="property">object</span></span><br><span class="line">    <span class="keyword">if</span>(session.<span class="property">status</span> === <span class="string">&#x27;complete&#x27;</span> &amp;&amp; session.<span class="property">payment_status</span> === <span class="string">&#x27;paid&#x27;</span>) &#123;</span><br><span class="line">    <span class="comment">// 根据 sessionId 去取第 2 步关联的订单</span></span><br><span class="line">    <span class="keyword">const</span> order = <span class="title function_">getOrderBySessionId</span>(session.<span class="property">id</span>)</span><br><span class="line">    <span class="comment">// 更新订单状态</span></span><br><span class="line">    <span class="keyword">await</span> <span class="title function_">updateOrder</span>(orderId, &#123; <span class="attr">status</span>: <span class="string">&#x27;success&#x27;</span> &#125;)</span><br><span class="line">    <span class="comment">// 处理其他任务，如给用户发放权益等</span></span><br><span class="line">    ......</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<h3 id="订阅">订阅</h3>
+<p>订阅根一次性购买流程差不多，只是订阅要复杂一些，因为订阅是周期性的购买，业务方需要管理这些订阅信息（订阅开始时间，订阅结束时间，订阅的什么类型产品），来处理相应的会员权益。</p>
+<p>流程与一次性购买不同的是，第 2 步要创建周期信息：</p>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> session = <span class="keyword">await</span> stripe.<span class="property">checkout</span>.<span class="property">sessions</span>.<span class="title function_">create</span>(&#123;</span><br><span class="line">    <span class="attr">payment_method_types</span>: [<span class="string">&#x27;card&#x27;</span>],</span><br><span class="line">    <span class="attr">line_items</span>: [</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">price_data</span>: &#123;</span><br><span class="line">          <span class="attr">currency</span>: <span class="string">&#x27;usd&#x27;</span>,</span><br><span class="line">          <span class="attr">product_data</span>: &#123;</span><br><span class="line">            name,</span><br><span class="line">            description,</span><br><span class="line">          &#125;,</span><br><span class="line">          <span class="attr">unit_amount</span>: <span class="number">41.99</span>,</span><br><span class="line">          <span class="attr">recurring</span>: &#123;</span><br><span class="line">          	<span class="attr">interval</span>: <span class="string">&#x27;month&#x27;</span>,<span class="comment">// 可选：&#x27;day&#x27; | &#x27;month&#x27; | &#x27;week&#x27; | &#x27;year&#x27;，取决于自身业务</span></span><br><span class="line">          &#125;,</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">quantity</span>: <span class="number">1</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">client_reference_id</span>: userId,</span><br><span class="line">    <span class="attr">mode</span>: <span class="string">&#x27;subscription&#x27;</span>,</span><br><span class="line">    <span class="attr">success_url</span>: <span class="string">&#x27;https://baidu.com&#x27;</span>,</span><br><span class="line">    <span class="attr">cancel_url</span>: <span class="string">&#x27;https://google.com&#x27;</span>,</span><br><span class="line">  &#125;)</span><br><span class="line"> <span class="comment">// 创建订单</span></span><br><span class="line"> <span class="keyword">const</span> order = <span class="keyword">await</span> <span class="title function_">createOrder</span>(&#123; userId, productId, <span class="attr">sessionId</span>: session.<span class="property">id</span> &#125; &#125;)</span><br><span class="line"><span class="comment">// 更新订阅信息，注意把session相关的subscription暂存到用户订阅表，在后续订阅和退款中会需要</span></span><br><span class="line"><span class="keyword">await</span> <span class="title function_">updateUserWallet</span>(userId, &#123; <span class="attr">subscribedAt</span>: xxx, <span class="attr">subscriptionExpireAt</span>: xxx, <span class="attr">subscriptionId</span>: session.<span class="property">subscription</span> &#125;)</span><br></pre></td></tr></table></figure>
+<p>最后也是在 收到 webhook 事件 <code>checkout.sessions.complete</code>，根据 sessionId 找到己方订单，处理相关业务。</p>
+<p>当然，这不是唯一的解法/方案，但是最简单的。也有另外的一些方案是，在 <code>stripe.checkout.sessions.create</code> 时，<strong>添加 metadata 信息</strong>，stripe 发现是要创建订阅 session，创建完之后以 webhook 的方式推给我们，己方需要在 webhook 监听 <code>customer.subscription.created</code> 事件，推过来的 <code>event.data.object</code> 会携带创建时的 metadata 信息，此时，己方把订阅信息存起来也是可以的，后面消费这个订阅信息即可，是否这样做，取决于后面是否有更复杂业务，这里暂不考虑</p>
+<p><strong>推荐使用前者方案</strong>，与一次性购买保持一致</p>
+<h3 id="取消订阅">取消订阅</h3>
+<p>取消订阅一个点要说明的是取消订阅并不是退款，取消订阅之后依旧可以享受的当次订阅的权益只是下一次不会自动续订，仅此而已，举个例子：1月1日订阅了一个月的会员，1月15日取消订阅，那么在2月1日之前依旧属于订阅期，可以使用订阅的权益，但是2月1日之后就会结束，但如果不取消订阅，那么在2月1日会自动续订。</p>
+<p>用户取消订阅 2 种手段，一种是在 stripe 平台用户端，另一种是己方平台，区别在于如果使用己方平台取消，需要主动使用 stripe sdk 取消，而用户直接使用 stripe ，需要己方在 webhook 监听 <code>customer.subscription.updated</code> 事件。</p>
+<p>这里就以用户使用己方取消为例，流程如下：</p>
+<p><img src="/images/subscription-cancel.png" alt="upload successful"></p>
+<p>示例代码：</p>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> subscriptionId = <span class="keyword">await</span> <span class="title function_">getUserWallet</span>(userId, req.<span class="property">subscriptionId</span>)</span><br><span class="line"><span class="keyword">const</span> response = <span class="keyword">await</span> stripe.<span class="property">subscriptions</span>.<span class="title function_">update</span>(subscriptionId, &#123;</span><br><span class="line">      <span class="attr">cancel_at_period_end</span>: <span class="literal">true</span>,</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">if</span> (response.<span class="property">cancel_at_period_end</span>) &#123;</span><br><span class="line">      logger.<span class="title function_">info</span>(<span class="string">&#x27;Cancel Stripe subscription successfully&#x27;</span>)</span><br><span class="line">      <span class="comment">// 处理取消订阅相关信息，最好给一个状态，幂等防止重复取消</span></span><br><span class="line">      <span class="keyword">await</span> <span class="title function_">updateWallet</span>(userId ,&#123; <span class="attr">status</span>: <span class="string">&#x27;cancel&#x27;</span> &#125;)</span><br><span class="line">      res.<span class="title function_">send</span>(&#123; <span class="attr">data</span>: <span class="string">&#x27;success&#x27;</span> &#125;)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      logger.<span class="title function_">error</span>(</span><br><span class="line">        <span class="string">`Cancel Stripe subscription fail, userId: <span class="subst">$&#123;userId&#125;</span>, sessionSubscriptionId: <span class="subst">$&#123;sessionSubscriptionId&#125;</span>`</span></span><br><span class="line">      )</span><br><span class="line">      res.<span class="title function_">send</span>(&#123; <span class="attr">data</span>: <span class="string">&#x27;fail&#x27;</span> &#125;)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>如果使用 stripe 平台取消，那么监听 webhook <code>customer.subscription.updated</code> 事件，事件数据会提供 subscriptionId，然后后续业务跟上面一样，不再赘述</p>
+<h3 id="退款">退款</h3>
+<p>退款为2种：</p>
+<ul>
+<li>一次性购买的退款</li>
+<li>订阅的退款<br>
+退款跟取消流程类似，如果退款的是订阅，代表是立即退订，暂停和移除用户的会员权益，这与取消订阅则不同。</li>
+</ul>
+<p>这里以用户在 stripe 平台退款为例，己方需要监听退款事件，这里的一个关键点/难点是，<strong>退款事件没有提供订阅信息（id）</strong>，但提供了发票id，发票是支付成功后 stripe 保留的，发票中会提供购买/订阅的具体信息，这样我们需要通过退款事件的发票id换一下订阅信息，最后取消用户订阅的相关权益</p>
+<p>示例代码如下：</p>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> invoiceId = <span class="title function_">getStripeInvoiceId</span>(chargeData.<span class="property">invoice</span>)</span><br><span class="line">  <span class="keyword">if</span> (!invoiceId) &#123;</span><br><span class="line">    logger.<span class="title function_">error</span>(<span class="string">&#x27;Stripe refund fail: not found invoiceId&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> invoiceInfo = <span class="keyword">await</span> stripe.<span class="property">invoices</span>.<span class="title function_">retrieve</span>(invoiceId)</span><br><span class="line">  <span class="keyword">const</span> subscriptionId = invoiceInfo.<span class="property">subscription</span></span><br><span class="line">  <span class="keyword">const</span> userWallet = <span class="keyword">await</span> <span class="title function_">getUserWallet</span>(userId, &#123; subscriptionId &#125;)</span><br><span class="line"> <span class="comment">// verify some logic</span></span><br><span class="line"> <span class="keyword">await</span> <span class="title function_">updateUserWallet</span>(userId, &#123; <span class="attr">subscribedAt</span>: <span class="literal">null</span>, <span class="attr">subscriptionExpired</span>: <span class="literal">null</span>, xxx, <span class="attr">status</span>: <span class="string">&#x27;refund&#x27;</span>  &#125;)</span><br><span class="line"> <span class="comment">// other service</span></span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<h2 id="最后">最后</h2>
+<p>建议你在测试环境中充分验证你的接入逻辑，确保在生产环境中能够稳定运行。如果你有更多复杂的业务场景或疑问，可以随时参考 Stripe 官方文档，或根据业务需要进一步扩展你的实现。</p>
+<p>Stripe 的集成没有固定的最佳实践，适合你的业务需求的方案才是最好的方案。祝你的项目接入 Stripe 一切顺利！</p>
+]]></content>
+      <categories>
+        <category>支付</category>
+      </categories>
+      <tags>
+        <tag>支付</tag>
+        <tag>Stripe</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>NextJS/NextUI集成阿里iconfont</title>
+    <url>/2024/11/08/NextJS-NextUI%E9%9B%86%E6%88%90%E9%98%BF%E9%87%8Ciconfont/</url>
+    <content><![CDATA[<blockquote>
+<p>前置条件： 已经注册了 <a href="https://www.iconfont.cn/">iconfont</a></p>
+</blockquote>
+<h3 id="第一步，复制项目-symbol-路径">第一步，复制项目 symbol 路径</h3>
+<p><img src="https://raw.githubusercontent.com/aaaaaajie/blog-images/refs/heads/main/iconfont.jpg" alt=""></p>
+<h3 id="第二步，在-next-项目集成">第二步，在 next 项目集成</h3>
+<span id="more"></span>
+<ol>
+<li>将第一步复制的路径填充到 <code>app -&gt; layout.tsx</code> 中<br>
+<img src="https://github.com/aaaaaajie/blog-images/blob/main/nextui-add-confont-1.jpg?raw=true" alt=""></li>
+<li>将 <code>styles -&gt; globals.css</code> 中加入以下代码:</li>
+</ol>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.icon</span> &#123;</span><br><span class="line">  <span class="attribute">width</span>: <span class="number">1em</span>;</span><br><span class="line">  <span class="attribute">height</span>: <span class="number">1em</span>;</span><br><span class="line">  <span class="attribute">vertical-align</span>: -<span class="number">0.15em</span>;</span><br><span class="line">  <span class="attribute">fill</span>: currentColor;</span><br><span class="line">  <span class="attribute">overflow</span>: hidden;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="第三步，封装组件，使用">第三步，封装组件，使用</h3>
+<p>在 components 目录下创建 icon.tsx 文件</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="title function_">ALiIcon</span> = (<span class="params"><span class="attr">props</span>: &#123; iconName: <span class="built_in">string</span> &#125;</span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; iconName &#125; = props;</span><br><span class="line">  <span class="keyword">const</span> name = <span class="string">`#<span class="subst">$&#123;iconName&#125;</span>`</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">aria-hidden</span>=<span class="string">&quot;true&quot;</span> <span class="attr">className</span>=<span class="string">&quot;icon&quot;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">use</span> <span class="attr">xlinkHref</span>=<span class="string">&#123;name&#125;</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>在对应文件测试使用</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">ALiIcon</span> &#125; <span class="keyword">from</span> <span class="string">&quot;../../components/icons&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">Test</span>() &#123;</span><br><span class="line">    <span class="keyword">return</span> (<span class="language-xml"><span class="tag">&lt;<span class="name">ALiIcon</span> <span class="attr">iconName</span>=<span class="string">&quot;your-iconfont-name&quot;</span> /&gt;</span></span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码中 your-iconfont-name 是 iconfont 项目中的 symbol</p>
+]]></content>
+      <categories>
+        <category>React</category>
+        <category>NextJS</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Centos 安装 Docker，并修改源</title>
+    <url>/2024/11/05/centos7%E5%AE%89%E8%A3%85docker/</url>
+    <content><![CDATA[<h4 id="安装-yum-utils-并添加源">安装 yum-utils 并添加源</h4>
+<p>为了安装 Docker，我们需要首先安装yum-utils，以便添加 Docker 的源。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">yum install -y yum-utils</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
+<h4 id="安装-Docker">安装 Docker</h4>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">yum install docker-ce docker-ce-cli containerd.io</span><br></pre></td></tr></table></figure>
+<h4 id="验证-Docker-是否安装成功">验证 Docker 是否安装成功</h4>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker --<span class="built_in">help</span></span><br></pre></td></tr></table></figure>
+<p>如果出现 Docker 相关命令，说明成功了</p>
+<h4 id="运行并设置自启动">运行并设置自启动</h4>
+<p>Docker 安装完之后不会自动运行，需要手动运行：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">systemctl start docker</span><br></pre></td></tr></table></figure>
+<p>为了让 Docker 在每次重启系统的时候能自动运行，还需要设置自启动：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> docker</span><br></pre></td></tr></table></figure>
+<h4 id="设置-DockerHub-源">设置 DockerHub 源</h4>
+<p>国内拉镜像速度堪忧，设置一下 DockerHub 源就好了：</p>
+<ol>
+<li>创建目录：<code>mkdir -p /etc/docker</code></li>
+<li>创建文件：</li>
+</ol>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="built_in">tee</span> /etc/docker/daemon.json &lt;&lt;-<span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;registry-mirrors&quot;</span>: [</span><br><span class="line">        <span class="string">&quot;https://docker.m.daocloud.io&quot;</span>,</span><br><span class="line">        <span class="string">&quot;https://dockerhub.azk8s.cn&quot;</span>,</span><br><span class="line">        <span class="string">&quot;https://docker.mirrors.ustc.edu.cn&quot;</span>,</span><br><span class="line">        <span class="string">&quot;https://mirror.ccs.tencentyun.com&quot;</span>,</span><br><span class="line">        <span class="string">&quot;https://dockerproxy.com&quot;</span>,</span><br><span class="line">        <span class="string">&quot;https://mirror.baidubce.com&quot;</span>,</span><br><span class="line">        <span class="string">&quot;https://docker.nju.edu.cn&quot;</span>,</span><br><span class="line">        <span class="string">&quot;https://mirror.iscas.ac.cn&quot;</span></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>重启：</li>
+</ol>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">systemctl daemon-reload</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">systemctl restart docker.service</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>查看镜像源是否修改成功</li>
+</ol>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker info|grep Mirrors -A 1</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>Docker</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>免密登录</title>
+    <url>/2024/08/08/%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/</url>
+    <content><![CDATA[<ol>
+<li>在本地服务器终端输入 <code>ssh-copy-id [user@host]</code>，示例：<code>ssh-copy-id root@xx.xx.xx</code></li>
+<li>输入以后会提示输入密码，输入后，本地服务器的公钥会复制到远程服务器的 <code>authorized_keys</code> 文件中</li>
+<li>打开新的终端测试：<code>ssh root@xx.xx.xx</code></li>
+</ol>
+<p>不出意外，应该可以免密登录了。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>SSH</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用 prettier 脚本命令格式化项目</title>
+    <url>/2024/03/29/%E4%BD%BF%E7%94%A8%20prettier%20%E8%84%9A%E6%9C%AC%E5%91%BD%E4%BB%A4%E6%A0%BC%E5%BC%8F%E5%8C%96%E9%A1%B9%E7%9B%AE/</url>
+    <content><![CDATA[<h3 id="1-全局安装-prettier">1. 全局安装 prettier</h3>
+<p><code>npm install -g prettier</code></p>
+<h3 id="2-执行脚本命令">2. 执行脚本命令</h3>
+<p><code>prettier --config .prettierrc.js --write ./src/**/*.ts ./test/**/*.ts</code></p>
+<h4 id="说明">说明</h4>
+<ol>
+<li>–config .prettierrc.js 指定配置文件</li>
+<li>–write 指定修改文件或目录</li>
+</ol>
+<h3 id="查看更多">查看更多</h3>
+<ul>
+<li><a href="https://www.prettier.cn/docs/cli.html">https://www.prettier.cn/docs/cli.html</a></li>
+<li>命令: <code>prettier --help</code></li>
+</ul>
+]]></content>
+      <categories>
+        <category>工程化</category>
+      </categories>
+      <tags>
+        <tag>工程化</tag>
+        <tag>格式化</tag>
+        <tag>prettier</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>换机软件清单</title>
+    <url>/2024/03/29/%E8%A3%85%E6%9C%BA%E6%B8%85%E5%8D%95/</url>
+    <content><![CDATA[<h3 id="Mac">Mac</h3>
+<ul>
+<li><a href="https://git-scm.com/downloads">git</a></li>
+<li><a href="https://github.com/nvm-sh/nvm">nvm</a></li>
+<li><a href="https://code.visualstudio.com/Download">vscode</a></li>
+</ul>
+<h3 id="Centos">Centos</h3>
+<ul>
+<li><a href="https://docs.pingcode.com/ask/55142.html">git</a></li>
+<li><a href="https://cloud.tencent.com/developer/article/1626878">nginx</a></li>
+<li>java <code>yum install -y java-1.8.0-openjdk-devel.x86_64</code></li>
+<li><a href="">mvn</a> +<a href="https://developer.aliyun.com/article/512821">修改 maven 镜像源为阿里</a></li>
+<li><a href="https://tutorials.tinkink.net/zh-hans/linux/how-to-install-docker-on-centos-7.html">docker</a> +<a href="https://gist.github.com/y0ngb1n/7e8f16af3242c7815e7ca2f0833d3ea6">连接不上 docker hub 使用镜像加速</a></li>
+<li><a href="https://www.jianshu.com/p/63422ff9ed0a">docker 安装 redis</a></li>
+<li><a href="https://blog.csdn.net/ling1998/article/details/124809256">docker 安装 mysql</a></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker run --name mysql -p 10000:3306 -d  -v /usr/local/docker/mysql/conf/my.cnf:/etc/mysql/my.cnf -v /usr/local/docker/mysql/data:/var/lib/mysql -v /usr/local/docker/mysql/logs:/logs -e MYSQL_ROOT_PASSWORD=123456 --restart=always  mysql --lower_case_table_names=1</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>工具</category>
+      </categories>
+      <tags>
+        <tag>工具</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>angular使用配置环境变量</title>
+    <url>/2023/07/26/angular%E4%BD%BF%E7%94%A8%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/</url>
+    <content><![CDATA[<p>为了更清晰，更快速的了解 Angular 环境配置的架构，请看此图：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64c0e588bebe86147c5a05b6/origin-url" alt="image.png"></p>
+<p>下面具体内容也会按照图上所示来介绍。</p>
+<span id="more"></span>
+<h3 id="添加环境配置文件">添加环境配置文件</h3>
+<ol>
+<li>创建文件，不过这个步骤在使用 Angular cli 构建的项目的时候已经默认配置好了（如果没有，在项目终端执行   <code>ng generate environments</code>  ），在 src -&gt; environments 目录，并且目录下会有几个不同的文件，如下：<br>
+<img src="https://atlas-rc.pingcode.com/files/public/64c0ec08bebe86147c5a05cd/origin-url" alt="image.png"></li>
+</ol>
+<p>名字可以随便取，默认是 Angular 的命名规范，  <code>目录+环境.ts</code>  ，一般用默认提供的这两到三个文件就够了，当然如果环境多的情况，就复制出来几份，比如图上：  <code>environment.alpha.ts</code></p>
+<ol start="2">
+<li>配置文件内容</li>
+</ol>
+<p>默认需要导出一个对象，默认名字为 environment，如果  <strong>想要添加变量，直接在 environment 里添加键值对，比如添加一个baseURL</strong>   ，下图所示：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64c0e4d5bebe86147c5a05b2/origin-url" alt="image.png"></p>
+<p><strong>两点需要注意：</strong></p>
+<ol>
+<li><strong>多个环境配置文件，默认使用 environment.ts 作为默认/基础文件配置，就是说在项目中使用的地方导入的是该文件</strong>  ，可能有同学会问：我想以其他文件作为默认配置行吗，我的回答是：行，但是一定要保证在 angular.json 中映射正确，为了避免配置失误，建议还是不要改。</li>
+<li>environment 这个名字也可以修改，但是一定要注意其他引用的地方也要同步修改，比如 main.ts 启动项目时，其他的环境配置文件  <strong>一定要和默认/基础文件导出的对象命名保持一致</strong>  。</li>
+</ol>
+<h3 id="映射环境配置文件">映射环境配置文件</h3>
+<blockquote>
+<p>angular.json 是项目的基础，它配置了打包、服务启动、代理…等，环境配置也是其中的一项</p>
+</blockquote>
+<ol>
+<li>打开 angular.json 文件，找到节点：“architect” -&gt; “build” -&gt; “configurations”，然后添加环境替换规则，如图：<br>
+<img src="https://atlas-rc.pingcode.com/files/public/64c0ee58bebe86147c5a05d3/origin-url" alt="image.png"></li>
+<li>找到节点：“serve” -&gt; “configurations” 添加 “alpha” 节点（内容复制其他环境的就行），如图：<br>
+<img src="https://atlas-rc.pingcode.com/files/public/64c0ef43bebe86147c5a05d6/origin-url" alt="image.png"></li>
+<li>为了后面测试配置的环境是否生效，这里配置默认按照 alpha 运行。</li>
+</ol>
+<h3 id="使用环境配置文件">使用环境配置文件</h3>
+<p>配置结束，使用起来就非常简单了，只需要注意一点，导入的环境文件是基础环境（上面 replace 的文件，通常是 environment.ts），如图：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64c0f02ebebe86147c5a05da/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64c0f05abebe86147c5a05db/origin-url" alt="image.png"></p>
+<p>从页面看下内容：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64c0f084bebe86147c5a05dd/origin-url" alt="image.png"></p>
+<p>OK，大功告成！</p>
+<h3 id="番外篇：合并通用环境变量">番外篇：合并通用环境变量</h3>
+<p>angular 中只提到了配置文件替换规则，可实际开发中有很大部分情况下需要的是合并规则，更详细说：很多环境变量是相同的，我们期望是只写一遍，关于合并规则，angular.json 并没有提供（至少本人没有发现），但是我们可以利用 js 特性手动合并一下，借助一个默认配置文件，配置通用的环境变量，然后在其他文件中做解构合并操作，如图示：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64c0f317bebe86147c5a05e6/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64c0f335bebe86147c5a05e7/origin-url" alt="image.png"></p>
+<h3 id="参考">参考</h3>
+<ul>
+<li><a href="https://angular.cn/guide/build#configuring-application-environments">Angular 官网环境配置</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Angular</category>
+      </categories>
+      <tags>
+        <tag>Angular</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>基于位掩码权限设计</title>
+    <url>/2023/07/16/%E5%9F%BA%E4%BA%8E%E4%BD%8D%E6%8E%A9%E7%A0%81%E6%9D%83%E9%99%90%E8%AE%BE%E8%AE%A1/</url>
+    <content><![CDATA[<p>在权限设计中有一种非常独特、有意思方案叫  <strong>位掩码权限设计</strong>  ，它在应对一些局部数据权限（权限点不多）的场景下，非常的犀利，比如 PingCode 知识管理页面权限就结合 ACL 对特定人群（用户、用户组、部门）做权限分配，由于权限点只有两个，开发中体现不是非常突出，也没有把这个思维贯彻到底，不过在最近做的一个小项目（业余时间的玩具）中表现比较明显，这篇文章一直是处于未完成的状态 ，做完这个需求后，有触动把它好好写完，分享下。</p>
+<span id="more"></span>
+<h2 id="什么是位掩码权限？">什么是位掩码权限？</h2>
+<p>维基百科搜了一下没有正式对位掩码权限的解释，还得是 ChatGPT：</p>
+<blockquote>
+<p>位掩码权限（Bitmask Permissions）是一种权限管理系统，用于在计算机系统中对资源或操作进行控制和限制。它使用二进制位来表示不同的权限或访问级别。每个二进制位都代表一种权限或操作，可以设置为开启或关闭。</p>
+</blockquote>
+<p>了解过 Linux 权限的应该知道它的一些权限点：r（read 读）、w（write 写）、x（execute 执行），对应的权限值是 4、2、1。</p>
+<p>这是一个标准的位掩码权限设计，其中 1、2、4 对应着基于“位”的二进制，拿 4 位举例：  <code>1 =&gt; 0001</code>  ，  <code>2 =&gt; 0010</code>  ，  <code>4 =&gt; 0100</code>  。</p>
+<blockquote>
+<p>几个名词的小知识：  1. mask 掩码，常表示权限，Worktile 中出现过</p>
+</blockquote>
+<ol>
+<li>x 的全称是 excute，之所以用这个字母表示，起源于 Unix 的设计哲学… 简单的字母 x 更简洁、可读性高，表示最小单元，最基本的操作。后续业界很多也采用这种方式，我说一种大家就知道了 Lodash 使用回调函数第一个参数   <code>_.map(arr, x=&gt; x.name);</code></li>
+</ol>
+<h2 id="常见权限处理">常见权限处理</h2>
+<h4 id="1-赋予多种权限">1. 赋予多种权限</h4>
+<p>采用累计权限点的方式，比如拥有“读”+“写”，4 + 2 = 6，那么最终权限值是 6，拥有“读”+“写”+“执行”，那权限值是：4 + 2 + 1 = 7，以此类推，根据场景搭配权限点即可。</p>
+<h4 id="2-判断是否拥有某种权限">2. 判断是否拥有某种权限</h4>
+<p>使用位运算   <code>&amp;</code>  ，比如现已拥有的权限值是 3，想知道是否有可见（读）权限，那么就执行   <code>!!(3 &amp; 2)</code>  结果是   <code>true</code>  ，  <code>3 &amp; 2</code>   结果是 2，&amp; 的思路是把 10 进制转换成 2 进制比较，二进制”与“的规则是同为 1 则为 1，否则为 0，  <strong>和 2 的指数相与，结果必定只有两种结果：0 或 本身，</strong>  最终得 否则有关于二进制的一些知识更多知识可以看想了解  把二进制的计算结果再转回 10 进制，最终权限值 &amp;  权限点只会返回两种结果 0 或权限点本身，0 代表无权限，权限点代表有此权限，更具体的二进制计算可以点  <a href="https://pingcode.com/pages/tacyd1qSVw">这里</a>  。</p>
+<p>判断只拥有一种权限，全等比较即可，比如只读（除读之外没有其他权限）  <code>inputPermission === 4</code>  ，如果权限值是列表或字符串的情况还需要做排他处理，很是麻烦。</p>
+<h4 id="3-页面展示权限点">3. 页面展示权限点</h4>
+<p>页面如何展示这些权限点以及映射也是值得思考的问题，不过在这种权限模式下就比较灵活了，因为权限值是一个数字而非数组或字符串，数组和字符串前后端是必须都要映射索引的，必然会有一套计算权限的逻辑，对于数字来说，是一个无序的，前端配置静态固定位置，映射方式就使用上述的与运算一行代码即可。</p>
+<h2 id="优缺点">优缺点</h2>
+<p>总的来说，位掩码在局部权限设计的场景下比较突出（权限点少且相互之间依赖性低）：</p>
+<ol>
+<li>简单易用，设置、修改、校验、展示时非常方便</li>
+<li>储存效率高，尤其是在关系型数据库储存结构有限时</li>
+<li>权限点组合灵活性高，比如读+写、读+删除、执行+写…</li>
+</ol>
+<p>但是它不适合权限点多，粒度细的系统，位就不够用了（第 10 个权限点已经是 1024 了）</p>
+<h2 id="实际应用">实际应用</h2>
+<p>下面的场景是业余时间做个低代码的玩具，其中部分场景下包含了一些权限设置，界面是这样的：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64ae72c6bebe86147c59f649/origin-url" alt="image.png"></p>
+<p>对应填写表单是这样的：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64abe0b6a7dae9eff18ccb62/origin-url" alt="image.png"></p>
+<h3 id="选型">选型</h3>
+<p>选用哪门技术/手段，必然要考虑各种因素（业务场景、已有架构、易用、质量、性能），这里简单介绍一些前置条件：</p>
+<ol>
+<li>低代码场景，主体表（是一个抽象节点，后续简称业务主体）是动态表，动态字段</li>
+<li>关系型数据库（选用的原因是这块业务框架指定了 MySQL）</li>
+<li>权限粒度是字段，且权限点有限</li>
+<li>权限绑定的用户主体（成员/部门/组织角色/应用角色/职位）分布于不同的表</li>
+</ol>
+<p>针对于上述条件可以得出的结论就是本文讲的  <strong>位掩码权限的设计方案，</strong>  其实中间环节是可以有很多思考的（不感兴趣的可以跳过）  一些结论：</p>
+<ol>
+<li>关系型数据库，权限值不推荐是列表（对象、数组），一是不支持，存 json 串也比较膈应，最好  <strong>用基本数据类型（字符串、数字）</strong></li>
+<li>权限绑定的用户主体分布多表，需要  <strong>排除关联表的方案，采用关联字段的方式</strong>  ，如果采用关联表方案有以下弊端：
+<ol>
+<li>分布于多个主体关联权限表，缺点是  <strong>表分散，成本高</strong>  ，在动态表的情况下额外在创建动态表也很费劲，后续根据不同主体找不同的表。</li>
+<li>分布于一张表存多个主体映射权限的数据，缺点是主体（这里是配置的模块）数量不固定，比较  <strong>容易造成数据量大</strong>  ，总数是：业务主体数据量 * 用户主体数量 * 权限点数量，所以后续还要  <strong>考虑分表</strong>  。</li>
+<li>无论上面哪种都需要  <strong>额外多查一次关联表</strong></li>
+</ol>
+</li>
+<li>权限值的储存如果是 01 拼接的字符串（0 代表无权限，1 代表有权限），那么需要考虑权限值的展示以及单字段校验等方式，因为字符串一个字符映射一个权限点，所以前端展示时需要知道哪一位对应什么权限，这种情况下前后端都必然要有一个  <strong>权限点索引配置，还得有一套根据索引匹配的逻辑</strong>  。</li>
+</ol>
+<p>选用位掩码权限的方式有这些优势：</p>
+<ol>
+<li>数字作为基本数据类型，  <strong>在任何数据库都支持</strong>  ，而数组或 JSON 需要 NoSQL 类的数据库支撑。</li>
+<li>数字相比列表或字符串更简单，  <strong>不用考虑权限点映射顺序的相关配置和计算程序</strong>  。</li>
+<li>数字相比关联列表更简单  <strong>，减少查表次数，内聚性高（与业务主体绑定更近）</strong>  ，  <strong>更节约内存</strong>  （主要是字段和表之间的对比）</li>
+<li>权限值用数字更简洁，在多层嵌套的 JSON 下，显然  <strong>数字比对象或数组更清楚</strong>  。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">permissions: &#123;</span><br><span class="line">  read: true,</span><br><span class="line">  write: true,</span><br><span class="line">  require: true</span><br><span class="line">&#125;</span><br><span class="line">// good</span><br><span class="line">permissions: 7</span><br></pre></td></tr></table></figure>
+<h2 id="最后">最后</h2>
+<p>还是重复两点吧：</p>
+<ol>
+<li>权限点较少时，选用此方案非常适合。</li>
+<li>用户主体类型复杂的情况可以结合 ACL 或 RBAC 混合使用。</li>
+</ol>
+<p>最后提供可以直接使用的代码片段：</p>
+<ol>
+<li>定义权限点</li>
+</ol>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64b3e45bbebe86147c59f95e/origin-url" alt="image.png"></p>
+<ol>
+<li>验证工具函数</li>
+</ol>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64af9f42bebe86147c59f718/origin-url" alt="image.png"></p>
+<ol>
+<li>HTML 中方便的管道</li>
+</ol>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64af9f90bebe86147c59f71c/origin-url" alt="image.png"></p>
+]]></content>
+      <categories>
+        <category>权限系统</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>再谈单元测试</title>
+    <url>/2023/06/07/%E5%86%8D%E8%B0%88%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/</url>
+    <content><![CDATA[<p>曾写过多篇测试相关的文章，都源于每次测试给我带来的触动，这次也不例外，最近在重构复杂逻辑时，再次感谢它为我保驾护航，同时也发现了历史测试中存在的一些问题。</p>
+<h3 id="测试的意义">测试的意义</h3>
+<blockquote>
+<p>这是一个认知问题，如果不清楚为何要写测试，那么最终产生的测试大概率是腐烂、或无意义的。</p>
+</blockquote>
+<ol>
+<li>保证代码的正确性，提升代码质量是它最高的使命。</li>
+<li>保证代码的安全性/稳定性，当对某段代码改动后，测试会告诉哪些代码受到了潜在的问题。</li>
+<li>可以指导写代码的思路，在测试驱动开发（TDD）体现尤为明显。</li>
+<li>更能透彻的理解代码，很多情况下，写代码时常常会陷入自己的世界，从测试相当于站在旁观者的角度审视代码，从而提升可读性和扩展性。</li>
+</ol>
+<span id="more"></span>
+<h3 id="写测试的一些原则">写测试的一些原则</h3>
+<blockquote>
+<p>首先必须要有一个态度/认知：写测试与写普通代码一样，测试也要很清楚的表达逻辑，不能因为它不体现到产品上就粗糙了事。</p>
+</blockquote>
+<p>有些原则会受不同开发者个人能力影响，所以我的看法是正面原则应该鼓励，反面原则明令禁止。</p>
+<h4 id="不写没有意义的测试">不写没有意义的测试</h4>
+<p>比如   <code>1 + 2 === 3</code>  ，或者让函数执行一次，而不是验证函数执行的结果，这种无意义的行为，还有一种情况是为了提升测试覆盖率而补充，在我看来更是“本末倒置”。</p>
+<h4 id="不写重复的测试">不写重复的测试</h4>
+<p>相同的逻辑写多遍，当然有可能是不同开发成员测相同的逻辑，如果发现应该删除。</p>
+<h4 id="不写描述与实际逻辑不符的测试">不写描述与实际逻辑不符的测试</h4>
+<p>典型的挂羊头卖狗肉，当修复测试时，通过描述不能准备判断场景，细排查发现并不是预期逻辑，花费了不必要的时间。</p>
+<h4 id="不写上下文依赖的测试">不写上下文依赖的测试</h4>
+<p>要保证测试的独立性，就是说单个的测试也可以运行，在工作当中也很多处发现，下一个测试要依赖于上一个测试，这显然是不合理的，如果某天删掉了第一个测试，第二个测试就会挂掉。</p>
+<h4 id="尽可能保证测试的可读性">尽可能保证测试的可读性</h4>
+<p>最好有递进关系，很容易从测试中看到你的逻辑是什么。</p>
+<h4 id="尽可能保证测试的纯粹性">尽可能保证测试的纯粹性</h4>
+<p>一个测试只测一种场景，也可以说编程原则中的“单一原则”，可以正反面断言。</p>
+<h4 id="提取重复的前置条件">提取重复的前置条件</h4>
+<p>很多时候只为了测关键点，需要配备一些前置条件，当多个测试都有相同逻辑时，应当提取到不同维度。</p>
+<p>比如使用 before、beforeEach、after、afterEach，或者提升至更底层的函数，比如 Helper 类。</p>
+<p>反面示例（下图）很多是本人曾经犯过的问题，自觉公开处刑 🙃</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/648038e2e468e3b3652fab3d/origin-url" alt="image.png"></p>
+<h3 id="应该如何写一个测试？">应该如何写一个测试？</h3>
+<p>关于测试的方法论，本人所知道的是 TDD 和 BDD，也曾查过一些资料，对我至今仍然有非常大的指导意义，不讲过多的概念，回顾一张图吧。</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64801dffe468e3b3652faaab/origin-url" alt="image.png"></p>
+<h4 id="几个例子">几个例子</h4>
+<ol>
+<li>
+<p>开发一个创建用户的 API，我的步骤是：</p>
+<p>a. <strong>编写测试用例</strong>  ：先 http 请求这个 API 的路由，此时路由可能都不存在，没有关系，这一步就是要  <strong>这个测试用例失败</strong>  。<br>
+<img src="https://atlas-rc.pingcode.com/files/public/64802844e468e3b3652faae5/origin-url" alt="image.png"></p>
+<p>b. <strong>编写代码</strong>  ：解决它为什么失败？原因：没有定义路由和响应数据，OK 解决它，添加一个 POST /api/user 的路由，并且   <code>response.end('success')</code>  。  <strong>这一步让测试用例通过</strong>  。<br>
+<img src="https://atlas-rc.pingcode.com/files/public/64802959e468e3b3652faae7/origin-url" alt="image.png"></p>
+<p>c. <strong>编写测试用例</strong>  ：制定创建用户的信息：名字（张三）、手机号（xxx）、年龄…，并且期望创建成功，并且判断创建的信息无误，此时运行测试，  <strong>结果应当是失败</strong>  ，因为代码中还没有创建逻辑。<br>
+<img src="https://atlas-rc.pingcode.com/files/public/64802a36e468e3b3652faaec/origin-url" alt="image.png"></p>
+<p>d. <strong>编写代码：</strong>  解决失败原因，创建响应结果的实体，并且 response.send({ code: 200, data: user })，  <strong>让测试成功。</strong><br>
+<img src="https://atlas-rc.pingcode.com/files/public/64802c6ee468e3b3652faaf6/origin-url" alt="image.png"></p>
+<p>e. <strong>编写测试用例</strong>  ：输入不合法的信息，让  <strong>测试继续报错</strong>  。</p>
+<p>f. <strong>编写程序：</strong>  加入校验逻辑，解决报错，让  <strong>测试成功。</strong></p>
+<p>g. …</p>
+</li>
+<li>
+<p>一个缺陷，真实开发的例子：<br>
+<img src="https://atlas-rc.pingcode.com/files/public/64802e2ee468e3b3652faaff/origin-url" alt="image.png"></p>
+</li>
+</ol>
+<p>a. 这个思路应当是先按照描述去模拟场景，验证预期行为和实际行为是否一致，如下：<br>
+<img src="https://atlas-rc.pingcode.com/files/public/64802fe8e468e3b3652fab06/origin-url" alt="image.png"></p>
+<p>b. 这种情况就避免了  <strong>启动前端代码的麻烦事，进行自我验证，驱动排查</strong>  。在解决这个缺陷时，重构了大量的代码，历史的测试一次次告诉我重构逻辑漏掉了哪些场景。</p>
+<p>从上面的两个例子中，可以再次得出它的指导思路：  <strong>让测试失败，改代码修复，在让测试失败，修复…反复验证。</strong></p>
+<h3 id="结束">结束</h3>
+<p>好吧，暂时没有其他要说的了，后续有想法，再继续更新。</p>
+]]></content>
+      <categories>
+        <category>单元测试</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>编辑器系列-剪贴板</title>
+    <url>/2023/06/04/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%89%AA%E8%B4%B4%E6%9D%BF/</url>
+    <content><![CDATA[<h2 id="剪贴板概述">剪贴板概述</h2>
+<p>在编辑器中复制/剪切的方式有两种：</p>
+<ul>
+<li>系统剪贴板：快捷键触发  <code>Ctrl/⌘ + C/X/V</code></li>
+<li>浏览器剪贴板：工具栏或拦截快捷键触发</li>
+</ul>
+<p>两种方式的区别：数据储存的位置不同，前者的数据是储存在系统的剪贴板中，后者存在浏览器中。</p>
+<p>两者都可以基本满足复制/剪切，但是往往在线编辑器常用浏览器剪贴板，为什么呢？</p>
+<span id="more"></span>
+<h3 id="为什么用浏览器剪贴板？">为什么用浏览器剪贴板？</h3>
+<ol>
+<li>触发动作的条件不确定，像最开始说的，用户可能使用快捷键也可能是用编辑器提供的工具栏，当用工具栏时，则需要发一个复制的命令，在客户端肯定是操作浏览器。</li>
+<li>对于复杂元素系统剪贴板不识别，比如复制一个文本绘图插件元素粘贴到编辑器内，复制时需要对该元素进行识别，并且做更多灵活的动作，比如拦截特定情况。</li>
+<li>安全性问题，比较难把控涉及到权限，数据保密等安全问题。</li>
+</ol>
+<h3 id="流程">流程</h3>
+<p><img src="https://atlas-rc.pingcode.com/files/public/647b02e1e468e3b3652fa6da/origin-url" alt="image.png"></p>
+<h3 id="事件">事件</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>事件名称</th>
+<th>系统快捷键</th>
+<th>主动触发</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>复制</td>
+<td>oncopy</td>
+<td><code>Ctrl/⌘ + C</code></td>
+<td><code>document.execCommand('copy')</code></td>
+</tr>
+<tr>
+<td>剪切</td>
+<td>oncut</td>
+<td><code>Ctrl/⌘ + X</code></td>
+<td><code>document.execCommand('cut')</code></td>
+</tr>
+<tr>
+<td>粘贴</td>
+<td>onpaste</td>
+<td><code>Ctrl/⌘ + V</code></td>
+<td><code>document.execCommand('paste')</code></td>
+</tr>
+</tbody>
+</table>
+<p>示例：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/647acb0be468e3b3652fa6c4/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/647acbd1e468e3b3652fa6c6/origin-url" alt="image.png"></p>
+<h2 id="实现方式一：强大的-document-execCommand">实现方式一：强大的 document.execCommand</h2>
+<p>这个 API 的木器主要用来操纵编辑器元素的，正如我给的标题，它非常“强大”，强大之处在于它支持的场景/命令非常全，除了上面复制/粘贴/剪切，还有一些以下命令：</p>
+<table>
+<thead>
+<tr>
+<th>命令名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>backColor</td>
+<td>容器元素添加背景颜色</td>
+</tr>
+<tr>
+<td>bold</td>
+<td>切换文字粗体效果</td>
+</tr>
+<tr>
+<td>createLink</td>
+<td>创建锚链接</td>
+</tr>
+<tr>
+<td>fontName</td>
+<td>修改字体</td>
+</tr>
+<tr>
+<td>fontSize</td>
+<td>修改字体大小</td>
+</tr>
+<tr>
+<td>heading</td>
+<td>设置标题</td>
+</tr>
+<tr>
+<td>insertImage</td>
+<td>插入图片</td>
+</tr>
+<tr>
+<td>insertOrderedList</td>
+<td>插入有序列表</td>
+</tr>
+<tr>
+<td>justifyLeft/Right/Center</td>
+<td>所选内容文本对齐：左对齐、右对齐、居中对齐</td>
+</tr>
+<tr>
+<td>outdent</td>
+<td>缩进</td>
+</tr>
+<tr>
+<td>undo/redo</td>
+<td>撤销/重做</td>
+</tr>
+<tr>
+<td>underline</td>
+<td>切换下划线</td>
+</tr>
+</tbody>
+</table>
+<p>示例点  <a href="https://execcommand-api.stackblitz.io/">这里</a>  。</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/647aec16e468e3b3652fa6d6/origin-url" alt="image.png"></p>
+<p>Wiki 插件工具栏的复制：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/647c3175e468e3b3652fa6e0/origin-url" alt="image.png"></p>
+<h3 id="已被废弃"><strong>已被废弃</strong></h3>
+<p>这个 API 非常方便地操作文本内容，但是它被废弃了，废弃的原因：</p>
+<ol>
+<li><strong>存在安全问题：可以修改浏览器设置、运行脚本</strong>  ，容易被恶意攻击。</li>
+<li><strong>浏览器兼容问题：很多特性在不同浏览器操作不一致。</strong>  上面的示例中，工具栏的按钮置灰就是浏览器不支持的。</li>
+</ol>
+<p>取而代之的是 Clipboard API，见下节。</p>
+<h2 id="实现方式二：Clipboard-API">实现方式二：Clipboard API</h2>
+<p>该 API 一般用于剪贴板（复制/剪切/粘贴），相较于 execCommand 可以避免安全问题，同时也更加可靠和跨浏览器兼容。</p>
+<p>提供的 API 也都是异步的，返回结构都是 Promise，方法如下：</p>
+<ul>
+<li><code>navigator.clipboard.writeText()</code>  ：将文本内容写入剪贴板。</li>
+<li><code>navigator.clipboard.readText()</code>  ：从剪贴板中读取文本内容。</li>
+<li><code>navigator.clipboard.write()</code>  ：将数据写入剪贴板。</li>
+<li><code>navigator.clipboard.read()</code>  ：从剪贴板中读取数据。</li>
+</ul>
+<h3 id="clipboardData-和-DataTransfer">clipboardData 和 DataTransfer</h3>
+<p>clipboardData 绑定于 Clipboard Event（copy、cut、paste），是其属性，数据结构 DataTransfer 对象的一种。</p>
+<p>主要作用：</p>
+<ul>
+<li>访问全局剪贴板数据：  <code>event.clipboardData.setData(format, data)</code></li>
+<li>设置全局剪贴板数据：  <code>event.clipboardData.getData(format)</code></li>
+<li>清除全局剪贴板数据：  <code>event.clipboardData.clearData()</code></li>
+</ul>
+<p>DataTransfer 其他作用：</p>
+<ul>
+<li>可以存储文件类型</li>
+<li>可操作的类型有：  <code>none</code>  ,   <code>copy</code>  ,   <code>copyLink</code>  ,   <code>copyMove</code>  ,   <code>link</code>  ,   <code>linkMove</code>  ,   <code>move</code>  ,   <code>all</code>   or   <code>uninitialized</code>  。</li>
+<li>设置拖动的图像：  <code>DataTransfer.setDragImage()</code></li>
+</ul>
+<p>Ps：Wiki 中采用这种方式进行数据存取的。</p>
+<p>一个操作 clipboard API 的示例片段：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/647bfceee468e3b3652fa6df/origin-url" alt="image.png"></p>
+<h3 id="navigator-clipboard-write-和-clipboardData-setData-有何区别？">navigator.clipboard.write 和 clipboardData.setData 有何区别？</h3>
+<style>
+table th:nth-of-type(2) {
+    width: 30%;
+}
+table th:nth-of-type(3) {
+    width: 25%;
+}
+table th:last-of-type {
+    width: 40%;
+}
+</style>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>相同点</th>
+<th>不同点</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td>触发方式</td>
+<td>触发时机/来源</td>
+<td>其他</td>
+</tr>
+<tr>
+<td>navigator.clipboard.write</td>
+<td>都可以向剪贴板写入数据</td>
+<td>异步</td>
+<td>任何时机,任何 JS 程序</td>
+<td>第一次需要用户主动授权（浏览器弹框询问用户，如果拒绝则中断操作）</td>
+</tr>
+<tr>
+<td>event.clipboardData.setData</td>
+<td></td>
+<td>同步</td>
+<td>必须是 ClipboardEvent 来源之一（copy、cut、paste）</td>
+<td>无</td>
+</tr>
+</tbody>
+</table>
+<h2 id="完整-Demo">完整 Demo</h2>
+<p>预览：  <a href="https://slate-demo.stackblitz.io/">https://slate-demo.stackblitz.io/</a></p>
+<p>源码：  <a href="https://stackblitz.com/edit/slate-demo?file=src%2Fclipboard.component.ts">https://stackblitz.com/edit/slate-demo?file=src%2Fclipboard.component.ts</a></p>
+<h2 id="最后">最后</h2>
+<p>本人最近计划写一个《揭秘富文本编辑器》系列（又名：编辑器那些事），记录曾经对编辑器好奇的一些知识，如果你也感兴趣，可以关注我，有好奇的点，也可以在下方留言评论告诉我，我会在后续更新。<br>
+文中有不正确的观点和内容，还望告知，感谢 🌹</p>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Clipboard_API">https://developer.mozilla.org/zh-CN/docs/Web/API/Clipboard_API</a></li>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/API/DataTransfer">https://developer.mozilla.org/zh-CN/docs/Web/API/DataTransfer</a></li>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Document/execCommand">https://developer.mozilla.org/zh-CN/docs/Web/API/Document/execCommand</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>编辑器</category>
+      </categories>
+      <tags>
+        <tag>富文本编辑器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>编辑器系列—如何获取光标/元素位置</title>
+    <url>/2023/05/29/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%85%89%E6%A0%87%E5%92%8C%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE/</url>
+    <content><![CDATA[<h3 id="Slate-Selection">Slate Selection</h3>
+<p>slate 的 selection 是用来表示一个元素或节点的位置，结构如下：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64744566e468e3b3652fa138/origin-url" alt="image.png"></p>
+<p>它是基于原生 <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Selection">DOM Selection API</a> 封装的，一些基础概念：</p>
+<span id="more"></span>
+<h4 id="anchor">anchor</h4>
+<blockquote>
+<p>锚指的是一个选区的起始点。当我们使用鼠标框选一个区域的时候，锚点就是我们鼠标按下瞬间的那个点。在用户拖动鼠标时，锚点是不会变的 <strong>。</strong> ——MDN</p>
+</blockquote>
+<h4 id="focus">focus</h4>
+<blockquote>
+<p>选区的焦点是该选区的终点，当您用鼠标框选一个选区的时候，焦点是你的鼠标松开瞬间所记录的那个点。随着用户拖动鼠标，焦点的位置会随着改变。——MDN</p>
+</blockquote>
+<p>注意的一点是： <strong>anchor 和 focus 的概念不能与选区的起始位置和终止位置混淆，因为 anchor 指向的位置可能在 focus 指向的位置的前面，也可能在 focus 指向位置的后面，这取决于你选择文本时鼠标移动的方向（也就是按下鼠标键和松开鼠标键的位置）</strong></p>
+<h4 id="path">path</h4>
+<p>slate 中 path 的类型： <code>type Path = number[];</code> ，它是一个描述元素的路径。</p>
+<p>看一个例子：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64216ce4d074dd3307dfb4e9/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/642163a5d074dd3307dfb4d0/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64216523d074dd3307dfb4d5/origin-url" alt="image.png"></p>
+<ul>
+<li>第一张图，path:[0,0]，无论光标在 1、2、3、4、5、6 它的 path 都是 [0, 0]</li>
+<li>第二张图光标落在行内代码上时，发现 path 变了，变成了 [0, 1, 0]</li>
+<li>第三张图光标落在分隔线元素上，path 是 [1, 0]</li>
+</ul>
+<p>根据以上结果可以推出， <strong>path 第一位是第几行或者独占整行的块级元素，第二位是第几行的第几个元素（不是第几个光标），第三位是指嵌套的元素，</strong> 比如表格中的列填充的就是第三位。</p>
+<h4 id="offset">offset</h4>
+<p>指元素的偏移位置，从上面第一张图中还可以看到起始 offset 是 3，结束 offset 是 6，可以推出 offset 指元素的第几个位置，path + offset 可以描述出起始或结束的点，achor + focus 表示从第几个元素第几个位置选到第几个元素第几个位置。</p>
+<h3 id="Selection-是如何构造出来的？"><strong>Selection 是如何构造出来的？</strong></h3>
+<p>通过原生的 Selection API 的数据观察，我们很容易知道 offset，如图中的 anchorOffset 和 focusOffset：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64744883e468e3b3652fa140/origin-url" alt="image.png"></p>
+<p>转换成 Slate Selection：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    anchor: &#123; offset: 9 &#125;,</span><br><span class="line">    focus: &#123; offset: 9 &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再从上面数据中观察，并没有找到是第几行的信息，为什么？</p>
+<p>行的信息也是比较复杂且灵活的，比如：第二行插入了表格元素，该元素本身就是独占整行，它是第二行，那么表格里的第一行该如何表示呢？我个人猜测原生 API 应该也不知道如何表示，所以把这个问题交给开发者定义，也就有了上述的一些规则，下面从代码层面仔细讲解这个行（path）是如何构建出来的。</p>
+<h4 id="基于插件结构定规则">基于插件结构定规则</h4>
+<p>selection 的 path 是根据插件数据结构为基础构建的，在另一篇文章讲到的表格数据结构例子：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64744f7ae468e3b3652fa14b/origin-url" alt="image.png"></p>
+<p>那么数组的第一个元素的默认就是第一行（path 为 0），表格元素的第一行是 (0,0)，第二行是 (0,2)。</p>
+<h4 id="实现规则">实现规则</h4>
+<ol>
+<li>渲染元素时，记录元素和索引。</li>
+<li><strong>当前元素开始从缓存的元素和索引中向上找，找到一级就向 path 数组的开头，临界终止条件：找至顶层。</strong></li>
+</ol>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64745359e468e3b3652fa14d/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6474522ce468e3b3652fa14c/origin-url" alt="image.png"></p>
+]]></content>
+      <categories>
+        <category>编辑器</category>
+      </categories>
+      <tags>
+        <tag>富文本编辑器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>编辑器系列—插件渲染机制</title>
+    <url>/2023/05/18/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89/</url>
+    <content><![CDATA[<h3 id="单个插件渲染流程">单个插件渲染流程</h3>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6465f1e87083dd5ecd38a428/origin-url" alt="image.png"></p>
+<span id="more"></span>
+<h3 id="多插件">多插件</h3>
+<p>插件机制有一个关键的问题是：当注册了多个插件，如何正确的找出要渲染的哪个插件。</p>
+<p><strong>插件的冒泡机制：先注册的插件会后执行，这很像数据结构中的“栈”，先入后出。比如，注册了三个插件 [A, B, C]，那么渲染时会优先取出 C，运行预渲染函数（renderElement），然后是 B，最后是 A，每个渲染函数中可以通过插件的类型与当前插件预定义的类型相比较，如果匹配则返回当前预定义插件对应的视图组件，否则流转到下一个插件，继续重复此逻辑</strong>  ，如下图：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6465f95f7083dd5ecd38a449/origin-url" alt="image.png"></p>
+<h4 id="源码">源码</h4>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6465fd057083dd5ecd38a457/origin-url" alt="image.png"></p>
+]]></content>
+      <categories>
+        <category>编辑器</category>
+      </categories>
+      <tags>
+        <tag>富文本编辑器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>编辑器系列—插件注册流程</title>
+    <url>/2023/05/16/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
+    <content><![CDATA[<h2 id="概览">概览</h2>
+<p><img src="https://atlas-rc.pingcode.com/files/public/646353137083dd5ecd38a0d5/origin-url" alt="image.png"></p>
+<span id="more"></span>
+<h2 id="创建编辑器">创建编辑器</h2>
+<h3 id="Slate-createEditor">Slate createEditor</h3>
+<p>createEditor 是 Slate 提供的创建编辑器对象的函数，编辑器对象的重要性相当于一个系统的核心，后面所有的插件注册/声明部分也都必须返回该对象，插件在运行过程中执行完当前插件的逻辑，最终也需要流转到该对象提供的核心函数上。</p>
+<h4 id="核心能力">核心能力</h4>
+<ol>
+<li>数据操作：
+<ol>
+<li>插入节点/文本（insertNode、insertText）</li>
+<li>删除（delete）</li>
+<li>文本数据操作（apply）</li>
+<li>插入或替换文本、节点（insertFragment）</li>
+<li>装饰文本（addMark）</li>
+</ol>
+</li>
+<li>数据变化：onChange</li>
+<li>检查元素类型：空元素（isVoid）、行内元素（isInline）</li>
+<li>属性：选区（selection）、动作/操作（operations）、子数据（children）</li>
+</ol>
+<h4 id="源码预览">源码预览</h4>
+<p><img src="https://atlas-rc.pingcode.com/files/public/646349d97083dd5ecd38a0b9/origin-url" alt="image.png"></p>
+<h4 id="使用">使用</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import &#123; createEditor &#125; from &#x27;slate&#x27;;</span><br><span class="line">const editor = createEditor();</span><br><span class="line">editor.insertText(&#x27;哈哈哈&#x27;);</span><br></pre></td></tr></table></figure>
+<h3 id="Slate-angular-withAngular">Slate-angular withAngular</h3>
+<blockquote>
+<ol>
+<li>以 withXxx 命名的一般为插件</li>
+</ol>
+</blockquote>
+<ol>
+<li>withAngular 本身也是一个插件</li>
+</ol>
+<p>withAngular 是 Slate-angular 内置插件，介于框架的限制，该插件大致上做了两件事：</p>
+<ol>
+<li>对于 Slate 部分函数进行了重写（比如 onChange）</li>
+<li>扩展额外的一些能力</li>
+</ol>
+<h4 id="核心能力-2">核心能力</h4>
+<ol>
+<li>重写数据操作函数：插入、删除、复制/粘贴板（insertFragment、setFragment）</li>
+<li>数据变化通知（onChange）</li>
+<li>基础 DOM 事件：onkeydown、onclick</li>
+<li>检查元素类型（isBlockCard）</li>
+<li>错误处理（onError）</li>
+</ol>
+<h4 id="源码预览-2">源码预览</h4>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64634a287083dd5ecd38a0bc/origin-url" alt="image.png"></p>
+<h4 id="使用-2">使用</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import &#123; createEditor &#125; from &#x27;slate&#x27;;</span><br><span class="line">import &#123; withAngular &#125; from &#x27;slate-angular&#x27;;</span><br><span class="line"></span><br><span class="line">const editor = withAngular(createEditor());</span><br></pre></td></tr></table></figure>
+<h3 id="Theia-withTheia">Theia withTheia</h3>
+<p>基于 Slate-angular 进行扩展和复写 editor 对象，提供了更多的特性，同时基于 Worktile 和 PingCode 业务封装了一些更复杂的逻辑。</p>
+<h4 id="核心能力-3">核心能力</h4>
+<ol>
+<li>多插件自动组合注册（combinePlugins）</li>
+<li>支持插件的渲染自定义组件（renderElement）</li>
+<li>更多的事件：globalMousedown</li>
+</ol>
+<h4 id="源码预览-3">源码预览</h4>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6463519e7083dd5ecd38a0d0/origin-url" alt="image.png"></p>
+<h2 id="构建-声明插件">构建/声明插件</h2>
+<p>上面 withTheia 和 withAngular 已经展示了一个插件的声明流程，那么插件需要到底做了什么事：</p>
+<ol>
+<li>重写和拦截编辑器对象（editor）提供的能力</li>
+<li>返回编辑器对象，供下一个插件使用继续流转</li>
+</ol>
+<h3 id="示例">示例</h3>
+<p><img src="https://atlas-rc.pingcode.com/files/public/646350e97083dd5ecd38a0ce/origin-url" alt="image.png"></p>
+<h2 id="组合-装载插件">组合/装载插件</h2>
+<p>方式：js 高阶函数～</p>
+<p>如：  <code>withInlines(withHistory(withAngular(createEditor())))</code></p>
+<p>theia 中组合插件</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/646351457083dd5ecd38a0cf/origin-url" alt="image.png"></p>
+<h3 id="示例-2">示例</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">this.editor = withTheia(</span><br><span class="line">  withHistory(</span><br><span class="line">    withAngular(</span><br><span class="line">      createEditor(),</span><br><span class="line">      CLIPBOARD_FORMAT_KEY)</span><br><span class="line">  ), plugins</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>编辑器</category>
+      </categories>
+      <tags>
+        <tag>富文本编辑器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>编辑器系列—什么是插件</title>
+    <url>/2023/05/16/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/</url>
+    <content><![CDATA[<blockquote>
+<p>插件（Plugin）是指一种可以增强或扩展已有软件功能的组件或模块。它们通常是以独立的方式编写，可以被动态地添加到主应用程序中，从而提供额外的功能和特性。                                                                                                          —— ChatGPT</p>
+</blockquote>
+<p>个人理解：插件是一个相对的名词，它必须有一个主体容器/应用，其他独立的组件以插入的形式扩展主体容器/应用。</p>
+<p>在 Slate 中，插件是一等公民，连编辑器都是以插件的形式创建的，其中编辑器对象扮演着主体容器/应用的角色，提供核心功能，每个插件可以基于 Editor 提供的核心能力去拦截改写或扩展自己的功能/逻辑。</p>
+<span id="more"></span>
+<p>编辑器主体和插件的关系：</p>
+<ul>
+<li>插件依赖于编辑器，无法单独使用</li>
+<li>编辑器可以在没有插件的情况下运行，但功能将受到限制</li>
+</ul>
+<p><img src="https://atlas-rc.pingcode.com/files/public/645e04fd521bcc58219384a4/origin-url" alt="image.png"></p>
+]]></content>
+      <categories>
+        <category>编辑器</category>
+      </categories>
+      <tags>
+        <tag>富文本编辑器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>hexo提交代码部署</title>
+    <url>/2023/05/09/hexo%E6%8F%90%E4%BA%A4%E4%BB%A3%E7%A0%81%E9%83%A8%E7%BD%B2/</url>
+    <content><![CDATA[<p><code>hexo clean &amp;&amp; hexo deploy</code></p>
+]]></content>
+      <tags>
+        <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>基于 Angular CDK 实现拖拽复制元素</title>
+    <url>/2023/04/05/%E5%9F%BA%E4%BA%8EAngularCDK%E5%AE%9E%E7%8E%B0%E6%8B%96%E6%8B%BD%E5%A4%8D%E5%88%B6%E5%85%83%E7%B4%A0/</url>
+    <content><![CDATA[<h2 id="背景">背景</h2>
+<p>有这样一个需求：<br>
+<img src="https://atlas.pingcode.com/files/public/642cdbc113b2732f78dd3cff" alt=""></p>
+<span id="more"></span>
+<p>使用的是原生 CDK 拖拽组件，找了很久也没有找到拖拽复制的，基础示例是从一个容器拖拽进另一个元素之后，该元素会从原容器中删除，如下图<br>
+<img src="https://atlas.pingcode.com/files/public/642cdd480ddbebc0a2997fde" alt=""></p>
+<p>找了很久的资料，最终发现了官方有这样一个 issue:  <a href="https://github.com/angular/components/issues/13100">https://github.com/angular/components/issues/13100</a> ，里面就充分阐述了这个问题，可惜的是官方并没有给出解决方案，通过关联的 pull request 看到官方提供了一个工具函数：copyArrayItem，它只是在原有的交互上又给原容器加了一遍拖拽的元素，当元素从一个容器到另一个容器（不要松鼠标），它还是会删除原容器的元素，会给用户造成一些错觉，如图：</p>
+<p><img src="https://atlas.pingcode.com/files/public/642ce2e70ddbebc0a2997ff4" alt=""><br>
+<img src="https://atlas.pingcode.com/files/public/642cdff613b2732f78dd3d0f" alt=""></p>
+<h2 id="解决方案">解决方案</h2>
+<p>这也是一个骚操作，思路是：拖拽的过程中用一个跟原容器一模一样的容器替代它，等拖拽结束后在恢复原视图，用一个状态来控制两个容器的隐藏/显示，这样的话在从一个容器移入新容器的整个过程中原容器会隐藏掉，也就是说这个容器的元素在被删除的一瞬间，用户的视觉下是看不到的，用户只能看到跟原容器一模一样的容器，而这个容器是静态的，元素从开始到最后都不会减少。</p>
+<h3 id="代码">代码</h3>
+<p><img src="https://atlas.pingcode.com/files/public/642ce7720ddbebc0a2998008" alt=""><br>
+效果图如文章第一节所示</p>
+<h3 id="拓展">拓展</h3>
+<h4 id="为什么不是只复制出这个元素而是复制整个容器呢？">为什么不是只复制出这个元素而是复制整个容器呢？</h4>
+<p>因为删除这个动作是 dropList 控制的，数据也是容器控制的，进入新容器的一瞬间依旧会删除（cdk 内部控制的，不支持外部重写）。</p>
+<h4 id="把-style-display-换成-ngIf-是否可行？">把 style.display 换成 ngIf 是否可行？</h4>
+<p>不行，因为使用 ngIf 整个 dom 就都不会渲染了，那么拖拽组件就找不到宿主导致无法拖拽，使用 display，外层 dom 存在只是样式隐藏了，但是真实 dom 依旧存在。</p>
+<h2 id="源码及示例">源码及示例</h2>
+<p><a href="https://stackblitz.com/edit/cdk-drag-drop-copy?file=src/app/cdk-drag-drop-connected-sorting-example.html">https://stackblitz.com/edit/cdk-drag-drop-copy?file=src/app/cdk-drag-drop-connected-sorting-example.html</a></p>
+]]></content>
+      <categories>
+        <category>Angular</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Angular 动态创建组件</title>
+    <url>/2023/03/22/angular%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BA%E7%BB%84%E4%BB%B6/</url>
+    <content><![CDATA[<p>有两种方式：视图动态渲染和组件动态创建（笔者拟自己拟的概念），  <strong>区别是前者的重心是使用 NgComponentOutlet 指令在视图模板中，后者的重心是使用 createComponent API 在组件内创建的</strong>  。</p>
+<span id="more"></span>
+<h3 id="方式一：视图渲染">方式一：视图渲染</h3>
+<p>声明一个组件 app-dynamic</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@Component(&#123;</span><br><span class="line">  selector: &#x27;app-dynamic&#x27;,</span><br><span class="line">  template: &#x27;&lt;div&gt; 123 &lt;div&gt;&#x27;,</span><br><span class="line">&#125;)</span><br><span class="line">export class DynamicComponent implements OnInit &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>在其他组件的视图渲染该组件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@Component(&#123;</span><br><span class="line">  selector: &#x27;my-app&#x27;,</span><br><span class="line">  template: `</span><br><span class="line">    &lt;ng-container *ngComponentOutlet=&quot;dynamicComponent&quot;&gt;&lt;/ng-container&gt;</span><br><span class="line">  `,</span><br><span class="line">&#125;)</span><br><span class="line">export class App &#123;</span><br><span class="line">  dynamicComponent = DynamicComponent;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>效果如下</p>
+<p><img src="https://atlas.pingcode.com/files/public/641aa49d7b59c40c0df5baa0/origin-url" alt="image.png"></p>
+<h4 id="传递参数">传递参数</h4>
+<p>这种方式不能直接像 @Input() 一样去传值，但是 ngComponentOutlet 指令  **支持 injector 注入 token **  的方式传值。</p>
+<p>修改上述代码：</p>
+<p><img src="https://atlas.pingcode.com/files/public/641aa5edaad49592766d5672/origin-url" alt="image.png"></p>
+<p>组件接收值</p>
+<p><img src="https://atlas.pingcode.com/files/public/641aa66caad49592766d5689/origin-url" alt="image.png"></p>
+<p>完整代码戳  <a href="https://stackblitz.com/edit/angular-m1uvoc?file=src/main.ts">这里</a></p>
+<h3 id="方式二：组件创建">方式二：组件创建</h3>
+<p>声明一个组件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@Component(&#123;</span><br><span class="line">  selector: &#x27;app-two&#x27;,</span><br><span class="line">  template: &#x27;&lt;div&gt; &#123;&#123; name &#125;&#125; &lt;/div&gt;&#x27;,</span><br><span class="line">&#125;)</span><br><span class="line">export class TwoComponent &#123;</span><br><span class="line">  @Input() name: string;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@Component(&#123;</span><br><span class="line">  selector: &#x27;my-app&#x27;,</span><br><span class="line">  template: `</span><br><span class="line">    &lt;ng-template #container&gt;&lt;/ng-template&gt;</span><br><span class="line">  `,</span><br><span class="line">&#125;)</span><br><span class="line">export class App &#123;</span><br><span class="line">  </span><br><span class="line">  constructor(</span><br><span class="line">    private environmentInjector: EnvironmentInjector,</span><br><span class="line">    private cdr: ChangeDetectorRef</span><br><span class="line">  ) &#123; &#125;</span><br><span class="line">  </span><br><span class="line">  ngAfterViewInit() &#123;</span><br><span class="line">    const component = this.container.createComponent(TwoComponent, &#123;</span><br><span class="line">      environmentInjector: this.environmentInjector,</span><br><span class="line">    &#125;);</span><br><span class="line">    // 传参</span><br><span class="line">    component.setInput(&#x27;name&#x27;, &#x27;组件动态创建&#x27;);</span><br><span class="line">    this.cdr.detectChanges();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>效果</p>
+<p><img src="https://atlas.pingcode.com/files/public/641b0769aad49592766d61a8/origin-url" alt="image.png"></p>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a href="https://angular.cn/api/common/NgComponentOutlet#ngcomponentoutlet">ngcomponentoutlet</a></li>
+<li><a href="https://angular.cn/api/core/ViewContainerRef#createcomponent">createcomponent</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Angular</category>
+      </categories>
+      <tags>
+        <tag>Angular</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>js 修改伪类元素的样式</title>
+    <url>/2023/03/15/js%E8%AE%BE%E7%BD%AE%E4%BC%AA%E7%B1%BB%E5%85%83%E7%B4%A0/</url>
+    <content><![CDATA[<blockquote>
+<p>这是一个骚操作…因为目前为止 js 还没有提供可以直接设置伪类的 API，但是程序界流传着这样一句话：<strong>任何解决不了的问题都可以引入一个第三方去解决</strong></p>
+</blockquote>
+<p>有一种思路是：</p>
+<ol>
+<li>js 添加自定义 style 属性</li>
+<li>css 中读取并使用该属性的值</li>
+</ol>
+<span id="more"></span>
+<p>以下面场景为例：</p>
+<p>需求是给右侧伪类元素随机添加颜色（这个场景也许不太恰当，完全可以另外写一个 div，这里只为了演示说明）<br>
+<img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6f4d47f4594f448699944093666232aa~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></p>
+<p>代码如下：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;demo&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">style</span>=<span class="string">&quot;margin: 30px 150px;&quot;</span>&gt;</span>随机切换背景色<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="language-css"></span></span><br><span class="line"><span class="language-css">    * &#123;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">box-sizing</span>: border-box;</span></span><br><span class="line"><span class="language-css">    &#125;</span></span><br><span class="line"><span class="language-css"></span></span><br><span class="line"><span class="language-css">    <span class="selector-tag">body</span> &#123;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">margin</span>: <span class="number">0</span> auto;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">min-height</span>: <span class="number">100vh</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">width</span>: <span class="number">500px</span>;</span></span><br><span class="line"><span class="language-css">    &#125;</span></span><br><span class="line"><span class="language-css"></span></span><br><span class="line"><span class="language-css">    <span class="selector-class">.demo</span> &#123;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">margin-top</span>: <span class="number">40px</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">position</span>: relative;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">width</span>: <span class="number">200px</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">height</span>: <span class="number">200px</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">background-color</span>: lightgreen;</span></span><br><span class="line"><span class="language-css">    &#125;</span></span><br><span class="line"><span class="language-css"></span></span><br><span class="line"><span class="language-css">    <span class="selector-class">.demo</span><span class="selector-pseudo">::after</span> &#123;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">content</span>: <span class="string">&#x27;伪类元素&#x27;</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">display</span>: block;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">position</span>: absolute;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">top</span>: <span class="number">0</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">left</span>: <span class="number">100%</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">margin-left</span>: <span class="number">20px</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">height</span>: <span class="number">160px</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">width</span>: <span class="number">160px</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">padding</span>: <span class="number">20px</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">background-color</span>: lightgrey;</span></span><br><span class="line"><span class="language-css">    &#125;</span></span><br><span class="line"><span class="language-css"></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="添加-style-自定义属性">添加 style 自定义属性</h2>
+<p>按照文章最开始讲的思路，我们第一步需要使用 js 给 dom 元素的 style 添加自定义属性</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> colors = [<span class="string">&#x27;lightpink&#x27;</span>, <span class="string">&#x27;lightblue&#x27;</span>, <span class="string">&#x27;lightgoldenrodyellow&#x27;</span>, <span class="string">&#x27;lightgrey&#x27;</span>];</span><br><span class="line"><span class="keyword">let</span> i = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">const</span> btn = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;button&#x27;</span>);</span><br><span class="line">btn.<span class="title function_">addEventListener</span>(<span class="string">&#x27;click&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">123</span>);</span><br><span class="line">    <span class="keyword">const</span> element = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;.demo&#x27;</span>);</span><br><span class="line">    <span class="comment">/* 添加自定义属性 */</span></span><br><span class="line">    element.<span class="property">style</span>.<span class="title function_">setProperty</span>(<span class="string">&#x27;--bg-color&#x27;</span>, colors[i % <span class="number">4</span>]);</span><br><span class="line">    i++;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="css-使用自定义属性值">css 使用自定义属性值</h2>
+<p>这里需要用到 css 的 <a href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/var">var() 函数</a></p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.demo</span><span class="selector-pseudo">::after</span> &#123;</span><br><span class="line">    <span class="attribute">content</span>: <span class="string">&#x27;伪类元素&#x27;</span>;</span><br><span class="line">    <span class="attribute">display</span>: block;</span><br><span class="line">    <span class="attribute">position</span>: absolute;</span><br><span class="line">    <span class="attribute">top</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">left</span>: <span class="number">100%</span>;</span><br><span class="line">    <span class="attribute">margin-left</span>: <span class="number">20px</span>;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">160px</span>;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">160px</span>;</span><br><span class="line">    <span class="attribute">padding</span>: <span class="number">20px</span>;</span><br><span class="line">    <span class="comment">/* 使用 --bg-color 属性值 */</span></span><br><span class="line">    <span class="attribute">background-color</span>: <span class="built_in">var</span>(--bg-color, lightgrey);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们可以看下添加后的 css 样式</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fa134b3332a8439f8e1495a13663052f~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></p>
+<h2 id="最终完整代码">最终完整代码</h2>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;demo&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">style</span>=<span class="string">&quot;margin: 30px 150px;&quot;</span>&gt;</span>随机切换背景色<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">    <span class="keyword">const</span> colors = [<span class="string">&#x27;lightpink&#x27;</span>, <span class="string">&#x27;lightblue&#x27;</span>, <span class="string">&#x27;lightgoldenrodyellow&#x27;</span>, <span class="string">&#x27;lightgrey&#x27;</span>];</span></span><br><span class="line"><span class="language-javascript">    <span class="keyword">let</span> i = <span class="number">0</span>;</span></span><br><span class="line"><span class="language-javascript">    <span class="keyword">const</span> btn = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;button&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">    btn.<span class="title function_">addEventListener</span>(<span class="string">&#x27;click&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">123</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">const</span> element = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;.demo&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        element.<span class="property">style</span>.<span class="title function_">setProperty</span>(<span class="string">&#x27;--bg-color&#x27;</span>, colors[i % <span class="number">4</span>]);</span></span><br><span class="line"><span class="language-javascript">        i++;</span></span><br><span class="line"><span class="language-javascript">    &#125;);</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="language-css"></span></span><br><span class="line"><span class="language-css">    * &#123;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">box-sizing</span>: border-box;</span></span><br><span class="line"><span class="language-css">    &#125;</span></span><br><span class="line"><span class="language-css"></span></span><br><span class="line"><span class="language-css">    <span class="selector-tag">body</span> &#123;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">margin</span>: <span class="number">0</span> auto;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">min-height</span>: <span class="number">100vh</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">width</span>: <span class="number">500px</span>;</span></span><br><span class="line"><span class="language-css">    &#125;</span></span><br><span class="line"><span class="language-css"></span></span><br><span class="line"><span class="language-css">    <span class="selector-class">.demo</span> &#123;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">margin-top</span>: <span class="number">40px</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">position</span>: relative;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">width</span>: <span class="number">200px</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">height</span>: <span class="number">200px</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">background-color</span>: lightgreen;</span></span><br><span class="line"><span class="language-css">    &#125;</span></span><br><span class="line"><span class="language-css"></span></span><br><span class="line"><span class="language-css">    <span class="selector-class">.demo</span><span class="selector-pseudo">::after</span> &#123;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">content</span>: <span class="string">&#x27;伪类元素&#x27;</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">display</span>: block;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">position</span>: absolute;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">top</span>: <span class="number">0</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">left</span>: <span class="number">100%</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">margin-left</span>: <span class="number">20px</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">height</span>: <span class="number">160px</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">width</span>: <span class="number">160px</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">padding</span>: <span class="number">20px</span>;</span></span><br><span class="line"><span class="language-css">        <span class="attribute">background-color</span>: <span class="built_in">var</span>(--bg-color, lightgrey);</span></span><br><span class="line"><span class="language-css">    &#125;</span></span><br><span class="line"><span class="language-css"></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>js 操作样式</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Angular 指令组合 API—hostDirectives</title>
+    <url>/2023/03/10/directive-composition-api/</url>
+    <content><![CDATA[<blockquote>
+<p>原文在我的知乎：<a href="https://zhuanlan.zhihu.com/p/612817008">Angular hostDirective 详解</a></p>
+</blockquote>
+<h2 id="前言">前言</h2>
+<p>最近有一个需求是动态创建组件，然后给其组件添加指令，当时可难坏了，因为 createComponent API 不支持绑定指令，所以我当时猜想是否可以在 @Component 注入或 @HostBindingDirective 绑定实现呢？找了很久，最终发现官方支持了这种，选择的是前者，Feature Issue 如下：</p>
+<span id="more"></span>
+<p><img src="https://pic2.zhimg.com/v2-d304bc6d587aba81e8d2dbb7a8c29685_r.jpg" alt=""><br>
+具体详情：<a href="https://github.com/angular/angular/issues/47728">https://github.com/angular/angular/issues/47728</a></p>
+<h2 id="简介">简介</h2>
+<p>hostDirectives 是以依赖注入（ @Component 装饰器）的方式给宿主绑定指令，该特性于 Angular 15 支持。</p>
+<p>基本使用：</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&#x27;app-demo&#x27;</span>,</span><br><span class="line">  <span class="attr">template</span>: <span class="string">&#x27;&lt;div&gt;&lt;/div&gt;&#x27;</span>,</span><br><span class="line">  <span class="attr">hostDirectives</span>: [<span class="title class_">CdkDrag</span>]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">DemoComponent</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>等价于</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><span class="line">&lt;app-demo cdkDrag&gt;&lt;/app-demo&gt;</span><br></pre></td></tr></table></figure>
+<p>有些类似 host 属性（或<code>@HostBinding('class') className = 'active'</code>）和 <code>&lt;div class='active'&gt;&lt;/div&gt;</code> 的关系。</p>
+<h2 id="需要注意的点">需要注意的点</h2>
+<ul>
+<li>Angular 会在编译时静态应用宿主指令。不能在运行时动态添加指令。</li>
+<li>hostDirectives 中使用的指令必须是 standalone: true 。</li>
+<li>Angular 会忽略 hostDirectives 属性中所应用的那些指令的 selector 。</li>
+</ul>
+<p><img src="https://pic3.zhimg.com/v2-56bfc82c5187d5fa9645aba6827ce2e6_b.jpg" alt=""></p>
+<p>还有个小区别是，hostDirectives 添加的指令不会给 dom 元素加上属性，不过这并不影响效果。<br>
+<img src="https://pic4.zhimg.com/v2-72b83d9917ee69d13b1c5738681a8e8f_b.jpg" alt=""><br>
+<img src="https://pic3.zhimg.com/v2-5ba4e6493ef88fb15173edccc78c666a_b.jpg" alt=""></p>
+<h2 id="指令支持输入（属性）与输出（事件）">指令支持输入（属性）与输出（事件）</h2>
+<ol>
+<li>创建一个指令</li>
+</ol>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Directive</span>, <span class="title class_">EventEmitter</span>, <span class="title class_">Input</span>, <span class="title class_">OnInit</span>, <span class="title class_">Output</span>, <span class="title class_">ViewContainerRef</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@angular/core&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&#x27;[one]&#x27;</span>,</span><br><span class="line">  <span class="attr">exportAs</span>: <span class="string">&#x27;one&#x27;</span>,</span><br><span class="line">  <span class="attr">standalone</span>: <span class="literal">true</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">DirectiveOne</span> <span class="keyword">implements</span> <span class="title class_">OnInit</span> &#123;</span><br><span class="line">  <span class="meta">@Input</span>() <span class="keyword">public</span> <span class="attr">name</span>: <span class="built_in">string</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Output</span>() nameChange = <span class="keyword">new</span> <span class="title class_">EventEmitter</span>();</span><br><span class="line"></span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"><span class="keyword">private</span> <span class="attr">viewContainer</span>: <span class="title class_">ViewContainerRef</span></span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">ngOnInit</span>(): <span class="built_in">void</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;one input name: &#x27;</span> + <span class="variable language_">this</span>.<span class="property">name</span>);</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">viewContainer</span>.<span class="property">element</span>.<span class="property">nativeElement</span>.<span class="property">style</span> = <span class="string">&#x27;color: red;&#x27;</span>;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">nameChange</span>.<span class="title function_">emit</span>(<span class="string">&#x27;one name output&#x27;</span>);</span><br><span class="line">    &#125;, <span class="number">1000</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>组件使用指令添加输入输出参数</li>
+</ol>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&#x27;app-demo&#x27;</span>,</span><br><span class="line">  <span class="attr">standalone</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">imports</span>: [<span class="title class_">DirectiveOne</span>],</span><br><span class="line">  <span class="attr">hostDirectives</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">directive</span>: <span class="title class_">DirectiveOne</span>,</span><br><span class="line">      <span class="attr">inputs</span>: [<span class="string">&#x27;name&#x27;</span>],</span><br><span class="line">      <span class="attr">outputs</span>: [<span class="string">&#x27;nameChange&#x27;</span>]</span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">template</span>: <span class="string">`脱我战时袍，著我旧时裳`</span>,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">DemoComponent</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>使用组件绑定输入属性和事件返回</li>
+</ol>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Component</span>, <span class="title class_">Input</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@angular/core&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">CommonModule</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@angular/common&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; bootstrapApplication &#125; <span class="keyword">from</span> <span class="string">&#x27;@angular/platform-browser&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">DemoComponent</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./demo.component&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&#x27;my-app&#x27;</span>,</span><br><span class="line">  <span class="attr">imports</span>: [<span class="title class_">CommonModule</span>, <span class="title class_">DemoComponent</span>],</span><br><span class="line">  <span class="attr">standalone</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">template</span>: <span class="string">`</span></span><br><span class="line"><span class="string">    &lt;app-demo [name]=&quot;name&quot; (nameChange)=&quot;change($event)&quot;&gt;&lt;/app-demo&gt;</span></span><br><span class="line"><span class="string">  `</span>,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">App</span> &#123;</span><br><span class="line">  <span class="meta">@Input</span>() name = <span class="string">&#x27;Angular app&#x27;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">change</span>(<span class="params">value</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(value);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>效果显示：<br>
+<img src="https://pic2.zhimg.com/v2-46c50c58c07b45e6d872497d31ea43a5_b.jpg" alt=""></p>
+<h2 id="给输入输出起别名">给输入输出起别名</h2>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">      <span class="attr">directive</span>: <span class="title class_">DirectiveOne</span>,</span><br><span class="line">      <span class="attr">inputs</span>: [<span class="string">&#x27;name: Name&#x27;</span>],</span><br><span class="line">      <span class="attr">outputs</span>: [<span class="string">&#x27;nameChange: NameChange&#x27;</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>&lt;app-demo [Name]=&quot;name&quot; (NameChange)=&quot;change($event)&quot;&gt;&lt;/app-demo&gt;</code></p>
+<h2 id="指令中引入另一个指令">指令中引入另一个指令</h2>
+<blockquote>
+<p>方便理解，我把这种叫做指令嵌套或指令继承</p>
+</blockquote>
+<ol>
+<li>指令 DirectiveTwo</li>
+</ol>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Directive</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@angular/core&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">DirectiveOne</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./directive-one&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&#x27;[two]&#x27;</span>,</span><br><span class="line">  <span class="attr">standalone</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">exportAs</span>: <span class="string">&#x27;two&#x27;</span>,</span><br><span class="line">  <span class="attr">hostDirectives</span>: [<span class="title class_">DirectiveOne</span>]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">DirectiveTwo</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>组件使用指令</li>
+</ol>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Component</span>, <span class="title class_">Input</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@angular/core&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">DirectiveTwo</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./directive-two&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&#x27;app-demo&#x27;</span>,</span><br><span class="line">  <span class="attr">standalone</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">imports</span>: [<span class="title class_">DirectiveTwo</span>],</span><br><span class="line">  <span class="attr">hostDirectives</span>: [<span class="title class_">DirectiveTwo</span>],</span><br><span class="line">  <span class="attr">template</span>: <span class="string">`脱我战时袍，著我旧时裳`</span>,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">DemoComponent</span> &#123; &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="指令嵌套的执行顺序">指令嵌套的执行顺序</h2>
+<p>以上述为例，大体的执行顺序为：DirectiveOne -&gt; DirectiveTwo。</p>
+<p>加上每个指令生命钩子后的顺序为：DirectiveOne constructor（初始化）-&gt; DirectiveTwo constructor（初始化）-&gt; DirectiveOne ngOnInit -&gt; DirectiveTwo ngOnInit … 等等，<strong>这个顺序意味着后续的指令可以修改前面指令对宿主元素的操作</strong>。</p>
+<p>示例如下：</p>
+<ol>
+<li>DirectiveOne</li>
+</ol>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Directive</span>, <span class="title class_">EventEmitter</span>, <span class="title class_">Input</span>, <span class="title class_">OnInit</span>, <span class="title class_">Output</span>, <span class="title class_">ViewContainerRef</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@angular/core&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&#x27;[one]&#x27;</span>,</span><br><span class="line">  <span class="attr">exportAs</span>: <span class="string">&#x27;one&#x27;</span>,</span><br><span class="line">  <span class="attr">standalone</span>: <span class="literal">true</span>,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">DirectiveOne</span> <span class="keyword">implements</span> <span class="title class_">OnInit</span> &#123;</span><br><span class="line">  <span class="meta">@Input</span>() <span class="keyword">public</span> <span class="attr">name</span>: <span class="built_in">string</span>;</span><br><span class="line">  <span class="meta">@Output</span>() nameChange = <span class="keyword">new</span> <span class="title class_">EventEmitter</span>();</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"><span class="keyword">private</span> <span class="attr">viewContainer</span>: <span class="title class_">ViewContainerRef</span></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;one constructor&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">ngOnInit</span>(): <span class="built_in">void</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;one ngOnInit&#x27;</span>);</span><br><span class="line">    <span class="comment">// console.log(&#x27;one input name: &#x27; + this.name);</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">viewContainer</span>.<span class="property">element</span>.<span class="property">nativeElement</span>.<span class="property">style</span> = <span class="string">&#x27;color: red;&#x27;</span>;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">nameChange</span>.<span class="title function_">emit</span>(<span class="string">&#x27;one output&#x27;</span>);</span><br><span class="line">    &#125;, <span class="number">1000</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>DirectiveTwo</li>
+</ol>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Directive</span>, <span class="title class_">EventEmitter</span>, <span class="title class_">Input</span>, <span class="title class_">OnInit</span>, <span class="title class_">Output</span>, <span class="title class_">ViewContainerRef</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@angular/core&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">DirectiveOne</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./directive-one&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Directive</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&#x27;[two]&#x27;</span>,</span><br><span class="line">  <span class="attr">standalone</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">exportAs</span>: <span class="string">&#x27;two&#x27;</span>,</span><br><span class="line">  <span class="attr">hostDirectives</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">directive</span>: <span class="title class_">DirectiveOne</span>,</span><br><span class="line">      <span class="attr">inputs</span>: [<span class="string">&#x27;name&#x27;</span>],</span><br><span class="line">      <span class="attr">outputs</span>: [<span class="string">&#x27;nameChange&#x27;</span>]</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">DirectiveTwo</span> <span class="keyword">implements</span> <span class="title class_">OnInit</span> &#123;</span><br><span class="line">  <span class="meta">@Input</span>() <span class="keyword">public</span> name = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">  <span class="meta">@Output</span>() nameChange = <span class="keyword">new</span> <span class="title class_">EventEmitter</span>();</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"><span class="keyword">private</span> <span class="attr">viewContainer</span>: <span class="title class_">ViewContainerRef</span></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;two constructor&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">ngOnInit</span>(): <span class="built_in">void</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;two ngOnInit&#x27;</span>);</span><br><span class="line">    <span class="comment">// 覆盖宿主元素</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">viewContainer</span>.<span class="property">element</span>.<span class="property">nativeElement</span>.<span class="property">innerHTML</span> += <span class="string">&#x27;；&lt;span&gt;当窗理云鬓，对镜帖花黄&lt;/span&gt;。&#x27;</span>;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">viewContainer</span>.<span class="property">element</span>.<span class="property">nativeElement</span>.<span class="property">style</span> = <span class="string">&#x27;color: red; background-color: yellow;&#x27;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>组件使用指令</li>
+</ol>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Component</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@angular/core&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">DirectiveTwo</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./directive-two&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&#x27;app-demo&#x27;</span>,</span><br><span class="line">  <span class="attr">standalone</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">imports</span>: [<span class="title class_">DirectiveTwo</span>],</span><br><span class="line">  <span class="attr">hostDirectives</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">directive</span>: <span class="title class_">DirectiveTwo</span>,</span><br><span class="line">      <span class="attr">inputs</span>: [<span class="string">&#x27;name&#x27;</span>],</span><br><span class="line">      <span class="attr">outputs</span>: [<span class="string">&#x27;nameChange&#x27;</span>]</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">  <span class="attr">template</span>: <span class="string">`脱我战时袍，著我旧时裳`</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">DemoComponent</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;demo constructor&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">ngOnInit</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;demo ngOnInit&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>使用组件</li>
+</ol>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  <span class="attr">selector</span>: <span class="string">&#x27;my-app&#x27;</span>,</span><br><span class="line">  <span class="attr">imports</span>: [<span class="title class_">CommonModule</span>, <span class="title class_">DemoComponent</span>],</span><br><span class="line">  <span class="attr">standalone</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">template</span>: <span class="string">`</span></span><br><span class="line"><span class="string">    &lt;app-demo [name]=&quot;name&quot; (nameChange)=&quot;change($event)&quot;&gt;&lt;/app-demo&gt;</span></span><br><span class="line"><span class="string">  `</span>,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">App</span> &#123;</span><br><span class="line">  <span class="meta">@Input</span>() name = <span class="string">&#x27;Angular app&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>效果展示：<br>
+<img src="https://pic3.zhimg.com/v2-5d4bac157f712e1822e9d13dff735ea2_b.jpg" alt=""><br>
+最终的效果可以发现 DirectiveTwo 在 DirectiveOne 的基础上修改了宿主元素。</p>
+<h2 id="向动态创建的组件添加指令">向动态创建的组件添加指令</h2>
+<p>场景：使用官方 cdk 的拖拽组件实现将左侧组件拖拽至可添加区域（中间部分），并且中间的元素可拖拽排序，所以中间部分也必须是一个 cdkDragList，复制出的组件必须包含指令 cdkDrag。<br>
+<img src="https://pic4.zhimg.com/v2-150933b20bd5b9e0e7848927790a2b37_b.jpg" alt=""><br>
+<img src="https://pic3.zhimg.com/v2-f2b760caee55c6d8623da993b323e8d2_b.jpg" alt=""></p>
+<ol>
+<li>动态创建组件：<br>
+<img src="https://pic1.zhimg.com/v2-51fb0719c069fb876f55eb70ef707a04_b.jpg" alt=""><br>
+<img src="https://pic1.zhimg.com/v2-bb6eaa59b3f78b5c69f90be7e2a38c74_b.jpg" alt=""></li>
+<li>给组件添加 cdkDrag 指令<br>
+<img src="https://pic4.zhimg.com/v2-16b950c305ddf3b4d3d87fd0ecb65503_b.jpg" alt=""></li>
+</ol>
+<p>dom 元素<br>
+<img src="https://pic1.zhimg.com/v2-2164fb9111b7169baeeac807a19e2c68_b.jpg" alt=""></p>
+<h2 id="完整代码">完整代码</h2>
+<p><a href="https://link.zhihu.com/?target=https%3A//stackblitz.com/edit/angular-directive-compose-api%3Ffile%3Dsrc%252Fmain.ts">angular-directive-compose-api - StackBlitz</a></p>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="https://link.zhihu.com/?target=https%3A//angular.cn/guide/directive-composition-api%23directive-composition-api">Angular directive-composition-api</a></li>
+<li><a href="https://link.zhihu.com/?target=https%3A//angular.cn/api/core/Directive%23hostdirectives">Angular @Directive#hostdirectives</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Angular</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Sass 中使用 Google icons 和 字体</title>
+    <url>/2023/03/05/%E4%BD%BF%E7%94%A8google%E7%9F%A2%E9%87%8F%E5%9B%BE/</url>
+    <content><![CDATA[<h2 id="1-导入-icon">1. 导入 icon</h2>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="keyword">@import</span> <span class="string">&quot;https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&amp;display=swap&quot;</span>;</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h2 id="2-使用">2. 使用</h2>
+<p>添加 <code>class=&quot;material-icons&quot;</code></p>
+<p>示例：<code>&lt;i class=&quot;material-icons&quot;&gt;space_dashboard&lt;/i&gt;</code></p>
+<h2 id="图标库">图标库</h2>
+<ul>
+<li><a href="https://fonts.google.com/icons?hl=zh-cn">https://fonts.google.com/icons?hl=zh-cn</a></li>
+<li>其他：<a href="https://developers.google.com/fonts/docs/material_icons?hl=zh-cn">https://developers.google.com/fonts/docs/material_icons?hl=zh-cn</a></li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
+    <title>Linux/Mac 语法手册</title>
+    <url>/2023/03/03/linux%E8%AF%AD%E6%B3%95%E6%89%8B%E5%86%8C/</url>
+    <content><![CDATA[<h2 id="查看端口占用">查看端口占用</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lsof -i:端口号</span><br></pre></td></tr></table></figure>
+<h2 id="杀死进程">杀死进程</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">kill</span> -9 PID</span><br></pre></td></tr></table></figure>
+<h2 id="查看内存占用情况-前10位">查看内存占用情况(前10位)</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ps aux --<span class="built_in">sort</span> -rss | <span class="built_in">head</span> -n 10</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h2 id="剪切-移动-重命名">剪切/移动/重命名</h2>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> 目录名/文件名 目录名/文件名 <span class="comment"># 移动</span></span><br><span class="line"><span class="built_in">mv</span> 文件名 文件名 <span class="comment"># 重命名</span></span><br></pre></td></tr></table></figure>
+<h2 id="压缩-解压">压缩/解压</h2>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">tar zxvf fileName.tgz <span class="comment"># 解压</span></span><br><span class="line">tar cvf fileName.tar dirName <span class="comment"># 压缩</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>Mac</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Mac</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用镜像下载 vscode</title>
+    <url>/2023/03/03/vscode%E9%95%9C%E5%83%8F%E4%B8%8B%E8%BD%BD/</url>
+    <content><![CDATA[<p>从官网下载 vscode 会特别的慢，所以利用镜像可以提高下载速度。</p>
+<h2 id="1-打开vscode官网">1. 打开vscode官网</h2>
+<p>打开官网： <a href="https://code.visualstudio.com/Download/">https://code.visualstudio.com/Download/</a></p>
+<span id="more"></span>
+<h2 id="2-选中系统对应的版本">2. 选中系统对应的版本</h2>
+<p><img src="https://atlas.pingcode.com/files/public/64215ccf7b59c40c0df6138e" alt="在这里插入图片描述"></p>
+<h2 id="3-复制下载链接地址">3. 复制下载链接地址</h2>
+<p><img src="https://atlas.pingcode.com/files/public/64215cde7b59c40c0df6138f" alt="在这里插入图片描述"></p>
+<h2 id="4-修改链接地址">4. 修改链接地址</h2>
+<p>将复制后的链接地址的域名(上图https后面框起来的那块)修改为 <code>vscode.cdn.azure.cn</code><br>
+最终类似于这样的网址：<code>https://az764295.vo.msecnd.net/stable/e7d7e9a9348e6a8cc8c03f877d39cb72e5dfb1ff/VSCode-darwin-universal.zip</code></p>
+]]></content>
+      <categories>
+        <category>VSCode</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>理解npm legacy-peer-deps 参数标识</title>
+    <url>/2023/02/22/npm%20legacy-peer-deps%20%E5%8F%82%E6%95%B0%E6%A0%87%E8%AF%86/</url>
+    <content><![CDATA[<p>大家应该都遇到过这样的错误：  <strong>unable to resolve dependency tree</strong>  <strong>。</strong></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/63f5a12ea299063b352a91dd/origin-url" alt="image.png"></p>
+<p>刚开始是根据报错提示给出的解决方案：  <code>npm install --legacy-peer-deps</code>  ，这个用过很多次了，也解决过大多数场景，但最近一次却栽到了这上面。</p>
+<span id="more"></span>
+<h3 id="为什么会出现-unable-to-resolve-dependency-tree">为什么会出现 unable to resolve dependency tree ?</h3>
+<p>简单说，  <strong>安装包的依赖出现了不对等</strong>  。具体解释看下面：</p>
+<blockquote>
+<p>前几天还和同事聊这个问题：A 依赖了 C，版本是 1.0，B 也依赖了 C，版本是 2.0，那么最终 npm 安装的 C 是 1.0 还是 2.0，甚至说 C 本身就被项目依赖，版本是 4.0，此时安装的又是什么版本或者以上情况 均不处理报错终止安装，当然这些都是假设自己是 npm 的一些设想，从实际结果来看是终止安装。</p>
+</blockquote>
+<p>所以要处理这个问题就会产生一个用来维护依赖版本的东西，这就是 peerDependencies，peerDependencies 叫对等依赖关系，在 npm 7 才允许显示设置的，再此之前应该是默认始终安装（npm 6 的文档是没有 peerDependencies 相关资料的，也没有 legacy-peer-deps 参数标识），但实际情况我用 node 14.x 却没有此错误（node 14 配套的 npm 是 6.x）…</p>
+<h4 id="dependencies-和-peerDependencies-有什么区别？">dependencies 和 peerDependencies 有什么区别？</h4>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>dependencies</th>
+<th>peerDependencies</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>描述</td>
+<td>项目运行时所需的依赖库</td>
+<td>指定我们的包与特定版本的npm包兼容</td>
+</tr>
+<tr>
+<td>行为</td>
+<td>如果node_modules目录中不存在某个包，则会自动添加该包。</td>
+<td>不会自动安装对等依赖项。需要手动修改package.json文件，添加对等依赖项。</td>
+</tr>
+<tr>
+<td>使用</td>
+<td>包括在最终代码包中</td>
+<td>只有在发布自己的包时才能包含</td>
+</tr>
+</tbody>
+</table>
+<h3 id="legacy-peer-deps">legacy-peer-deps</h3>
+<p><strong>–legacy-peer-deps 参数是代表忽略 peerDependencies 设置的依赖版本并继续安装</strong>  ，这样产生的结果是，所有依赖会被打乱（具体安装策略还不是很清楚），这有时候没问题有时候就会出错，这取决于项目中是否用到了不同版本库的特性，向这次就栽到这上面了    ，很多库版本不一致，导致某些包已经不支持现有代码引用的一些特性而报错。</p>
+<p>所以，综上所述，  <strong>不要轻易加上 --legacy-peer-deps</strong>  ，这也是官方的警告⚠️  ** 。**</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/63f5a895a299063b352a91e3/origin-url" alt="image.png"><img src="https://atlas-rc.pingcode.com/files/public/63f5a8eaa299063b352a91e4/origin-url" alt="image.png"></p>
+<h3 id="其他解决办法">其他解决办法</h3>
+<ul>
+<li>使用 --force ，代表强制继续安装。<br>
+–omit=peer 这个倒还没有试过。</li>
+</ul>
+<h3 id="总结">总结</h3>
+<p>总结就是<strong>能不用 --legacy-peer-deps</strong>的就不用，求其次用 <strong>–force</strong>。</p>
+]]></content>
+      <categories>
+        <category>NPM</category>
+      </categories>
+      <tags>
+        <tag>NPM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>hexo ocean 主题集成 mermaid</title>
+    <url>/2023/02/08/mermaid/</url>
+    <content><![CDATA[<p>mermaid 是一款可以使用文本来绘图的工具，支持流程图、时序图、类图、饼状图等等，更多看<a href="https://mermaid.js.org/intro/">这里</a>。它可以支持在 markdown 中使用，这对于我这种程序员非常的好用，可以代替一些插图，hexo 对插图是一大痛点（上传图片，然后在 markdown 中插入链接，重要的是要考虑储存位置、空间和后期的维护），本人习惯使用代码块或文字的方式代替，所以这是一篇 hexo ocean 集成 mermaid 的文档。</p>
+<span id="more"></span>
+<p>先做个展示如下</p>
+<pre class="mermaid">flowchart LR
+    A[Start] --> B{Is it?}
+    B -->|Yes| C[OK]
+    C --> D[Rethink]
+    D --> B
+    B ---->|No| E[End]</pre>
+<h2 id="安装插件">安装插件</h2>
+<p><code>npm install --save hexo-filter-mermaid-diagrams</code></p>
+<h2 id="添加配置">添加配置</h2>
+<h3 id="方式一：远程加载-mermaid">方式一：远程加载 mermaid</h3>
+<ol>
+<li>添加配置<br>
+到 themes/ocean 的 _config.yml 文件中添加以下配置</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mermaid: </span><br><span class="line">  enable: true</span><br><span class="line">  version: &quot;9.0.0&quot; # 远程加载</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>进入 themes/ocean/layout/_partial 目录找到 after-footer.ejs 加入以下代码：</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;% <span class="keyword">if</span> (theme.<span class="property">mermaid</span>.<span class="property">enable</span>) &#123; %&gt;</span><br><span class="line">  <span class="language-xml"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&#x27;https://unpkg.com/mermaid@&lt;%= theme.mermaid.version %&gt;/dist/mermaid.min.js&#x27;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">  <span class="language-xml"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">    <span class="keyword">if</span> (<span class="variable language_">window</span>.<span class="property">mermaid</span>) &#123;</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">      mermaid.<span class="title function_">initialize</span>(&#123;<span class="attr">theme</span>: <span class="string">&#x27;forest&#x27;</span>&#125;);</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">    &#125;</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">  </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">&lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="方式二：本地加载-marmaid（推荐）">方式二：本地加载 marmaid（推荐）</h3>
+<p>本地加载 js 比远程访问速度快，所以推荐。配置跟第一种差不多，只是源码文件下载到本地。</p>
+<ol>
+<li>添加配置<br>
+到 themes/ocean 的 _config.yml 文件中添加以下配置</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mermaid: </span><br><span class="line">  enable: true</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>
+<p>下载 mermaid 源码，@后面的是版本，可以挑选自己想要的版本，版本信息看<a href="https://github.com/mermaid-js/mermaid">这里</a><br>
+地址：<a href="https://unpkg.com/mermaid@9.0.0/dist/mermaid.min.js">https://unpkg.com/mermaid@9.0.0/dist/mermaid.min.js</a><br>
+下载后放到 themes/ocean/source/js 目录下，文件名可以叫做 mermaid.min.js，名字可以自定义。</p>
+</li>
+<li>
+<p>进入 themes/ocean/layout/_partial 目录找到 after-footer.ejs 加入以下代码：</p>
+</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;% <span class="keyword">if</span> (theme.<span class="property">mermaid</span>.<span class="property">enable</span>) &#123; %&gt;</span><br><span class="line">  <span class="language-xml"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&#x27;/js/mermaid.min.js&#x27;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">  <span class="language-xml"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">    <span class="keyword">if</span> (<span class="variable language_">window</span>.<span class="property">mermaid</span>) &#123;</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">      mermaid.<span class="title function_">initialize</span>(&#123;<span class="attr">theme</span>: <span class="string">&#x27;forest&#x27;</span>&#125;);</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">    &#125;</span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml">  </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">&lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+<p>OK，到此配置结束。</p>
+<p>参考：<a href="https://github.com/webappdevelp/hexo-filter-mermaid-diagrams">https://github.com/webappdevelp/hexo-filter-mermaid-diagrams</a></p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>谈面向切面编程—AOP</title>
+    <url>/2023/02/07/%E5%88%87%E9%9D%A2%E7%BC%96%E7%A8%8B/</url>
+    <content><![CDATA[<p>第一次听说 AOP 这个概念大概还是在 5 年前，那时还是一个 Java 小白，只赚了个耳熟，这些年倒比较理解了，但并没有好好总结一篇，最近又看到相关话题，大家存在分歧有些争论，都多少有些片面，这里个人也大言不惭，谈一下 AOP。</p>
+<span id="more"></span>
+<h2 id="什么是-AOP">什么是 AOP</h2>
+<p>AOP 为 Aspect Oriented Programming 的缩写，意为：面向切面编程，是一种把系统分为多个关注点（切面）解决问题的思维。</p>
+<p>有很多资料说 AOP 是 OOP 的补充，而个人认为此观点有些局限，对面向对象语言工作者来说，OOP 是把系统当作多个对象之间的交互，AOP 把这些分解成不同关注点，帮助解决了问题，然而 AOP 不光只针对 OOP 来讲的，同样面向过程编程有些短板也可以用 AOP 来补充的，所以我们应该明确的观点是 AOP 是独立于其他编程模式之外的，不只是某一种编程模式的补充。</p>
+<blockquote>
+<p>AOP 产生于 1997 年的欧洲面向对象编程大会（ECO0P97）上，施乐公司 PaloAlto 研究中心首席科学家、大不列颠哥伦比亚大学教授 GregorKiczales 等人首次提出了 AOP 的概念，此后每年的 ECOOP 上都有AOP相关的专题研讨会，各大公司、大学、研究机构纷纷投入人员进行研究。2001 年 3 月 15 日，PaloAlto 研究中心发布了首种支持 AOP 的语言，AspectJ。</p>
+</blockquote>
+<h2 id="AOP-核心思想">AOP 核心思想</h2>
+<h3 id="什么是切面（Aspect）">什么是切面（Aspect）</h3>
+<p>AOP 最重要的关键词是 Aspect（切面），所谓的 Aspect，从设计上讲，是横切系统的关注点，这里又产生了一个新名词“横切”，为什么不是竖切？<strong>从历史来讲，传统的面向过程和面向对象中的继承都是自顶向下的编程范式</strong>，例如：</p>
+<pre class="mermaid">graph TD;
+    出门-->看电影;
+    看电影-->回家;
+    接收请求-->业务逻辑;
+    业务逻辑-->响应;
+    爷-->父;
+    父-->子;
+    人--> 黄种人;
+    黄种人--> 中国人;</pre>
+<p>拿服务端处理请求的逻辑来讲，有 n 个请求，都要走<strong>接收请求-&gt;处理业务逻辑-&gt;响应</strong>这样的逻辑，这里面必然有很多的其他环节，比如<strong>每个请求验证登录状态，在业务逻辑前后加日志显示耗时</strong>…</p>
+<pre class="mermaid">flowchart TB
+    req1(接收请求)-->state1(验证登录状态)-->logic1(业务逻辑)-->log1(日志显示耗时)-->res1(响应);
+    req2(接收请求)-->state2(验证登录状态)-->logic2(业务逻辑)-->log2(日志显示耗时)-->res2(响应);
+    req3(接收请求)-->state3(验证登录状态)-->logic3(业务逻辑)-->log3(日志显示耗时)-->res3(响应);
+    reqn(接收请求)-->staten(验证登录状态)-->logicn(业务逻辑)-->logn(日志显示耗时)-->resn(响应);
+
+    state1-.-state2-.-state3-.-staten;
+
+    log1-.-log2-.-log3-.-logn;
+
+    style state1 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5;
+    style state2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5;
+    style state3 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5;
+    style staten fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5;
+    
+    style log1 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5;
+    style log2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5;
+    style log3 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5;
+    style logn fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5;</pre>
+<p>遇到这种情况时，一种是比较简单，在每个过程前后都写一遍上述逻辑，或者复制粘贴，但这依旧显得有些“蠢笨”，而且后期维护也是个大问题，所以<strong>正确的思路是提取出来此逻辑</strong>，然后在需要的地方动态注入此逻辑，这个做法在如今已经是很常见的了，大家也在大多数场景下形成了这种意识，而这个切点就是“验证登录状态”、“写日志”，多个切点（虚线）连接的面独立于纵向程序之外形成横切面。</p>
+<h3 id="代码联结">代码联结</h3>
+<blockquote>
+<p>代码联结是指对输入的组件语言和 aspect ，根据联结点的语法定义，生成相应的中间文件或目标代码。这个过程可以分成三个阶段进行。首先，为组件语言和 Aspect 语言构造相应的语法树；然后依据 aspect 中的联结点定义对语法树进行联结；最后在联结的语法树上生成中间文件或目标代码。</p>
+</blockquote>
+<p>这段资料比较官方，个人的理解就是独立于模块外的中间目录/文件/代码。</p>
+<h3 id="特性">特性</h3>
+<p>衡量软件质量高低的要素主要包括可靠性、可扩展性、可重用性、兼容性以及易用性和易维护性等。其中 <strong>AOP 体现了可扩展性、可重用性和易理解性、易维护性等方面的能力</strong>，拿上面的例子对应这些特性体现之处：</p>
+<ol>
+<li>可扩展性：面向系统级的扩展，在任何需要打日志的地方注入此逻辑，如果是面向对象那么只能是类级别的继承使用此逻辑。</li>
+<li>可重用性：这点最直观，减去写多遍具体的实现逻辑，提取到全局通用，只需要在不同的地方去<strong>注入</strong>。</li>
+<li>易理解性：减少代码缠结的问题，抽象于程序之外，专注于程序逻辑。</li>
+<li>易维护性：当验证登录状态的逻辑发生变化时，通过联结器影响到系统相关的各个部分，只需要改动一处，避免漏掉。<br>
+基于以上特性达到松耦合、易于维护和扩展的目的。</li>
+</ol>
+<h2 id="实现手段">实现手段</h2>
+<ul>
+<li>代理</li>
+<li>反射注入（DI）</li>
+</ul>
+<h2 id="常用场景">常用场景</h2>
+<ul>
+<li>拦截器：服务端路由中间件、前端路由守卫</li>
+<li>依赖注入</li>
+<li>日志</li>
+<li>错误处理</li>
+<li>前端管道</li>
+<li>消息队列</li>
+</ul>
+<p>如果有人浏览到此文章有不同意见，欢迎留言！</p>
+]]></content>
+      <categories>
+        <category>编程思想</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>论读书</title>
+    <url>/2023/02/06/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/</url>
+    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="ca1bbab990e4a14253d7855c191e1a7881898678c38b838375a7e9124ac15863">5b45b2886d298a7453f8a0d9655aadb337598089fa8910e517b17d73c71d66cb4b9ce5ad4700d7dfccb36d1c5d376e956999d471ed83f6dd4df27501f8af0bad12e95b95b79816f7faec9b985192382a4ff4e09f3d2a22c2366470fa827794b527c1e2e23c6532933faad6bfc4376c03a91067841e67b69f70c72dd4213c6107a369d85cc6ac0ef9d96f165f55c2ac037adb456f73b634c3ff7abe50556cd63ba12cde3494d0c37bada8b1bfd436db190ebd43f6834fc7d5450017701e9e78a60cc530c71f7eec81b6903bfea797db9114e7438371e26913f1a1feee9f130eecff3d3e1c9d95a7bf453fa4989c98e41dd18c24af438130152d674965d190ddca1300bff8ac5c3abc9b78cf682169e99f90dd9f564cb56bff9d143634bbf31ab3db62c6ebff71e3394072c21c644125563b28202a87e5c029224a5ef9dc41adb1d0241aad1f1d0f92263b18cd794a6342338e6ef2227f5b9abac7b640889def282ed4670a040ee6d10caa18da432ab9223bc9c22eb23e5430557326d2a317cde5cecf6ecbfba6add36297bfc1fdd38c3a437db9a1976e3bc1c458e5375eb01bffe744b0f0e489e1ae2d40c8a966fb4c96c85b102955181bdb76a50468945971180ed4f56af74491c66ff57474b11c8e607dab93d77820bd45af5681a6922e01aafde4e522b0685300c3d758265c57cdd2261556d2cb21104bf47029bf215b4f093665286b51b98818bbc1fe384ec63f873b4000c0f4d09954248a4b2ed0a5dc230796655466302fb81d72a8a850e06619a7e3005c23b99524f5747240f7b4633c672a422a2d24d4ec16852578cac8d9fa5f00f02979b28ef0087d8bf2daf89936877c79f1082e7b1fdece753bcd06eec0d33c2d45c07f3b1a57ba80fb5504b154d477604bfe6ddddc894cc51d81e45382b40167c1cc2c9cc4fe16155742f7cb54b6eedf4e076efdc278707e9ae8b5c11e4901638798a9cc1d9d75c2bb67fa953e92f44cb7e219a0ec34ed91e7bf9701704f84ee125a9454e8411c1209703eab488fbfc4c8722e6aa2f7f7f2b34226418777a0a9f2b9975229ad327dd38d8c0679ad470a961706aa0baceebb32568e6afa4946a92f223a3a1c06efadecfa07af5e30b4996e762c0eb24f464349a6b28ed9f44dd583ec4f6f62b222c3e77d025bcd29c4e7d6a08e1329e0c6fd7366dcb8213a18db9b494fd0f07d50ee78bdd68ce867c39f69822affe15505f5fe980d477721d69d581d34cca6a828846ff96135a1b8c0fd6e32331095bd354e77ebf0a47eb06cbb1bff880f66bc716704c6b35f12886d10d0839aeb8ccc919725fc9ecce63b2f08740b66bf6e2e1b9cbcb252c89337e32b09b71ee196fcf9477f0e11dd71ae8a1c041a6e126f95ca7ab15ce30785342469e64ae4ceac592b2fa189dc38032d357b604fb5bd5caca3f0ce68f7a0ffdfdc1fc10e881352fdb3720b8360f793acab151cfc93ae8f69600d71ea6616774df0e09e25f3cb1ef9001544b5eedd22d09030c342569f8626e48941f07a8813387612e664e138558f78302f9f4073db433dad7550acc0436b06730901be9c0b28b687ea78900b810a81616fa105103bd000b14385d85185b4011d7baedfad96cc7f258930b12822183671dc997bda028751a41d8d29c990ad25e6767bf8a9a739e9194330f71dca68a0ce38e70e92eb75eb9dffecf93bba63f823b9cdab555be37ba208bf84071a5e34cc15cc385b0a5c5ca4463512bc41deedd8264a6b9d5866120a2dfa8e34ac442ad9d71a48f4f809bec90dab39b8e37af8d0aeafef289934d22c8f35086dac5765b03f855769de44efb3deb929638a8a42b7322a55db414507ad5abbbff151c2893c1a1e9ab1e3a04b4e6e17432a02620f5855fbf0bb62dfea2763218873f73286af9b7ef5366c24badf27ae76a38ea2cb72385e11f6285bb0c6f7f70abd28a9fd715e705cf3df46877a741f534297fb066ecce87d038c616d748346267b71142b510b69c6a157bc5186bb8ed35a28b3f9a14ddfa1d68f03e0196263b32beee7a5b3616e6c76a4aed6b092aa77308109ff7c3d1e9dd758a051fde922dc1b5b4fa9d796566d8ecbd5ea7bdea8de2df0e533faf65ef18d701bbf295e9494e6f9ad644aba271a728cbc1f5b01f442e6f9635945d088d70e21d1044d5572df2bc99caa835a2911cbe733a472c7e2fe90b8f949a2875653660d18eda2f6ef45341753982bdd1d8427a44b5a3d67e861940a0e74d71c979bdb28c0e1746d386bd9e059410267f39a94291ee14169774f28273bf7b0193c2d964cdf1407102515d6affd5c3bea888df167ade7f8861adc327a44df6c77d5b3266478374a20dae21a225ef6731e9583e89a8656dff1fe674b91e131293ea297b33f7e850c1b6162c0d5ff4c26d7954e0c449f1dc20b67cb596daf879cd99879f205366dc7bcb3689d0fb052c56e0d8af051bde4cd952cdc9b4360b2ec3593e39e0ec133546f6c6ec5d172019d4bb41b826170ecc45882db73d061a3e98b72d10c960e857aa4cbc2f45019dfd844bb9ec3421f5f5e6e798f103689b5147b39c1b760bca08e6b19f82e0de6c710f9fb688ddd9892975c56cfce7ffeaddc87b9b2dc9f557c9839ea09abbdc75b863a28159d6045345705b1ebd8b26b04e767d6daed51a853a86aeb55bec4f6ebd84bcfe340c402dff4207c3da1af1468cbbd8eb8afc703a5e1530e761c7e5be8047df93a07b4bc099194f01093773898dd6083bb14ce2ec7d9a05053c3214e91134b810210a0a51cfbf0a412bbd601852180b5df6100031338bef986b343f650c965e7b695c2be3a73d1849a2f5936d0a3ccfbd1ccb03fac42f8bce84bddd0f70d56eb2d66e19556357a4ce9e739b06b8c3f81b0b3087049ad27196cc26f75c7b7f4cfc90d8797f8815fe24a9114b5338ca6bd73f99fcea04b9d864f64b82f3658be06af86a93bd9818c60e569db1daf9629ae3e92c4d16fbe5d69b3df5885300cfdd0ed39d40ae0f7bf9826e248e53c7f9bf6b286b16048b23a4af7dc1ed27dfb1f8b2cbd2946c403020e552d5a50f415a800b606762fb51380ffd36e9a35e2e6c41d511fed71e7829a520d14ea66fc2f0da870bec55ba835dbc29a503796f4af34c2125e65f6a213f31ca989d7dc5454124c8d14f683b5165e19580e9c28f54d9bea911c995c2a013c81e48f7824eb71825ed8b0760d8a2f6c1c5b41f721bcd7f2d3a626791bdad473681aeb2af1daed9bbc4f66bd02ad18d6019b6dc6dc32a4a3eff7efab1b24556a8a736d6a14e66c7178da0a419f7efff6b7439e7a938d90cbbc4a5913dd053cef870d98096521651dd8b63586da5eed501d56a6393948a1f2fba496c7447d52b90bcefd36929d28309b115b4420b958935c73aa0863d6ec101a9b4d0b1dff636f6702e127d6bd1cb374a95c5c127803b52e9f181e75223907d41a0e5af384ddac59e47f9cf2e61795031c740b3708ce0902dd8a593d359acecff63aa600640d26ff6a9fe85d6a2743224d6de263f9f496179f8ec22fec9eac5b14cda623d01baa38ff36b29e81c11e736b869bfe2d821061f13697064c6432634caaeec00468c0d4d6dfbf5bced3895c21b67dd30b848fabd764399811e8e720f70ef6f333fe6cc80908eb4a005f62e2b26396e92ed884d6b569a21763639d18f486d6f59c10b9b13dd8e9a6fd19079008879b0656eee18e8b63c6d4a102ad3d860fda6f81a96e4de279b95c2500eff8c0c32c939c6a8387ef409f2655e9156e0adf2de9913f768a54aa02a234c447592c63f039fcdca29425d4705f8a2a34dec6c41ee7bbda843b1e817b2a5e7f131f825ac4cb1d22ddde4158964c5ca16778b0fb44ce7216364f09d682dcef59c2e8102907ef33c6c19d8fbc4aa1fee4584ae647a670d30724f72b4f3d2f082fa802f388b9f6801995bf813a3e6efdbe67524aad94d5e5c7455f87b5a4adfb0dd0f1e61c188b32ff4f0210960bd30ebdb68f507f70b57b6d5e2322c3dff6d7f0eedfa0d0752e0f5dc0f215263a0325592413854bfbb542f3c08b7c70d31b77688705bacea82e67c65ff5cb1a8ab14546ad778a360edbfcdd749c499390e3687a506577622a44d86a2f880eba722d529918edf149a41b09b82a2a03da4ab25713369525d5191d3bd5a1d154ef8d128fc8635a08986b4edd149806236541fc313a8c31793703fc4b4e0ec0add68d444233825b0f8693d812b57b2160f28c7d0a917e144af1bdd31e17e133107df470934648795115048dac52a7cff243ed5bd010fa18fcf523f88a14ef1d2d6194f5bdf0d13bb9b392ad2164213bc89b62aa6a165c6c6a1877f54a66335b340c401f8f12e0f0a304c3db55666aeb60032a7f163700d587b9a1777293af875c4e5da57d577fcf5329b82c9201e4ae2cc58ba6181ea857f78068c1f9b21f5332b6d11b63310b4263f3a959439bdd5ce54796d13b8a6a8dc93e7bf891f3ef6a615e817afa3d44aff1b39a821de5425b87c98a80b388519c282a2936f9f30d712921be7dd97def43387379a5a26c620c34669b1e0d4675201e52207e50f7c68d1d4df8492608c7dfb310bdaf6a36b08f5fec3bfa8f7632ccc971c879804cfea90de6e6f8eb2ec861f8f60cae7044ecca7d6b2849824c10b605d6653f44041bd56fac0136bafc41b515d3b248821e6f28271c2b22a911b53ffab0b3326c0e454c4291a7025ce60bba56bee935a5718b157bb988db85e08bc084b8c9</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">还是别出招了，反正是我赢！</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
+      <categories>
+        <category>读书感悟</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>编程角度谈抽象</title>
+    <url>/2023/02/06/%E7%BC%96%E7%A8%8B%E8%A7%92%E5%BA%A6%E8%B0%88%E6%8A%BD%E8%B1%A1/</url>
+    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="a4923887cd9354c0aac76d2b67ad72cd73d1bc6334f739754533add31c015128">5b45b2886d298a7453f8a0d9655aadb3203769014c2692d0bdeb09b0c9d5f574db4ab28c862267cb263948e32d928381283d74f4ab0faa452f478abcc2bc1146f3da08b72dcf5205fe979b19f95315c478f7f29beefdc045f93f01a1682cf3a67a83a3e4dedc6728af5f4b37a4bca59987df1d597edd3d918d3ed53bfcb5e7985f338fbd2c162512e46108da29cafa8f5718a51a20feddb6798350a45a20b158ecc0f7c5dc06a743845b97008b72ea5502186f61946b3fa7a7734dea1bdb595f26a629a5fbe6c4f73cd20c3000c46c57544f96639a8cc4f51e8e848afd2e1672602f044ac19bec162aba1c68c0e800f20093752d5c017417215001e3526647fca12730c9eab29ff555cd01b8603552aec27a36090f605f1d5803e8e8a2315ef5fd0bf5972e278d4709e33c0ca5a85f329ef2b9d40da24d758b32752e15e8f88d553cc4caaaa6737940a30592d81745c458b9db0442d5b9ee88ce415da55c4a0ea5f6347f131603bfe71da83103fbfb9f3a644eeda0a35d4aa0b09e8056ad31f898d5c45015418c79da2fccaf371ea79e3efe58514a0249cea998be9e5f2f1001e5a8a7a447850ddc283b8b829c0fa54e2c5d247a35137f1db6088fa8c87ff8da27e673092078ecda8370600a9826c854f0da2e71726fa1772756ab925cabaf09efec73641d9d5ab18379fd45b75ed0b3e671cc4d716eddf7d31f3b0861def8d846613e806c2996429158161ca802847a8b2661573e7e600ec2d8889f83ef909dee9729abde982e8ba54ca3f7ae471062405c234a598fbb80b0422dc7653125eae8814bb9896f7f4aeae51e9ec88f5cd70069ae097d3027485b4dd7021c04f46a72c96d05576abebeed4bf6e16d75d77cb5b2610332827ad38f03f651d569b24391f1c6d24972e3dba8a79bce9e62e88c334fd9872a4e035601b1975ac6e646719ff08a2f4940079237c6042d822dcc7c0cd1e289029a0c92e81662b486c0bcb48b6648ce5203903f21502f77a27279a56f2505a8d163879803f40e5551b9b4d4cb4146a552a14e8b58ee2e0aef0eac8b1c0669999db5d483444367d453976ed74f5926a6c3b7ea23c2b32bfb6dfb8fc338627c39f38b1d799ad21fc649449f1345487d68f1e6376af3cfb6604badfc8b5b24cf90b391590cf8978b6d40bace5200caafe558ac7790a9de3b87e51586bf428c830c81bad0bbae905e251950ae05b8bd5af0eb90ed7bd4d9944ebbb7b01e7290164fe26cbad5b4796381229ab90355f0876078a27acaed9cf665253b37ea589ecb0fc29fc884ac0e3a9c6c5579de0f804d8998044efd12d894c318ab1778a105a8ee62ea80e3cb6926d58459dc3b1f9907e62abc592f9c664b8378204ea62971f2f7ea0cf31657070bdee221dc1d5cdcc8b01c47321b5619d622cb8d4626b85f74c638cd2e8cef6e3ca40f580218356da12986b518a39fea35d5f5ba4ba21a6eee288476475f2ad65aa88ddf15f9c50efa57b1b3098bef14cadaa49ec0beede01dda4df09d5125677a89ed3a7e4f679492bd39da5334333ad9010f0207271feac4dfd8a83c781a80428941299dcc4a94dc196521c6e1dcef5c0556c241bcd107a6ab448569b61f7a376e6d7ece15f228de19863b138bb4bccb3662d54d0fde9e78607041b1579c6048735944ee412faa78e066cbc374cef78d8e865e94e31a8f1f0927c63a54ac4643ef4d3c57594ed5fb8af32eb4649c2f8a4dbbb72b3982ed456f85cda2c4e372fd5b9963143cf813c3bb0fda3bc3e1d038596e23b84cd9dd791bd16bac9d14cba5a75d96f276212e910da6b45d881675f3ca5aabc045c3c2bc2da43ae56cf33683f97eebfdc252b4f2c02924faebf38afbc8a676cca1f6104fbf7978b47472f9f682fbaf7317770c5a129e5b7febe581418bdc536ba46794f723539235231ec72fea8f324b3015b05da59ea18499de93a0c5df3b9035993f9623612ed736526685cd5a0b849e97b0c52eb940f967da591da42a86d307a5948c6db0ce6d732a98f6954a1cf36fd9f0c5608219d0c2007cac9743b584d826bd2aabb7843ca225a021b085924c18a72a4422312b9f648d2d9f238dacdb890c1bc6ebbfe8e031a528ceac7ba13bfe720b33e7f327ce31f526de41fde6f908e4eb3e0b1329b1cf15b87598fb108d06cefd893d5527f12ba3898592df776cfa9fd1b229614904c31b465d4ef9f93ada21760c1c60da83fae580e59a27c2825c9e410818554a6a2e2dcb694016f15565da3d063be927e0035d8be707cc3c699afb4531292dce2317c05e7b479f8a2e1e0c5c701b57be537f915c06d58566e14e934865d67767c13fdb9b434c7212148c5155f6af974764db3119735b3c6f74f2ba8094e98057efc71d31ecf2ad70578df496a8d9cf1a86fb80fbd08d3693d4863620403b4934d29c4eef35cf522869bd5e6dca2472062d2926e31725340bfb4db00fa49fc993a8b67e0157febba4f31bfdddc39a7d2332dfd56ba3fc1d0834e0289f3baf76b65b1b97e07b2a8fa3442bb53ca937dccd3c27bc503a0faf50aae259ea1164de16f5f14d9ee3294867032e2cefb59f0986a0946a7752a36ecee58df9a3cefe4bf997a07c0af7a142c61aa3a247f4060ec8d271eaecec1bf721aa47e21960d960dfd2793c75f6ab7c8380b5b0b7217135d6bd00f745fcdc4985b8bac155972519cd7a73ac6a37974c159c3e984ccf59d6ecc200ecc9bafda20f8b42e491ca0080ecef10d4a36778c2bd47e64adf99842ac08ca386d94c58d08d05354cb3f903e57884c0a3981b24880de52ea2f3a9d9eca05af698ffa49346fc4cc5d717393536a7a870e3777cfcb0050da2171d997f2d50fa050dfebda0b56b06965fd5143fe59231e0a4355110420ed0a7a0a728ed30544dffc9b324eaec725f52dcba046f9a3805129324630e39b432d4744cb91a39d07989993b34856b40ef2f07ba8a97b8a6506847238a6fe81f28c3008ed7964eb34a2acf98921a3c021f9696989624a61d92951ede5bf823d53ccac8a99fc408947b145dfb76d1961b0758b746ab8df1d3b765d5c83b971035983ec86b1186cb51719bed32fc16abac10304bce22535838cc08f810e2915d0f546cc1d3d8d2288969736982d7d8763ca87f9bfb658ef4c122284ff9c64ebc7a4342b5949dc342c5fe9427ad7e6d45aa63543d61b55939e84177e745ff3c51d6dc79430b3a415e5fe6d2ce04a89a56d17cfa21e0616f9cf87e92aeda8c2e0afc4c947d30cca03ba2ac8800ee86d9668ace0b534ec46e63a1dcb8ddd49567e11b2ce0d92cecb03cb5033aeec4bc1aaa23b6f1e5908f8f4bd525676e22856a453ca779958c8b278127477c308fd970bd6692a5de810023a4ba8c9f16d7271049b0a3e46e191b4e682120a79a552461512b71d8e74fa0a82d3ce21ccaf68110fcfc09bbb185501e0a3b1d24f9bb137b7660f179be8101537e3474484d190da056e2eed0767837535eacf84f14f05907fdc161ba472e3d7dc41bd39337197c4b0a2a51d0155fba196f559d64d9d2affc0894b21fd938373d1acc4e58b46a8a85562325cd9d80df0ea5b380679c0fd8a97ba0f6fd31628bf701544bf00b366550af8749bf6f83346c07f54adabcb68f1d6925404e95f1e992ba02a5452877ea34df447d450a6a1849c7d8a6f768dbfdc843ad92270aa4bd727a749cbc78d27b8489e95264dab97c745a0458b09f0ffa738dbe6b78e0489446466e589750ff26f83c9a3bdbf3ab62d9c5efa689fe7b7d44e280312c4c04b8229db282eb023ee27065fca8fe6ee753f19ec930aebdaba953b249b2b701d94653ea846e4707f81829c2f3fffbf296c985491c2303641708876e8d94339d3ed50cf9ee57cf8a8d0c12a13ccf6f73273939e83e16e37f0572231c9f6aeb2266f7ccb428b84e08c1e71c5722a15cbddc6e77d5755ea74ab5abe890bdd289560bf29ce0dccc3c14bb00f2f9f45e2e479e9b017b37f97d9ac03dede6629d617add5a19741dc832f174a16ee9777c43c4e7e5731f19624d7aaf87096f162d53475b123fe1877d4ac2c87c18e830e8140fcc74566f478a94fd5f9972d9ddca9a9d6a6ad0e0fcab9ee29fab54f2228e47591e34c9a5a57c4ad1c135109bf665100ead974ece861e563b591a78507ba0042cd67dc57e1fe3b6d8107176095be1d3c78502659c97657db2450b36bd28e3a86073315b49b2babfc8a94ac071a4b804d9b57aca81e98362eebb7aa2e49cc718de9ab83241d6752a0a97dce3476d57c81d6c1f61a75c835f4815bb760ae35a0a862756e43ee35667501e41c251f9ce464b0fbe7cd4383ed050c488fc07e24c39c60ce639e9dcccb4346c1047c4613dfb6b94dcaee8d18bf8014b26481061971b0d826c0875a60e91586028f2b8982a0af4fcc94e7c070ea592383d50ad67d7384978b124b9a9c6b3b63cbbecf4ac93d24deafd5bc49f4aff134dd5d969cdf5095361168fc48139fa61322faa4b4b4c3cefb3d8fb38275e78a7fdff87e4b33a96773c6303d74008659a69c714a8cfb100840476bc5f0ed06004d3e631efd101b2976594ac6693191d74f02f425a086ce6e7181537dcff4c06159ca976aae3fbe4a8fbceabd313fcb5aa1ee258ef0b2a8a4c57911a5ebda60d0a9550481bb4748be2b87c14a509bf8f4c827de1246d342242743d355797ec3097a980569d300ed3530fabe884886b214443e15220421677e2cd724a6c1bffe4d8745e694b4cbb552b56b0aa987fb45fb59a89c6289a2f992c1324e93111c146a9834f45e79545507e0d86c5e0cce7b05949ccf53ed007e02871642cb9889f5f328adb9071870badeef84b163908ba1f999ead368d90a577cc85475f99f49fa241d51950b00fe14d301c1c9c7ee4b6b03c4d796c58dbd4ffac29b103dca4e20973e94b192d353eee25a4eecbc414eeb6722c9079bec0f0db8d3a034023ae74826d077d71214f91a34dce1408b9ab862200930d17b10bf5207cd0183907a9d05e012d1bc5c526b3cb48f509a6eda214f70de6675937858efdc2c0101d263c13bbca9c56b51b029cee7a0a192ab5fbfacb37f9e040d83c24a9e724de7ff22ca9cf8693e72042bbcacaf62f19a97c5c35065494f3cddef40e52fde7a55f576edc01358d088577dd0c9cd91d81058bb651cfe0acd782a318546391f253d63e069b89faa0cfae958e59c2eed8e1187a27e6241f8c5a87f9cd77239b57443ffeff14174418a8b0c3fc7d174e607baebf9cdb893b3f8ab56c5ee46daf07c156fd9acbae3617eec857626a6ad0f847ce996e1f9670a2be6dae0a60960551a04dfe84930fe8ee2b96631b98f551ae4535e80d604a74cef42b9377298d33548a6b4445683f759127d1857752f3a2cf6e0cade16fbc698800694e630972</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">还是别出招了，反正是我赢！</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
+      <categories>
+        <category>思源地</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>一剑，一念</title>
+    <url>/2023/02/06/%E9%9D%A2%E5%AF%B9%E7%96%BE%E9%A3%8E%E5%90%A7/</url>
+    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="8ad1d75060216ff23e980cbe9f97bcb5a01f6a97060ca7e5740f52b7b211e9f3">5b45b2886d298a7453f8a0d9655aadb3868d10e0b4e8b2ff76ca09742463ff2499c56a908e47d1bc14fcf606fe07ab46a574cce3a944cd728378260e93f3f1e4c8ccd8680ea5379d930d814b573af913867bf8300ee54f85af01b1f5225d854a6379a7fb32a5704404bcf6a8f6efc8b9dbaf1456faf112ebafbf2cd9bd4ca1f3fa97630e5ff0f0837e812fd25d1d0c5eed0d06c8d76574b9175ccb1ab942f756784dc7bc2a94f970c9f89063d979673ee44fd9c4afc8a4aa8cd548308a9f3faeefc3406a476e5c3f82bd40daaa0239ac352bd45f3aea1112df2b488a3f71f4dbd01fec5c49aba8e96d1307d53b7988980c81d07b416a50e7758857eecbe95192dd933cbf86f88d02471b7c7c718160fe0f937dd2192a2fc92e2d70ed3fe7fa5f1649256d722fe044ead2fe30c367d2b169e0bbbd01dc1f2cc12bae123d861428bf0f3c707713f97baf21b55e62964bdc2df991c2c1c971c05c3161970cbef6d5ef3ca44b92994c5a7bb2e7760731e048a9f136863995c88d93c10aea20d4ef5b5a014a3000492a460f77742e0180a04b541cd7876dc3ea8d6254f34cb879aeaf63894b5451838c6c0097f9a9ed65b7e2cb649fb2e178f065fd0bce64e52e5de656464a950599fa29ff08c33a58f92705bc30010c861636baaeb370a3fcc47ebbcc1918c151edce7ec51db27bdfe9fe689d4a472e9e5e140d51e57521b9e34b4a91ed4f1d63442cac7e0897e2c9b0e28a2f85b4bdd05ba24b6b2c36f5694b43e163279e5ad2ce49a05db7af1c6830f05dad894de72957414b84f2751626176fcb3562d4e9b8da0225e9b33514ce41a8a18aab94604828b7092d983811cd0b7a264a57299c75a0d8f884ef54b3651d2d19a812a28644c98204a5fe3078bc60dde64c403b79c8491bf836fcf690314463d4842fade38e8b5aeb469d021078f2f34a8357deb76fbcc71533cdaead1fe01219d76e7393d84cefdbdc31db27da4843449e593e1363e76b00be1470597153f00955f7028bdcd3f757354ef014570fdaa25dae2a909a6be4595fe0471e65eccad6bbd07e71edcf13931151cea2334dda7772baa714669b3a6ddeabed51e741088baea637ffaf1ec4f8b0d6dd5fef9bc38c6a05db473bf6a4142febae3e85b07fcbb4fd827d0c8f65d07d6fd198aa505e77742035098411b8edf7bb7ebe15d2f20829d6d421648b4679788661103d44bbc50a517a03602fe178dee474bb2fcce1960c089afe8796ebdf69f824b6d439a5d6acd00ec02a3a94bd69048f01a0ef35d997136263086a52056dab51e26a28f6387d48bbd4ff7f96ffd0749c02ae028d47a3c489ad4067784898af193b6f0c2a1f4bd830eb39b1b60c67063f7decb21199f982b88155662a2601c9f386b910613fe485aa6cce00011f4ec77eb8d2a669a8794956778407a6741fa858c4eaa94c809642eb0c73b21003c88b8a0332bf168f7eb0775fb5d270360d8876d735e80e7a521bb661f4d1e1b3cc6b10ffa3d51eb7181ba4acb06d7af697db94ac115fe420e2f821e50f42c3a29559435bcdb3b7a02b7fde94bc16cbd087bf535bb82f8f352e4f682a7c2c55dc5bfa9b201471bbffe6815dad3bace3395e5a4bcd81881aab91afb31a4594119e50df8fffe353255c15bce651e9243af8c50eb75f751788b7211e1cd7bfd7dd25f974c5ad1e2404e0</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">还是别出招了，反正是我赢！</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
+  </entry>
+  <entry>
+    <title>centos7安装yum</title>
+    <url>/2023/02/03/centos7%E5%AE%89%E8%A3%85yum/</url>
+    <content><![CDATA[<p>一般购买的服务器都自带 yum，但恰好我买的这台就没有，WTF…</p>
+<h2 id="一、创建安装目录">一、创建安装目录</h2>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /usr</span><br><span class="line">mkdir yum-install</span><br><span class="line">cd yum-install</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h2 id="二、wget-下载所有需要的-package">二、wget 下载所有需要的 package</h2>
+<p>在安装yum之前需要安装的依赖包</p>
+<ul>
+<li>python-iniparse-0.4-9.el7.noarch.rpm</li>
+<li>yum-metadata-parser-1.1.4-10.el7.x86_64.rpm</li>
+<li>yum-3.4.3-168.el7.centos.noarch.rpm</li>
+<li>yum-plugin-fastestmirror-1.1.31-54.el7_8.noarch.rpm</li>
+</ul>
+<p>具体package的仓储： <a href="http://mirrors.163.com/centos/7/os/x86_64/Packages/">http://mirrors.163.com/centos/7/os/x86_64/Packages/</a></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">wget http://mirrors.163.com/centos/7/os/x86_64/Packages/python-iniparse-0.4-9.el7.noarch.rpm</span><br><span class="line">wget http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-metadata-parser-1.1.4-10.el7.x86_64.rpm</span><br><span class="line">wget http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-3.4.3-168.el7.centos.noarch.rpm</span><br><span class="line">wget http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-plugin-fastestmirror-1.1.31-54.el7_8.noarch.rpm</span><br></pre></td></tr></table></figure>
+<h2 id="三、rpm-安装">三、rpm 安装</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rpm -ivh --force --nodeps python-iniparse-0.4-9.el7.noarch.rpm</span><br><span class="line">rpm -ivh --force --nodeps yum-metadata-parser-1.1.4-10.el7.x86_64.rpm</span><br><span class="line">rpm -ivh --force --nodeps yum-3.4.3-168.el7.centos.noarch.rpm</span><br><span class="line">rpm -ivh --force --nodeps yum-plugin-fastestmirror-1.1.31-54.el7_8.noarch.rpm</span><br></pre></td></tr></table></figure>
+<h2 id="四、安装-yum">四、安装 yum</h2>
+<p>包地址： <a href="http://yum.baseurl.org/wiki.html">http://yum.baseurl.org/wiki.html</a></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">wget http://yum.baseurl.org/download/3.4/yum-3.4.3.tar.gz</span><br></pre></td></tr></table></figure>
+<h2 id="五、测试">五、测试</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">yum --help</span><br></pre></td></tr></table></figure>
+<p>能出来命令，说明安装成功！</p>
+<h2 id="参考">参考</h2>
+<p><a href="https://cloud.tencent.com/developer/article/1720868">https://cloud.tencent.com/developer/article/1720868</a> <br>
+⚠️ 注意：上面博客里面的有些包已经升级了，推荐使用本文的链接或官方的链接寻找资源</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Docker 常用镜像启动模版</title>
+    <url>/2023/02/03/docker%E5%90%AF%E5%8A%A8%E5%B8%B8%E7%94%A8%E9%95%9C%E5%83%8F/</url>
+    <content><![CDATA[<blockquote>
+<p>docker 映射端口 -p &lt;主机端口&gt;:&lt;容器端口&gt;</p>
+</blockquote>
+<h1>MySQL</h1>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  --name mysql-container \</span><br><span class="line">  -p 3306:3306 \</span><br><span class="line">  -e MYSQL_ROOT_PASSWORD=123456 \            </span><br><span class="line">  mysql:latest</span><br></pre></td></tr></table></figure>
+<h1>SQL Server</h1>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  --name mssql-container \</span><br><span class="line">  -p 1433:1433 \</span><br><span class="line">  -e &quot;ACCEPT_EULA=Y&quot; \</span><br><span class="line">  -e &quot;SA_PASSWORD=StrongPassw0rd@&quot; \</span><br><span class="line">  --platform linux/amd64 \</span><br><span class="line">  mcr.microsoft.com/mssql/server:latest</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>docker</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Git 手册</title>
+    <url>/2023/02/03/git%E6%89%8B%E5%86%8C/</url>
+    <content><![CDATA[<blockquote>
+<p>以下命令中 [ ] 包裹的值为动态值，需要根据情况替换，比如 <code>git push origin [branchName]</code>，[branchName] 需要根据实际情况的值决定，比如： <code>git push origin master</code></p>
+</blockquote>
+<h2 id="常用命令">常用命令</h2>
+<ul>
+<li>创建本地仓库：<code>git init</code></li>
+<li>创建中央仓库：<code>git init --bare</code></li>
+<li>拉取远程分支所有历史提交记录：<code>git pull origin [branch] --allow-unrelated-histories</code></li>
+</ul>
+<h3 id="撤销暂存文件">撤销暂存文件</h3>
+<ul>
+<li>撤销所有：<code>git restore --staged .</code></li>
+<li>撤销文件：<code>git restore ---staged [filename]</code></li>
+</ul>
+<h3 id="撤销工作区文件">撤销工作区文件</h3>
+<ul>
+<li>撤销所有：<code>git restore .</code></li>
+<li>撤销文件(多个文件可以用空格隔开)：<code>git restore [filename]</code></li>
+</ul>
+<h2 id="标签">标签</h2>
+<ul>
+<li>快速打标签: <code>git tag [tagName]</code></li>
+<li>推送至远程: <code>git push origin [tagName]</code></li>
+</ul>
+<h2 id="cherry-pick">cherry-pick</h2>
+<p>将其他分支的 commit 迁移至当前分支(<strong>注意先切换到需要上线的分支</strong>): <code>git cherry-pick [commitid]</code></p>
+<p>一般在热修复，脚本，补丁需要及时上线，但又不能基于开发分支代码部署，将临时代码合并到上个上线的版本部署一版的场景中会用到。</p>
+<span id="more"></span>
+<h2 id="回滚">回滚</h2>
+<ul>
+<li>回滚到某次提交: <code>git reset [commitid]</code></li>
+<li>强制回滚某次提交，并且回删除节点后的所有提交(慎用): <code>git reset --hard [commitid]</code></li>
+<li>强制与远程分支保持一致： <code>git reset --hard origin/[branchName]</code></li>
+</ul>
+<h2 id="分支管理">分支管理</h2>
+<ul>
+<li>设置远程分支为默认分支：<code>git branch --set-upstream-to= origin [branchName]</code></li>
+</ul>
+<h3 id="删除分支">删除分支</h3>
+<ul>
+<li>删除本地分支： <code>git branch -D [branchName]</code></li>
+<li>删除远程分支： <code>git push origin -d [branchName]</code></li>
+<li>批量删除所有分支：<code>git branch | grep -v 'develop' | xargs git branch -D</code>
+<ul>
+<li><code>|</code> 管道命令，用于将一串命令串联起来。前面命令的输出可以作为后面命令的输入</li>
+<li><code>git branch</code> 列出本地所有分支</li>
+<li><code>grep</code> 搜索过滤命令。使用正则表达式搜索文本，并把匹配的行打印出来</li>
+<li><code>xargs</code> 参数传递命令。用于将标准输入作为命令的参数传给下一个命令</li>
+</ul>
+</li>
+</ul>
+<h2 id="常见问题">常见问题</h2>
+<h3 id="1-refusing-to-merge-unrelated-histories（拒绝合并不相关历史）">1. refusing to merge unrelated histories（拒绝合并不相关历史）</h3>
+<p>这种情况一般是本地仓储和远程仓储的提交历史不一致，git 需要确认是否合并<br>
+解决：<code>git pull origin master --allow-unrelated-histories</code></p>
+]]></content>
+      <categories>
+        <category>Git</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Mongodb 常用 API</title>
+    <url>/2023/02/01/mongodb%E6%89%8B%E5%86%8C/</url>
+    <content><![CDATA[]]></content>
+      <categories>
+        <category>Mongodb</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>2022年终总结</title>
+    <url>/2023/01/19/2022%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<blockquote>
+<p>年近将至，今天是壬寅年腊月廿八，公司上的工位已经陆陆续续空了许多，即使还有坚守在岗位上的人儿，其心也不知飞哪里去了，这个人儿也许恰是自己。</p>
+</blockquote>
+<h2 id="整体进化">整体进化</h2>
+<p>回顾2022，自己也算有些大体的“进化”：<br>
+✅ 晋升为“合格”前端<br>
+✅ 晋升为“Wiki”老成员<br>
+✅ 完成职级晋升</p>
+<span id="more"></span>
+<h2 id="工作-业务内容">工作/业务内容</h2>
+<p>工作内容上大部分在做 Wiki 业务，编辑器方面<strong>独立</strong>完成了2个较大插件，第三季度参与完成了思维导图的底层开发，后端也参与了些许重构，有时等不及 API 自己也会忍不住整上那么一手。<br>
+具体的还是要列举几个让自己感觉到充实的功能，也许明年后年或者更久，不会回忆起2022具体做了哪些，希望那时回过头来看看功能是否还依旧“站”得住，可以反馈自己是否成长了。</p>
+<h3 id="重构页面权限计算逻辑">重构页面权限计算逻辑</h3>
+<p>想想 Wiki 的页面权限，内心五味杂陈，如果他能够说话，我定能与他彻夜长谈，因为他是我来 Wiki 的第一个独立负责的模块，当时最有冲劲儿的时刻和精力献给了他，这一路与他相伴，经历了非常的多的挫折，HR 和领导层是 Wiki 的重度用户，至少每个季度绩效考核 HR 都会给各层领导分配所属员工的述职报告，就像每年阿里服务器要面临淘宝的”双十一“，当然可能有点夸张😂 ，这过程产生了很多漏洞，有产品设计上的，也有代码逻辑处理上的，同时还因为其他功能带来的影响也背了黑锅，总的来说功能不小，涉及的点太多，也花费了不少的心思，最后产出了几篇文章和一些讨论（犹豫了下，有可能泄密，链接还是撤回了吧）：</p>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/465792249">《PingCode Wiki 权限设计之 ACL》</a></li>
+<li>《页面权限》</li>
+<li>《权限继承方案》</li>
+<li>《权限设置-权限点》</li>
+<li>《空间所属对权限的补充》</li>
+</ul>
+<p>这一年 Wiki 加入了空间所属和可见性相关特性，会对之前的权限计算细节有些冲击，加上原有的代码也不是那么好，所以这块是需要重构的，其实当时的现状是 2022 年组内基本不会给我分配服务端方面的工作了，但是最终还是由我负责重构，不为其他，只为遵从内心，保留仅有良心和内心的执着，本着对曾负责的任务励志做到最好。最终的结果还是比较满意，使用比原来更简单了，计算逻辑的细节更清晰了，大大提高了可读性和易用性，同时在部门内发布了一篇文章<a href="https://rc.pcx.cc/g/FNhsAX">《Wiki 权限 v2.0》</a>。</p>
+<h3 id="两个插件：关联页面树和文本绘图">两个插件：关联页面树和文本绘图</h3>
+<blockquote>
+<p>我去，才回顾了一个功能已经写着么多了…已经下午 1 点了，还没吃饭。</p>
+</blockquote>
+<p>这两个插件算是较大的功能了，还都挺有成就感的，文本绘图起初说服自己用，自己写的功能自己不用还靠别人用吗？现在已经爱了爱了。当时也分享一篇文章<a href="https://rc.pcx.cc/g/fqKr0x">《文本绘图实现》</a>，页面树是自己从头到尾独立负责的插件，标志着一个里程碑，仅此而已，难点只有一个还是涉及权限的一些交互。</p>
+<h3 id="参与思维导图">参与思维导图</h3>
+<p>满足了一直憧憬着的编辑器底层技术，参与思维导图时有些许的激动，但这过程中是有些煎熬和烧脑的，每天都是超负荷，不得不吐槽一下：工期短，任务重，要求陌生的领域要像普通业务一样的开发进度，这谁能顶得住啊？底层还涉及到一些数学知识和算法。不过也都过去了，痛并快乐着，哦，值得一记的功能点是拖拽节点的占位显示，已经上线的方案很鸡肋，新方案已确定，只是还没有狠下心来花时间去落实。</p>
+<h2 id="阅读和知识分享">阅读和知识分享</h2>
+<p>✅ 每日一学 15 篇<br>
+✅ 向 WTC 供稿 2 篇<br>
+✅ 技术周刊 2 篇<br>
+✅ 技术分享 2 次<br>
+✅ 知乎发布《RxJS 全面解析》点赞至今 81 个，还挺激动的<br>
+✅ 《RxJS 深入浅出》—— 程墨<br>
+✅ 《沧浪之水》还挺有感触的<br>
+✅ 其他乱七八糟的书都翻一翻，都没读太完整…<br>
+总体上这方面还行，有些沉淀，也提升了一下写作能力。</p>
+<h2 id="沉淀技术">沉淀技术</h2>
+<p>✅ 使用 Angular 可以完成大多数业务<br>
+✅ 深度理解 RxJS，但对很多操作符还不够熟悉</p>
+<h2 id="心态">心态</h2>
+<p>整体来说，不再那么浮躁，沉稳了许多，可能是经历多了些，也有可能是多看了几本书，提升了认知，看明白了一些事情，对任务量做了减法，对完成度和质量做了加法，这点小组组长不一定认可，不过无所谓了。绩效上也不再过度追求，不再那么逼着自己上进学习或者说卷，这样反而内心少了许多焦虑，毕竟不在乎就不会难受了，这也可能是消极，随之快乐也减少了，想想也许有时糊涂比明白更好。</p>
+<h2 id="缺点">缺点</h2>
+<p>一个字，“懒”。自制力差一直是问题。<br>
+还有二个字，“胆怯”，对自己不擅长的东西和不太好把握的东西，还不是那么够勇敢，会想着退缩，不管是工作还是生活。</p>
+<h2 id="明年规划">明年规划</h2>
+<p>再沉淀一门前端技术，沉淀几篇有深度的文章，今年 RxJS 这块还是比较满意的，也许来年再加深一些！</p>
+<hr>
+<blockquote>
+<p>下午 1 点 55 了，终于写完了，这篇是个人总结也是一篇内心日记，下午说是要写对联，摸摸鱼，明日启程回家，来年再战🧨</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>年终总结</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>新启程—开篇</title>
+    <url>/2023/01/17/%E5%BC%80%E7%AF%87/</url>
+    <content><![CDATA[<blockquote>
+<p>今天是 2023-01-18，农历壬寅年腊月廿七（2022 年 12 月 27），此时是年前的摸鱼时刻 😂</p>
+</blockquote>
+<p>有人说，一个人的成长就是趋于稳定，比如，不再频繁的换手机号码、换工作、换房子…那写作的博客平台何尝不是呢？回头看下，自己已经用了许许多多的博客平台：CSDN、简书、语雀、掘金、知乎、思否、InfoQ、还有我们的 PingCode Wiki，还使用过 Hexo 搭了一套博客，甚至还用 Vue + NodeJS 原生写了一个博客系统，最终还一直在用/维护的只剩下了知乎和 Wiki 吧，至于其它的都是以这样或那样的原因最终放弃。</p>
+<p>有了这么多平台为什么还要再整一个 github pages 的个人博客呢？</p>
+<p>一个重要的原因是，前段时间服务器到期了，几百篇笔记都没有备份上，妈蛋！所以不想自己维护了，github pages 倒不用担心这点，就是访问稍慢，还算是可以接受吧。为啥不用 gitee pages？因为要备案，上传身份证和手持，当天没有带身份证，也懒得再操心这事了。</p>
+<p>这个博客作为自己的思源地，同时也记录一些有深度的文章，也可能转载一些之前在其他平台写过的笔记/文章，无论怎样，开启新篇章吧，希望自己多做些笔记，多些思考，多些沉淀！</p>
+]]></content>
+  </entry>
+</search>

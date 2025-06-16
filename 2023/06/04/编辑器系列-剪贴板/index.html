@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <title>
+    编辑器系列-剪贴板 |
+    
+    阿杰
+  </title>
+  <!-- Icon -->
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  
+  <main class="content">
+    <section class="outer">
+  <article id="post-编辑器系列-剪贴板" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h1 class="article-title" itemprop="name">
+    编辑器系列-剪贴板
+  </h1>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/06/04/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%89%AA%E8%B4%B4%E6%9D%BF/" class="article-date">
+  <time datetime="2023-06-04T07:01:42.000Z" itemprop="datePublished">2023-06-04</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/%E7%BC%96%E8%BE%91%E5%99%A8/">编辑器</a>
+</div>
+
+    </div>
+    
+
+    
+    
+<div class="tocbot"></div>
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+      
+        <h2 id="剪贴板概述">剪贴板概述</h2>
+<p>在编辑器中复制/剪切的方式有两种：</p>
+<ul>
+<li>系统剪贴板：快捷键触发  <code>Ctrl/⌘ + C/X/V</code></li>
+<li>浏览器剪贴板：工具栏或拦截快捷键触发</li>
+</ul>
+<p>两种方式的区别：数据储存的位置不同，前者的数据是储存在系统的剪贴板中，后者存在浏览器中。</p>
+<p>两者都可以基本满足复制/剪切，但是往往在线编辑器常用浏览器剪贴板，为什么呢？</p>
+<span id="more"></span>
+<h3 id="为什么用浏览器剪贴板？">为什么用浏览器剪贴板？</h3>
+<ol>
+<li>触发动作的条件不确定，像最开始说的，用户可能使用快捷键也可能是用编辑器提供的工具栏，当用工具栏时，则需要发一个复制的命令，在客户端肯定是操作浏览器。</li>
+<li>对于复杂元素系统剪贴板不识别，比如复制一个文本绘图插件元素粘贴到编辑器内，复制时需要对该元素进行识别，并且做更多灵活的动作，比如拦截特定情况。</li>
+<li>安全性问题，比较难把控涉及到权限，数据保密等安全问题。</li>
+</ol>
+<h3 id="流程">流程</h3>
+<p><img src="https://atlas-rc.pingcode.com/files/public/647b02e1e468e3b3652fa6da/origin-url" alt="image.png"></p>
+<h3 id="事件">事件</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>事件名称</th>
+<th>系统快捷键</th>
+<th>主动触发</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>复制</td>
+<td>oncopy</td>
+<td><code>Ctrl/⌘ + C</code></td>
+<td><code>document.execCommand('copy')</code></td>
+</tr>
+<tr>
+<td>剪切</td>
+<td>oncut</td>
+<td><code>Ctrl/⌘ + X</code></td>
+<td><code>document.execCommand('cut')</code></td>
+</tr>
+<tr>
+<td>粘贴</td>
+<td>onpaste</td>
+<td><code>Ctrl/⌘ + V</code></td>
+<td><code>document.execCommand('paste')</code></td>
+</tr>
+</tbody>
+</table>
+<p>示例：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/647acb0be468e3b3652fa6c4/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/647acbd1e468e3b3652fa6c6/origin-url" alt="image.png"></p>
+<h2 id="实现方式一：强大的-document-execCommand">实现方式一：强大的 document.execCommand</h2>
+<p>这个 API 的木器主要用来操纵编辑器元素的，正如我给的标题，它非常“强大”，强大之处在于它支持的场景/命令非常全，除了上面复制/粘贴/剪切，还有一些以下命令：</p>
+<table>
+<thead>
+<tr>
+<th>命令名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>backColor</td>
+<td>容器元素添加背景颜色</td>
+</tr>
+<tr>
+<td>bold</td>
+<td>切换文字粗体效果</td>
+</tr>
+<tr>
+<td>createLink</td>
+<td>创建锚链接</td>
+</tr>
+<tr>
+<td>fontName</td>
+<td>修改字体</td>
+</tr>
+<tr>
+<td>fontSize</td>
+<td>修改字体大小</td>
+</tr>
+<tr>
+<td>heading</td>
+<td>设置标题</td>
+</tr>
+<tr>
+<td>insertImage</td>
+<td>插入图片</td>
+</tr>
+<tr>
+<td>insertOrderedList</td>
+<td>插入有序列表</td>
+</tr>
+<tr>
+<td>justifyLeft/Right/Center</td>
+<td>所选内容文本对齐：左对齐、右对齐、居中对齐</td>
+</tr>
+<tr>
+<td>outdent</td>
+<td>缩进</td>
+</tr>
+<tr>
+<td>undo/redo</td>
+<td>撤销/重做</td>
+</tr>
+<tr>
+<td>underline</td>
+<td>切换下划线</td>
+</tr>
+</tbody>
+</table>
+<p>示例点  <a target="_blank" rel="noopener" href="https://execcommand-api.stackblitz.io/">这里</a>  。</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/647aec16e468e3b3652fa6d6/origin-url" alt="image.png"></p>
+<p>Wiki 插件工具栏的复制：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/647c3175e468e3b3652fa6e0/origin-url" alt="image.png"></p>
+<h3 id="已被废弃"><strong>已被废弃</strong></h3>
+<p>这个 API 非常方便地操作文本内容，但是它被废弃了，废弃的原因：</p>
+<ol>
+<li><strong>存在安全问题：可以修改浏览器设置、运行脚本</strong>  ，容易被恶意攻击。</li>
+<li><strong>浏览器兼容问题：很多特性在不同浏览器操作不一致。</strong>  上面的示例中，工具栏的按钮置灰就是浏览器不支持的。</li>
+</ol>
+<p>取而代之的是 Clipboard API，见下节。</p>
+<h2 id="实现方式二：Clipboard-API">实现方式二：Clipboard API</h2>
+<p>该 API 一般用于剪贴板（复制/剪切/粘贴），相较于 execCommand 可以避免安全问题，同时也更加可靠和跨浏览器兼容。</p>
+<p>提供的 API 也都是异步的，返回结构都是 Promise，方法如下：</p>
+<ul>
+<li><code>navigator.clipboard.writeText()</code>  ：将文本内容写入剪贴板。</li>
+<li><code>navigator.clipboard.readText()</code>  ：从剪贴板中读取文本内容。</li>
+<li><code>navigator.clipboard.write()</code>  ：将数据写入剪贴板。</li>
+<li><code>navigator.clipboard.read()</code>  ：从剪贴板中读取数据。</li>
+</ul>
+<h3 id="clipboardData-和-DataTransfer">clipboardData 和 DataTransfer</h3>
+<p>clipboardData 绑定于 Clipboard Event（copy、cut、paste），是其属性，数据结构 DataTransfer 对象的一种。</p>
+<p>主要作用：</p>
+<ul>
+<li>访问全局剪贴板数据：  <code>event.clipboardData.setData(format, data)</code></li>
+<li>设置全局剪贴板数据：  <code>event.clipboardData.getData(format)</code></li>
+<li>清除全局剪贴板数据：  <code>event.clipboardData.clearData()</code></li>
+</ul>
+<p>DataTransfer 其他作用：</p>
+<ul>
+<li>可以存储文件类型</li>
+<li>可操作的类型有：  <code>none</code>  ,   <code>copy</code>  ,   <code>copyLink</code>  ,   <code>copyMove</code>  ,   <code>link</code>  ,   <code>linkMove</code>  ,   <code>move</code>  ,   <code>all</code>   or   <code>uninitialized</code>  。</li>
+<li>设置拖动的图像：  <code>DataTransfer.setDragImage()</code></li>
+</ul>
+<p>Ps：Wiki 中采用这种方式进行数据存取的。</p>
+<p>一个操作 clipboard API 的示例片段：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/647bfceee468e3b3652fa6df/origin-url" alt="image.png"></p>
+<h3 id="navigator-clipboard-write-和-clipboardData-setData-有何区别？">navigator.clipboard.write 和 clipboardData.setData 有何区别？</h3>
+<style>
+table th:nth-of-type(2) {
+    width: 30%;
+}
+table th:nth-of-type(3) {
+    width: 25%;
+}
+table th:last-of-type {
+    width: 40%;
+}
+</style>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>相同点</th>
+<th>不同点</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td>触发方式</td>
+<td>触发时机/来源</td>
+<td>其他</td>
+</tr>
+<tr>
+<td>navigator.clipboard.write</td>
+<td>都可以向剪贴板写入数据</td>
+<td>异步</td>
+<td>任何时机,任何 JS 程序</td>
+<td>第一次需要用户主动授权（浏览器弹框询问用户，如果拒绝则中断操作）</td>
+</tr>
+<tr>
+<td>event.clipboardData.setData</td>
+<td></td>
+<td>同步</td>
+<td>必须是 ClipboardEvent 来源之一（copy、cut、paste）</td>
+<td>无</td>
+</tr>
+</tbody>
+</table>
+<h2 id="完整-Demo">完整 Demo</h2>
+<p>预览：  <a target="_blank" rel="noopener" href="https://slate-demo.stackblitz.io/">https://slate-demo.stackblitz.io/</a></p>
+<p>源码：  <a target="_blank" rel="noopener" href="https://stackblitz.com/edit/slate-demo?file=src%2Fclipboard.component.ts">https://stackblitz.com/edit/slate-demo?file=src%2Fclipboard.component.ts</a></p>
+<h2 id="最后">最后</h2>
+<p>本人最近计划写一个《揭秘富文本编辑器》系列（又名：编辑器那些事），记录曾经对编辑器好奇的一些知识，如果你也感兴趣，可以关注我，有好奇的点，也可以在下方留言评论告诉我，我会在后续更新。<br>
+文中有不正确的观点和内容，还望告知，感谢 🌹</p>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Clipboard_API">https://developer.mozilla.org/zh-CN/docs/Web/API/Clipboard_API</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/DataTransfer">https://developer.mozilla.org/zh-CN/docs/Web/API/DataTransfer</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Document/execCommand">https://developer.mozilla.org/zh-CN/docs/Web/API/Document/execCommand</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/06/04/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%89%AA%E8%B4%B4%E6%9D%BF/" data-id="cmbyuj8870029duji3fjlb28t" class="article-share-link">
+        分享
+      </a>
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AF%8C%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/" rel="tag">富文本编辑器</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+  
+<nav class="article-nav">
+  
+  <a href="/2023/06/07/%E5%86%8D%E8%B0%88%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/" class="article-nav-link">
+    <strong class="article-nav-caption">前一篇</strong>
+    <div class="article-nav-title">
+      
+      再谈单元测试
+      
+    </div>
+  </a>
+  
+  
+  <a href="/2023/05/29/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%85%89%E6%A0%87%E5%92%8C%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE/" class="article-nav-link">
+    <strong class="article-nav-caption">后一篇</strong>
+    <div class="article-nav-title">编辑器系列—如何获取光标/元素位置</div>
+  </a>
+  
+</nav>
+
+  
+
+  
+  
+  
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: 'd194952437b67371b253',
+    clientSecret: 'ee8127b1392f7840a0bcded24bd677566b86cbb2',
+    repo: 'comment',
+    owner: 'aaaaaajie',
+    admin: ['aaaaaajie'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last',
+    proxy: 'https://strong-caramel-969805.netlify.app/github_access_token',
+    createIssueManually: 'false'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+</article>
+</section>
+    <footer class="footer">
+  <div class="outer">
+    <!-- <ul class="list-inline">
+      <li>阿杰 &copy; 2025</li>
+      
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank"></a>
+            
+        </li>
+      
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul> -->
+    <!-- 
+      © 2018 ~ 2022-11-11 xxx. All rights reserved.
+      contact email: xxxs@foxmail.com
+     -->
+     
+    <!-- <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p> -->
+    <p>Contact Email: m18210870360@163.com</p>
+    <p>&copy; 2023 A Jie. All rights reserved.</p>
+  </div>
+</footer>
+  </main>
+  <aside class="sidebar">
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img style="border-radius: 50%;" src="/images/avatar.JPG" alt="阿杰"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/gallery">相册</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/favorites">收藏</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        搜索
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="fe fe-feed"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="输入关键字...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+  });
+</script>
+
+
+
+  <script src='/js/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+
+</html>

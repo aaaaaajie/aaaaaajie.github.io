@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <title>
+    基于 Angular CDK 实现拖拽复制元素 |
+    
+    阿杰
+  </title>
+  <!-- Icon -->
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  
+  <main class="content">
+    <section class="outer">
+  <article id="post-基于AngularCDK实现拖拽复制元素" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h1 class="article-title" itemprop="name">
+    基于 Angular CDK 实现拖拽复制元素
+  </h1>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/04/05/%E5%9F%BA%E4%BA%8EAngularCDK%E5%AE%9E%E7%8E%B0%E6%8B%96%E6%8B%BD%E5%A4%8D%E5%88%B6%E5%85%83%E7%B4%A0/" class="article-date">
+  <time datetime="2023-04-05T02:01:19.000Z" itemprop="datePublished">2023-04-05</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/Angular/">Angular</a>
+</div>
+
+    </div>
+    
+
+    
+    
+<div class="tocbot"></div>
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+      
+        <h2 id="背景">背景</h2>
+<p>有这样一个需求：<br>
+<img src="https://atlas.pingcode.com/files/public/642cdbc113b2732f78dd3cff" alt=""></p>
+<span id="more"></span>
+<p>使用的是原生 CDK 拖拽组件，找了很久也没有找到拖拽复制的，基础示例是从一个容器拖拽进另一个元素之后，该元素会从原容器中删除，如下图<br>
+<img src="https://atlas.pingcode.com/files/public/642cdd480ddbebc0a2997fde" alt=""></p>
+<p>找了很久的资料，最终发现了官方有这样一个 issue:  <a target="_blank" rel="noopener" href="https://github.com/angular/components/issues/13100">https://github.com/angular/components/issues/13100</a> ，里面就充分阐述了这个问题，可惜的是官方并没有给出解决方案，通过关联的 pull request 看到官方提供了一个工具函数：copyArrayItem，它只是在原有的交互上又给原容器加了一遍拖拽的元素，当元素从一个容器到另一个容器（不要松鼠标），它还是会删除原容器的元素，会给用户造成一些错觉，如图：</p>
+<p><img src="https://atlas.pingcode.com/files/public/642ce2e70ddbebc0a2997ff4" alt=""><br>
+<img src="https://atlas.pingcode.com/files/public/642cdff613b2732f78dd3d0f" alt=""></p>
+<h2 id="解决方案">解决方案</h2>
+<p>这也是一个骚操作，思路是：拖拽的过程中用一个跟原容器一模一样的容器替代它，等拖拽结束后在恢复原视图，用一个状态来控制两个容器的隐藏/显示，这样的话在从一个容器移入新容器的整个过程中原容器会隐藏掉，也就是说这个容器的元素在被删除的一瞬间，用户的视觉下是看不到的，用户只能看到跟原容器一模一样的容器，而这个容器是静态的，元素从开始到最后都不会减少。</p>
+<h3 id="代码">代码</h3>
+<p><img src="https://atlas.pingcode.com/files/public/642ce7720ddbebc0a2998008" alt=""><br>
+效果图如文章第一节所示</p>
+<h3 id="拓展">拓展</h3>
+<h4 id="为什么不是只复制出这个元素而是复制整个容器呢？">为什么不是只复制出这个元素而是复制整个容器呢？</h4>
+<p>因为删除这个动作是 dropList 控制的，数据也是容器控制的，进入新容器的一瞬间依旧会删除（cdk 内部控制的，不支持外部重写）。</p>
+<h4 id="把-style-display-换成-ngIf-是否可行？">把 style.display 换成 ngIf 是否可行？</h4>
+<p>不行，因为使用 ngIf 整个 dom 就都不会渲染了，那么拖拽组件就找不到宿主导致无法拖拽，使用 display，外层 dom 存在只是样式隐藏了，但是真实 dom 依旧存在。</p>
+<h2 id="源码及示例">源码及示例</h2>
+<p><a target="_blank" rel="noopener" href="https://stackblitz.com/edit/cdk-drag-drop-copy?file=src/app/cdk-drag-drop-connected-sorting-example.html">https://stackblitz.com/edit/cdk-drag-drop-copy?file=src/app/cdk-drag-drop-connected-sorting-example.html</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/04/05/%E5%9F%BA%E4%BA%8EAngularCDK%E5%AE%9E%E7%8E%B0%E6%8B%96%E6%8B%BD%E5%A4%8D%E5%88%B6%E5%85%83%E7%B4%A0/" data-id="cmbyuj886001zdujibiuzahb6" class="article-share-link">
+        分享
+      </a>
+      
+    </footer>
+
+  </div>
+
+  
+  
+<nav class="article-nav">
+  
+  <a href="/2023/05/09/hexo%E6%8F%90%E4%BA%A4%E4%BB%A3%E7%A0%81%E9%83%A8%E7%BD%B2/" class="article-nav-link">
+    <strong class="article-nav-caption">前一篇</strong>
+    <div class="article-nav-title">
+      
+      hexo提交代码部署
+      
+    </div>
+  </a>
+  
+  
+  <a href="/2023/03/22/angular%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BA%E7%BB%84%E4%BB%B6/" class="article-nav-link">
+    <strong class="article-nav-caption">后一篇</strong>
+    <div class="article-nav-title">Angular 动态创建组件</div>
+  </a>
+  
+</nav>
+
+  
+
+  
+  
+  
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: 'd194952437b67371b253',
+    clientSecret: 'ee8127b1392f7840a0bcded24bd677566b86cbb2',
+    repo: 'comment',
+    owner: 'aaaaaajie',
+    admin: ['aaaaaajie'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last',
+    proxy: 'https://strong-caramel-969805.netlify.app/github_access_token',
+    createIssueManually: 'false'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+</article>
+</section>
+    <footer class="footer">
+  <div class="outer">
+    <!-- <ul class="list-inline">
+      <li>阿杰 &copy; 2025</li>
+      
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank"></a>
+            
+        </li>
+      
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul> -->
+    <!-- 
+      © 2018 ~ 2022-11-11 xxx. All rights reserved.
+      contact email: xxxs@foxmail.com
+     -->
+     
+    <!-- <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p> -->
+    <p>Contact Email: m18210870360@163.com</p>
+    <p>&copy; 2023 A Jie. All rights reserved.</p>
+  </div>
+</footer>
+  </main>
+  <aside class="sidebar">
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img style="border-radius: 50%;" src="/images/avatar.JPG" alt="阿杰"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/gallery">相册</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/favorites">收藏</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        搜索
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="fe fe-feed"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="输入关键字...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+  });
+</script>
+
+
+
+  <script src='/js/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+
+</html>

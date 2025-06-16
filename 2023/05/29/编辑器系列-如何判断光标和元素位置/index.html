@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <title>
+    编辑器系列—如何获取光标/元素位置 |
+    
+    阿杰
+  </title>
+  <!-- Icon -->
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  
+  <main class="content">
+    <section class="outer">
+  <article id="post-编辑器系列-如何判断光标和元素位置" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h1 class="article-title" itemprop="name">
+    编辑器系列—如何获取光标/元素位置
+  </h1>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/05/29/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%85%89%E6%A0%87%E5%92%8C%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE/" class="article-date">
+  <time datetime="2023-05-29T07:30:42.000Z" itemprop="datePublished">2023-05-29</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/%E7%BC%96%E8%BE%91%E5%99%A8/">编辑器</a>
+</div>
+
+    </div>
+    
+
+    
+    
+<div class="tocbot"></div>
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+      
+        <h3 id="Slate-Selection">Slate Selection</h3>
+<p>slate 的 selection 是用来表示一个元素或节点的位置，结构如下：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64744566e468e3b3652fa138/origin-url" alt="image.png"></p>
+<p>它是基于原生 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Selection">DOM Selection API</a> 封装的，一些基础概念：</p>
+<span id="more"></span>
+<h4 id="anchor">anchor</h4>
+<blockquote>
+<p>锚指的是一个选区的起始点。当我们使用鼠标框选一个区域的时候，锚点就是我们鼠标按下瞬间的那个点。在用户拖动鼠标时，锚点是不会变的 <strong>。</strong> ——MDN</p>
+</blockquote>
+<h4 id="focus">focus</h4>
+<blockquote>
+<p>选区的焦点是该选区的终点，当您用鼠标框选一个选区的时候，焦点是你的鼠标松开瞬间所记录的那个点。随着用户拖动鼠标，焦点的位置会随着改变。——MDN</p>
+</blockquote>
+<p>注意的一点是： <strong>anchor 和 focus 的概念不能与选区的起始位置和终止位置混淆，因为 anchor 指向的位置可能在 focus 指向的位置的前面，也可能在 focus 指向位置的后面，这取决于你选择文本时鼠标移动的方向（也就是按下鼠标键和松开鼠标键的位置）</strong></p>
+<h4 id="path">path</h4>
+<p>slate 中 path 的类型： <code>type Path = number[];</code> ，它是一个描述元素的路径。</p>
+<p>看一个例子：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64216ce4d074dd3307dfb4e9/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/642163a5d074dd3307dfb4d0/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64216523d074dd3307dfb4d5/origin-url" alt="image.png"></p>
+<ul>
+<li>第一张图，path:[0,0]，无论光标在 1、2、3、4、5、6 它的 path 都是 [0, 0]</li>
+<li>第二张图光标落在行内代码上时，发现 path 变了，变成了 [0, 1, 0]</li>
+<li>第三张图光标落在分隔线元素上，path 是 [1, 0]</li>
+</ul>
+<p>根据以上结果可以推出， <strong>path 第一位是第几行或者独占整行的块级元素，第二位是第几行的第几个元素（不是第几个光标），第三位是指嵌套的元素，</strong> 比如表格中的列填充的就是第三位。</p>
+<h4 id="offset">offset</h4>
+<p>指元素的偏移位置，从上面第一张图中还可以看到起始 offset 是 3，结束 offset 是 6，可以推出 offset 指元素的第几个位置，path + offset 可以描述出起始或结束的点，achor + focus 表示从第几个元素第几个位置选到第几个元素第几个位置。</p>
+<h3 id="Selection-是如何构造出来的？"><strong>Selection 是如何构造出来的？</strong></h3>
+<p>通过原生的 Selection API 的数据观察，我们很容易知道 offset，如图中的 anchorOffset 和 focusOffset：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64744883e468e3b3652fa140/origin-url" alt="image.png"></p>
+<p>转换成 Slate Selection：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    anchor: &#123; offset: 9 &#125;,</span><br><span class="line">    focus: &#123; offset: 9 &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再从上面数据中观察，并没有找到是第几行的信息，为什么？</p>
+<p>行的信息也是比较复杂且灵活的，比如：第二行插入了表格元素，该元素本身就是独占整行，它是第二行，那么表格里的第一行该如何表示呢？我个人猜测原生 API 应该也不知道如何表示，所以把这个问题交给开发者定义，也就有了上述的一些规则，下面从代码层面仔细讲解这个行（path）是如何构建出来的。</p>
+<h4 id="基于插件结构定规则">基于插件结构定规则</h4>
+<p>selection 的 path 是根据插件数据结构为基础构建的，在另一篇文章讲到的表格数据结构例子：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64744f7ae468e3b3652fa14b/origin-url" alt="image.png"></p>
+<p>那么数组的第一个元素的默认就是第一行（path 为 0），表格元素的第一行是 (0,0)，第二行是 (0,2)。</p>
+<h4 id="实现规则">实现规则</h4>
+<ol>
+<li>渲染元素时，记录元素和索引。</li>
+<li><strong>当前元素开始从缓存的元素和索引中向上找，找到一级就向 path 数组的开头，临界终止条件：找至顶层。</strong></li>
+</ol>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64745359e468e3b3652fa14d/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6474522ce468e3b3652fa14c/origin-url" alt="image.png"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/05/29/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%85%89%E6%A0%87%E5%92%8C%E5%85%83%E7%B4%A0%E4%BD%8D%E7%BD%AE/" data-id="cmbyuj887002fduji6owh0ecq" class="article-share-link">
+        分享
+      </a>
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AF%8C%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/" rel="tag">富文本编辑器</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+  
+<nav class="article-nav">
+  
+  <a href="/2023/06/04/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%89%AA%E8%B4%B4%E6%9D%BF/" class="article-nav-link">
+    <strong class="article-nav-caption">前一篇</strong>
+    <div class="article-nav-title">
+      
+      编辑器系列-剪贴板
+      
+    </div>
+  </a>
+  
+  
+  <a href="/2023/05/18/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89/" class="article-nav-link">
+    <strong class="article-nav-caption">后一篇</strong>
+    <div class="article-nav-title">编辑器系列—插件渲染机制</div>
+  </a>
+  
+</nav>
+
+  
+
+  
+  
+  
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: 'd194952437b67371b253',
+    clientSecret: 'ee8127b1392f7840a0bcded24bd677566b86cbb2',
+    repo: 'comment',
+    owner: 'aaaaaajie',
+    admin: ['aaaaaajie'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last',
+    proxy: 'https://strong-caramel-969805.netlify.app/github_access_token',
+    createIssueManually: 'false'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+</article>
+</section>
+    <footer class="footer">
+  <div class="outer">
+    <!-- <ul class="list-inline">
+      <li>阿杰 &copy; 2025</li>
+      
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank"></a>
+            
+        </li>
+      
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul> -->
+    <!-- 
+      © 2018 ~ 2022-11-11 xxx. All rights reserved.
+      contact email: xxxs@foxmail.com
+     -->
+     
+    <!-- <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p> -->
+    <p>Contact Email: m18210870360@163.com</p>
+    <p>&copy; 2023 A Jie. All rights reserved.</p>
+  </div>
+</footer>
+  </main>
+  <aside class="sidebar">
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img style="border-radius: 50%;" src="/images/avatar.JPG" alt="阿杰"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/gallery">相册</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/favorites">收藏</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        搜索
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="fe fe-feed"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="输入关键字...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+  });
+</script>
+
+
+
+  <script src='/js/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+
+</html>

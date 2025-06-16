@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <title>
+    类别: 单元测试 |
+    
+    阿杰
+  </title>
+  <!-- Icon -->
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  
+  <main class="content">
+    <section class="outer">
+  <article class="articles">
+    
+    <!-- <h1 class="page-type-title">单元测试</h1> -->
+    
+  
+  
+  
+  
+  
+  
+  <div class="archives-wrap">
+    <div class="archive-year-wrap">
+      <a href="/archives/2023" class="archive-year">2023</a>
+    </div>
+    <div class="archives">
+      
+      <article class="archive-article archive-type-post">
+  
+  
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      
+  
+  <h2 class="archive-article-title" itemprop="name">
+    <a href="/2023/06/07/%E5%86%8D%E8%B0%88%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">再谈单元测试</a>
+  </h2>
+  
+  
+
+      <a href="/2023/06/07/%E5%86%8D%E8%B0%88%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/" class="archive-article-date">
+  <time datetime="2023-06-07T14:26:01.000Z" itemprop="datePublished">06/07</time>
+</a>
+    </header>
+    
+      <p>曾写过多篇测试相关的文章，都源于每次测试给我带来的触动，这次也不例外，最近在重构复杂逻辑时，再次感谢它为我保驾护航，同时也发现了历史测试中存在的一些问题。</p>
+<h3 id="测试的意义">测试的意义</h3>
+<blockquote>
+<p>这是一个认知问题，如果不清楚为何要写测试，那么最终产生的测试大概率是腐烂、或无意义的。</p>
+</blockquote>
+<ol>
+<li>保证代码的正确性，提升代码质量是它最高的使命。</li>
+<li>保证代码的安全性/稳定性，当对某段代码改动后，测试会告诉哪些代码受到了潜在的问题。</li>
+<li>可以指导写代码的思路，在测试驱动开发（TDD）体现尤为明显。</li>
+<li>更能透彻的理解代码，很多情况下，写代码时常常会陷入自己的世界，从测试相当于站在旁观者的角度审视代码，从而提升可读性和扩展性。</li>
+</ol>
+    
+    
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">单元测试</a>
+</div>
+
+    
+    
+  </div>
+
+</article>
+      
+      
+    </div>
+  </div>
+  
+  
+
+  
+</section>
+    <footer class="footer">
+  <div class="outer">
+    <!-- <ul class="list-inline">
+      <li>阿杰 &copy; 2025</li>
+      
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank"></a>
+            
+        </li>
+      
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul> -->
+    <!-- 
+      © 2018 ~ 2022-11-11 xxx. All rights reserved.
+      contact email: xxxs@foxmail.com
+     -->
+     
+    <!-- <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul></p> -->
+    <p>Contact Email: m18210870360@163.com</p>
+    <p>&copy; 2023 A Jie. All rights reserved.</p>
+  </div>
+</footer>
+  </main>
+  <aside class="sidebar">
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img style="border-radius: 50%;" src="/images/avatar.JPG" alt="阿杰"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/gallery">相册</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/favorites">收藏</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        搜索
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="fe fe-feed"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="输入关键字...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+  <script src='/js/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+
+</html>

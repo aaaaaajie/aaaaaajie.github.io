@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <title>
+    基于位掩码权限设计 |
+    
+    阿杰
+  </title>
+  <!-- Icon -->
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  
+  <main class="content">
+    <section class="outer">
+  <article id="post-基于位掩码权限设计" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h1 class="article-title" itemprop="name">
+    基于位掩码权限设计
+  </h1>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/07/16/%E5%9F%BA%E4%BA%8E%E4%BD%8D%E6%8E%A9%E7%A0%81%E6%9D%83%E9%99%90%E8%AE%BE%E8%AE%A1/" class="article-date">
+  <time datetime="2023-07-16T12:23:12.000Z" itemprop="datePublished">2023-07-16</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/%E6%9D%83%E9%99%90%E7%B3%BB%E7%BB%9F/">权限系统</a>
+</div>
+
+    </div>
+    
+
+    
+    
+<div class="tocbot"></div>
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+      
+        <p>在权限设计中有一种非常独特、有意思方案叫  <strong>位掩码权限设计</strong>  ，它在应对一些局部数据权限（权限点不多）的场景下，非常的犀利，比如 PingCode 知识管理页面权限就结合 ACL 对特定人群（用户、用户组、部门）做权限分配，由于权限点只有两个，开发中体现不是非常突出，也没有把这个思维贯彻到底，不过在最近做的一个小项目（业余时间的玩具）中表现比较明显，这篇文章一直是处于未完成的状态 ，做完这个需求后，有触动把它好好写完，分享下。</p>
+<span id="more"></span>
+<h2 id="什么是位掩码权限？">什么是位掩码权限？</h2>
+<p>维基百科搜了一下没有正式对位掩码权限的解释，还得是 ChatGPT：</p>
+<blockquote>
+<p>位掩码权限（Bitmask Permissions）是一种权限管理系统，用于在计算机系统中对资源或操作进行控制和限制。它使用二进制位来表示不同的权限或访问级别。每个二进制位都代表一种权限或操作，可以设置为开启或关闭。</p>
+</blockquote>
+<p>了解过 Linux 权限的应该知道它的一些权限点：r（read 读）、w（write 写）、x（execute 执行），对应的权限值是 4、2、1。</p>
+<p>这是一个标准的位掩码权限设计，其中 1、2、4 对应着基于“位”的二进制，拿 4 位举例：  <code>1 =&gt; 0001</code>  ，  <code>2 =&gt; 0010</code>  ，  <code>4 =&gt; 0100</code>  。</p>
+<blockquote>
+<p>几个名词的小知识：  1. mask 掩码，常表示权限，Worktile 中出现过</p>
+</blockquote>
+<ol>
+<li>x 的全称是 excute，之所以用这个字母表示，起源于 Unix 的设计哲学… 简单的字母 x 更简洁、可读性高，表示最小单元，最基本的操作。后续业界很多也采用这种方式，我说一种大家就知道了 Lodash 使用回调函数第一个参数   <code>_.map(arr, x=&gt; x.name);</code></li>
+</ol>
+<h2 id="常见权限处理">常见权限处理</h2>
+<h4 id="1-赋予多种权限">1. 赋予多种权限</h4>
+<p>采用累计权限点的方式，比如拥有“读”+“写”，4 + 2 = 6，那么最终权限值是 6，拥有“读”+“写”+“执行”，那权限值是：4 + 2 + 1 = 7，以此类推，根据场景搭配权限点即可。</p>
+<h4 id="2-判断是否拥有某种权限">2. 判断是否拥有某种权限</h4>
+<p>使用位运算   <code>&amp;</code>  ，比如现已拥有的权限值是 3，想知道是否有可见（读）权限，那么就执行   <code>!!(3 &amp; 2)</code>  结果是   <code>true</code>  ，  <code>3 &amp; 2</code>   结果是 2，&amp; 的思路是把 10 进制转换成 2 进制比较，二进制”与“的规则是同为 1 则为 1，否则为 0，  <strong>和 2 的指数相与，结果必定只有两种结果：0 或 本身，</strong>  最终得 否则有关于二进制的一些知识更多知识可以看想了解  把二进制的计算结果再转回 10 进制，最终权限值 &amp;  权限点只会返回两种结果 0 或权限点本身，0 代表无权限，权限点代表有此权限，更具体的二进制计算可以点  <a target="_blank" rel="noopener" href="https://pingcode.com/pages/tacyd1qSVw">这里</a>  。</p>
+<p>判断只拥有一种权限，全等比较即可，比如只读（除读之外没有其他权限）  <code>inputPermission === 4</code>  ，如果权限值是列表或字符串的情况还需要做排他处理，很是麻烦。</p>
+<h4 id="3-页面展示权限点">3. 页面展示权限点</h4>
+<p>页面如何展示这些权限点以及映射也是值得思考的问题，不过在这种权限模式下就比较灵活了，因为权限值是一个数字而非数组或字符串，数组和字符串前后端是必须都要映射索引的，必然会有一套计算权限的逻辑，对于数字来说，是一个无序的，前端配置静态固定位置，映射方式就使用上述的与运算一行代码即可。</p>
+<h2 id="优缺点">优缺点</h2>
+<p>总的来说，位掩码在局部权限设计的场景下比较突出（权限点少且相互之间依赖性低）：</p>
+<ol>
+<li>简单易用，设置、修改、校验、展示时非常方便</li>
+<li>储存效率高，尤其是在关系型数据库储存结构有限时</li>
+<li>权限点组合灵活性高，比如读+写、读+删除、执行+写…</li>
+</ol>
+<p>但是它不适合权限点多，粒度细的系统，位就不够用了（第 10 个权限点已经是 1024 了）</p>
+<h2 id="实际应用">实际应用</h2>
+<p>下面的场景是业余时间做个低代码的玩具，其中部分场景下包含了一些权限设置，界面是这样的：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64ae72c6bebe86147c59f649/origin-url" alt="image.png"></p>
+<p>对应填写表单是这样的：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64abe0b6a7dae9eff18ccb62/origin-url" alt="image.png"></p>
+<h3 id="选型">选型</h3>
+<p>选用哪门技术/手段，必然要考虑各种因素（业务场景、已有架构、易用、质量、性能），这里简单介绍一些前置条件：</p>
+<ol>
+<li>低代码场景，主体表（是一个抽象节点，后续简称业务主体）是动态表，动态字段</li>
+<li>关系型数据库（选用的原因是这块业务框架指定了 MySQL）</li>
+<li>权限粒度是字段，且权限点有限</li>
+<li>权限绑定的用户主体（成员/部门/组织角色/应用角色/职位）分布于不同的表</li>
+</ol>
+<p>针对于上述条件可以得出的结论就是本文讲的  <strong>位掩码权限的设计方案，</strong>  其实中间环节是可以有很多思考的（不感兴趣的可以跳过）  一些结论：</p>
+<ol>
+<li>关系型数据库，权限值不推荐是列表（对象、数组），一是不支持，存 json 串也比较膈应，最好  <strong>用基本数据类型（字符串、数字）</strong></li>
+<li>权限绑定的用户主体分布多表，需要  <strong>排除关联表的方案，采用关联字段的方式</strong>  ，如果采用关联表方案有以下弊端：
+<ol>
+<li>分布于多个主体关联权限表，缺点是  <strong>表分散，成本高</strong>  ，在动态表的情况下额外在创建动态表也很费劲，后续根据不同主体找不同的表。</li>
+<li>分布于一张表存多个主体映射权限的数据，缺点是主体（这里是配置的模块）数量不固定，比较  <strong>容易造成数据量大</strong>  ，总数是：业务主体数据量 * 用户主体数量 * 权限点数量，所以后续还要  <strong>考虑分表</strong>  。</li>
+<li>无论上面哪种都需要  <strong>额外多查一次关联表</strong></li>
+</ol>
+</li>
+<li>权限值的储存如果是 01 拼接的字符串（0 代表无权限，1 代表有权限），那么需要考虑权限值的展示以及单字段校验等方式，因为字符串一个字符映射一个权限点，所以前端展示时需要知道哪一位对应什么权限，这种情况下前后端都必然要有一个  <strong>权限点索引配置，还得有一套根据索引匹配的逻辑</strong>  。</li>
+</ol>
+<p>选用位掩码权限的方式有这些优势：</p>
+<ol>
+<li>数字作为基本数据类型，  <strong>在任何数据库都支持</strong>  ，而数组或 JSON 需要 NoSQL 类的数据库支撑。</li>
+<li>数字相比列表或字符串更简单，  <strong>不用考虑权限点映射顺序的相关配置和计算程序</strong>  。</li>
+<li>数字相比关联列表更简单  <strong>，减少查表次数，内聚性高（与业务主体绑定更近）</strong>  ，  <strong>更节约内存</strong>  （主要是字段和表之间的对比）</li>
+<li>权限值用数字更简洁，在多层嵌套的 JSON 下，显然  <strong>数字比对象或数组更清楚</strong>  。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">permissions: &#123;</span><br><span class="line">  read: true,</span><br><span class="line">  write: true,</span><br><span class="line">  require: true</span><br><span class="line">&#125;</span><br><span class="line">// good</span><br><span class="line">permissions: 7</span><br></pre></td></tr></table></figure>
+<h2 id="最后">最后</h2>
+<p>还是重复两点吧：</p>
+<ol>
+<li>权限点较少时，选用此方案非常适合。</li>
+<li>用户主体类型复杂的情况可以结合 ACL 或 RBAC 混合使用。</li>
+</ol>
+<p>最后提供可以直接使用的代码片段：</p>
+<ol>
+<li>定义权限点</li>
+</ol>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64b3e45bbebe86147c59f95e/origin-url" alt="image.png"></p>
+<ol>
+<li>验证工具函数</li>
+</ol>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64af9f42bebe86147c59f718/origin-url" alt="image.png"></p>
+<ol>
+<li>HTML 中方便的管道</li>
+</ol>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64af9f90bebe86147c59f71c/origin-url" alt="image.png"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/07/16/%E5%9F%BA%E4%BA%8E%E4%BD%8D%E6%8E%A9%E7%A0%81%E6%9D%83%E9%99%90%E8%AE%BE%E8%AE%A1/" data-id="cmbyuj8870022duji5zs04ml3" class="article-share-link">
+        分享
+      </a>
+      
+    </footer>
+
+  </div>
+
+  
+  
+<nav class="article-nav">
+  
+  <a href="/2023/07/26/angular%E4%BD%BF%E7%94%A8%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/" class="article-nav-link">
+    <strong class="article-nav-caption">前一篇</strong>
+    <div class="article-nav-title">
+      
+      angular使用配置环境变量
+      
+    </div>
+  </a>
+  
+  
+  <a href="/2023/06/07/%E5%86%8D%E8%B0%88%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/" class="article-nav-link">
+    <strong class="article-nav-caption">后一篇</strong>
+    <div class="article-nav-title">再谈单元测试</div>
+  </a>
+  
+</nav>
+
+  
+
+  
+  
+  
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: 'd194952437b67371b253',
+    clientSecret: 'ee8127b1392f7840a0bcded24bd677566b86cbb2',
+    repo: 'comment',
+    owner: 'aaaaaajie',
+    admin: ['aaaaaajie'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last',
+    proxy: 'https://strong-caramel-969805.netlify.app/github_access_token',
+    createIssueManually: 'false'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+</article>
+</section>
+    <footer class="footer">
+  <div class="outer">
+    <!-- <ul class="list-inline">
+      <li>阿杰 &copy; 2025</li>
+      
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank"></a>
+            
+        </li>
+      
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul> -->
+    <!-- 
+      © 2018 ~ 2022-11-11 xxx. All rights reserved.
+      contact email: xxxs@foxmail.com
+     -->
+     
+    <!-- <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p> -->
+    <p>Contact Email: m18210870360@163.com</p>
+    <p>&copy; 2023 A Jie. All rights reserved.</p>
+  </div>
+</footer>
+  </main>
+  <aside class="sidebar">
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img style="border-radius: 50%;" src="/images/avatar.JPG" alt="阿杰"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/gallery">相册</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/favorites">收藏</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        搜索
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="fe fe-feed"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="输入关键字...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+  });
+</script>
+
+
+
+  <script src='/js/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+
+</html>

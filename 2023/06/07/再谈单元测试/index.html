@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <title>
+    再谈单元测试 |
+    
+    阿杰
+  </title>
+  <!-- Icon -->
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  
+  <main class="content">
+    <section class="outer">
+  <article id="post-再谈单元测试" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h1 class="article-title" itemprop="name">
+    再谈单元测试
+  </h1>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/06/07/%E5%86%8D%E8%B0%88%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/" class="article-date">
+  <time datetime="2023-06-07T14:26:01.000Z" itemprop="datePublished">2023-06-07</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">单元测试</a>
+</div>
+
+    </div>
+    
+
+    
+    
+<div class="tocbot"></div>
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+      
+        <p>曾写过多篇测试相关的文章，都源于每次测试给我带来的触动，这次也不例外，最近在重构复杂逻辑时，再次感谢它为我保驾护航，同时也发现了历史测试中存在的一些问题。</p>
+<h3 id="测试的意义">测试的意义</h3>
+<blockquote>
+<p>这是一个认知问题，如果不清楚为何要写测试，那么最终产生的测试大概率是腐烂、或无意义的。</p>
+</blockquote>
+<ol>
+<li>保证代码的正确性，提升代码质量是它最高的使命。</li>
+<li>保证代码的安全性/稳定性，当对某段代码改动后，测试会告诉哪些代码受到了潜在的问题。</li>
+<li>可以指导写代码的思路，在测试驱动开发（TDD）体现尤为明显。</li>
+<li>更能透彻的理解代码，很多情况下，写代码时常常会陷入自己的世界，从测试相当于站在旁观者的角度审视代码，从而提升可读性和扩展性。</li>
+</ol>
+<span id="more"></span>
+<h3 id="写测试的一些原则">写测试的一些原则</h3>
+<blockquote>
+<p>首先必须要有一个态度/认知：写测试与写普通代码一样，测试也要很清楚的表达逻辑，不能因为它不体现到产品上就粗糙了事。</p>
+</blockquote>
+<p>有些原则会受不同开发者个人能力影响，所以我的看法是正面原则应该鼓励，反面原则明令禁止。</p>
+<h4 id="不写没有意义的测试">不写没有意义的测试</h4>
+<p>比如   <code>1 + 2 === 3</code>  ，或者让函数执行一次，而不是验证函数执行的结果，这种无意义的行为，还有一种情况是为了提升测试覆盖率而补充，在我看来更是“本末倒置”。</p>
+<h4 id="不写重复的测试">不写重复的测试</h4>
+<p>相同的逻辑写多遍，当然有可能是不同开发成员测相同的逻辑，如果发现应该删除。</p>
+<h4 id="不写描述与实际逻辑不符的测试">不写描述与实际逻辑不符的测试</h4>
+<p>典型的挂羊头卖狗肉，当修复测试时，通过描述不能准备判断场景，细排查发现并不是预期逻辑，花费了不必要的时间。</p>
+<h4 id="不写上下文依赖的测试">不写上下文依赖的测试</h4>
+<p>要保证测试的独立性，就是说单个的测试也可以运行，在工作当中也很多处发现，下一个测试要依赖于上一个测试，这显然是不合理的，如果某天删掉了第一个测试，第二个测试就会挂掉。</p>
+<h4 id="尽可能保证测试的可读性">尽可能保证测试的可读性</h4>
+<p>最好有递进关系，很容易从测试中看到你的逻辑是什么。</p>
+<h4 id="尽可能保证测试的纯粹性">尽可能保证测试的纯粹性</h4>
+<p>一个测试只测一种场景，也可以说编程原则中的“单一原则”，可以正反面断言。</p>
+<h4 id="提取重复的前置条件">提取重复的前置条件</h4>
+<p>很多时候只为了测关键点，需要配备一些前置条件，当多个测试都有相同逻辑时，应当提取到不同维度。</p>
+<p>比如使用 before、beforeEach、after、afterEach，或者提升至更底层的函数，比如 Helper 类。</p>
+<p>反面示例（下图）很多是本人曾经犯过的问题，自觉公开处刑 🙃</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/648038e2e468e3b3652fab3d/origin-url" alt="image.png"></p>
+<h3 id="应该如何写一个测试？">应该如何写一个测试？</h3>
+<p>关于测试的方法论，本人所知道的是 TDD 和 BDD，也曾查过一些资料，对我至今仍然有非常大的指导意义，不讲过多的概念，回顾一张图吧。</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64801dffe468e3b3652faaab/origin-url" alt="image.png"></p>
+<h4 id="几个例子">几个例子</h4>
+<ol>
+<li>
+<p>开发一个创建用户的 API，我的步骤是：</p>
+<p>a. <strong>编写测试用例</strong>  ：先 http 请求这个 API 的路由，此时路由可能都不存在，没有关系，这一步就是要  <strong>这个测试用例失败</strong>  。<br>
+<img src="https://atlas-rc.pingcode.com/files/public/64802844e468e3b3652faae5/origin-url" alt="image.png"></p>
+<p>b. <strong>编写代码</strong>  ：解决它为什么失败？原因：没有定义路由和响应数据，OK 解决它，添加一个 POST /api/user 的路由，并且   <code>response.end('success')</code>  。  <strong>这一步让测试用例通过</strong>  。<br>
+<img src="https://atlas-rc.pingcode.com/files/public/64802959e468e3b3652faae7/origin-url" alt="image.png"></p>
+<p>c. <strong>编写测试用例</strong>  ：制定创建用户的信息：名字（张三）、手机号（xxx）、年龄…，并且期望创建成功，并且判断创建的信息无误，此时运行测试，  <strong>结果应当是失败</strong>  ，因为代码中还没有创建逻辑。<br>
+<img src="https://atlas-rc.pingcode.com/files/public/64802a36e468e3b3652faaec/origin-url" alt="image.png"></p>
+<p>d. <strong>编写代码：</strong>  解决失败原因，创建响应结果的实体，并且 response.send({ code: 200, data: user })，  <strong>让测试成功。</strong><br>
+<img src="https://atlas-rc.pingcode.com/files/public/64802c6ee468e3b3652faaf6/origin-url" alt="image.png"></p>
+<p>e. <strong>编写测试用例</strong>  ：输入不合法的信息，让  <strong>测试继续报错</strong>  。</p>
+<p>f. <strong>编写程序：</strong>  加入校验逻辑，解决报错，让  <strong>测试成功。</strong></p>
+<p>g. …</p>
+</li>
+<li>
+<p>一个缺陷，真实开发的例子：<br>
+<img src="https://atlas-rc.pingcode.com/files/public/64802e2ee468e3b3652faaff/origin-url" alt="image.png"></p>
+</li>
+</ol>
+<p>a. 这个思路应当是先按照描述去模拟场景，验证预期行为和实际行为是否一致，如下：<br>
+<img src="https://atlas-rc.pingcode.com/files/public/64802fe8e468e3b3652fab06/origin-url" alt="image.png"></p>
+<p>b. 这种情况就避免了  <strong>启动前端代码的麻烦事，进行自我验证，驱动排查</strong>  。在解决这个缺陷时，重构了大量的代码，历史的测试一次次告诉我重构逻辑漏掉了哪些场景。</p>
+<p>从上面的两个例子中，可以再次得出它的指导思路：  <strong>让测试失败，改代码修复，在让测试失败，修复…反复验证。</strong></p>
+<h3 id="结束">结束</h3>
+<p>好吧，暂时没有其他要说的了，后续有想法，再继续更新。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/06/07/%E5%86%8D%E8%B0%88%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/" data-id="cmbyuj886001uduji4kd81srh" class="article-share-link">
+        分享
+      </a>
+      
+    </footer>
+
+  </div>
+
+  
+  
+<nav class="article-nav">
+  
+  <a href="/2023/07/16/%E5%9F%BA%E4%BA%8E%E4%BD%8D%E6%8E%A9%E7%A0%81%E6%9D%83%E9%99%90%E8%AE%BE%E8%AE%A1/" class="article-nav-link">
+    <strong class="article-nav-caption">前一篇</strong>
+    <div class="article-nav-title">
+      
+      基于位掩码权限设计
+      
+    </div>
+  </a>
+  
+  
+  <a href="/2023/06/04/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%89%AA%E8%B4%B4%E6%9D%BF/" class="article-nav-link">
+    <strong class="article-nav-caption">后一篇</strong>
+    <div class="article-nav-title">编辑器系列-剪贴板</div>
+  </a>
+  
+</nav>
+
+  
+
+  
+  
+  
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: 'd194952437b67371b253',
+    clientSecret: 'ee8127b1392f7840a0bcded24bd677566b86cbb2',
+    repo: 'comment',
+    owner: 'aaaaaajie',
+    admin: ['aaaaaajie'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last',
+    proxy: 'https://strong-caramel-969805.netlify.app/github_access_token',
+    createIssueManually: 'false'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+</article>
+</section>
+    <footer class="footer">
+  <div class="outer">
+    <!-- <ul class="list-inline">
+      <li>阿杰 &copy; 2025</li>
+      
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank"></a>
+            
+        </li>
+      
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul> -->
+    <!-- 
+      © 2018 ~ 2022-11-11 xxx. All rights reserved.
+      contact email: xxxs@foxmail.com
+     -->
+     
+    <!-- <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p> -->
+    <p>Contact Email: m18210870360@163.com</p>
+    <p>&copy; 2023 A Jie. All rights reserved.</p>
+  </div>
+</footer>
+  </main>
+  <aside class="sidebar">
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img style="border-radius: 50%;" src="/images/avatar.JPG" alt="阿杰"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/gallery">相册</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/favorites">收藏</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        搜索
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="fe fe-feed"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="输入关键字...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+  });
+</script>
+
+
+
+  <script src='/js/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+
+</html>

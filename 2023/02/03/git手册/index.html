@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <title>
+    Git 手册 |
+    
+    阿杰
+  </title>
+  <!-- Icon -->
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  
+  <main class="content">
+    <section class="outer">
+  <article id="post-git手册" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h1 class="article-title" itemprop="name">
+    Git 手册
+  </h1>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/02/03/git%E6%89%8B%E5%86%8C/" class="article-date">
+  <time datetime="2023-02-03T06:38:00.000Z" itemprop="datePublished">2023-02-03</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/Git/">Git</a>
+</div>
+
+    </div>
+    
+
+    
+    
+<div class="tocbot"></div>
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+      
+        <blockquote>
+<p>以下命令中 [ ] 包裹的值为动态值，需要根据情况替换，比如 <code>git push origin [branchName]</code>，[branchName] 需要根据实际情况的值决定，比如： <code>git push origin master</code></p>
+</blockquote>
+<h2 id="常用命令">常用命令</h2>
+<ul>
+<li>创建本地仓库：<code>git init</code></li>
+<li>创建中央仓库：<code>git init --bare</code></li>
+<li>拉取远程分支所有历史提交记录：<code>git pull origin [branch] --allow-unrelated-histories</code></li>
+</ul>
+<h3 id="撤销暂存文件">撤销暂存文件</h3>
+<ul>
+<li>撤销所有：<code>git restore --staged .</code></li>
+<li>撤销文件：<code>git restore ---staged [filename]</code></li>
+</ul>
+<h3 id="撤销工作区文件">撤销工作区文件</h3>
+<ul>
+<li>撤销所有：<code>git restore .</code></li>
+<li>撤销文件(多个文件可以用空格隔开)：<code>git restore [filename]</code></li>
+</ul>
+<h2 id="标签">标签</h2>
+<ul>
+<li>快速打标签: <code>git tag [tagName]</code></li>
+<li>推送至远程: <code>git push origin [tagName]</code></li>
+</ul>
+<h2 id="cherry-pick">cherry-pick</h2>
+<p>将其他分支的 commit 迁移至当前分支(<strong>注意先切换到需要上线的分支</strong>): <code>git cherry-pick [commitid]</code></p>
+<p>一般在热修复，脚本，补丁需要及时上线，但又不能基于开发分支代码部署，将临时代码合并到上个上线的版本部署一版的场景中会用到。</p>
+<span id="more"></span>
+<h2 id="回滚">回滚</h2>
+<ul>
+<li>回滚到某次提交: <code>git reset [commitid]</code></li>
+<li>强制回滚某次提交，并且回删除节点后的所有提交(慎用): <code>git reset --hard [commitid]</code></li>
+<li>强制与远程分支保持一致： <code>git reset --hard origin/[branchName]</code></li>
+</ul>
+<h2 id="分支管理">分支管理</h2>
+<ul>
+<li>设置远程分支为默认分支：<code>git branch --set-upstream-to= origin [branchName]</code></li>
+</ul>
+<h3 id="删除分支">删除分支</h3>
+<ul>
+<li>删除本地分支： <code>git branch -D [branchName]</code></li>
+<li>删除远程分支： <code>git push origin -d [branchName]</code></li>
+<li>批量删除所有分支：<code>git branch | grep -v 'develop' | xargs git branch -D</code>
+<ul>
+<li><code>|</code> 管道命令，用于将一串命令串联起来。前面命令的输出可以作为后面命令的输入</li>
+<li><code>git branch</code> 列出本地所有分支</li>
+<li><code>grep</code> 搜索过滤命令。使用正则表达式搜索文本，并把匹配的行打印出来</li>
+<li><code>xargs</code> 参数传递命令。用于将标准输入作为命令的参数传给下一个命令</li>
+</ul>
+</li>
+</ul>
+<h2 id="常见问题">常见问题</h2>
+<h3 id="1-refusing-to-merge-unrelated-histories（拒绝合并不相关历史）">1. refusing to merge unrelated histories（拒绝合并不相关历史）</h3>
+<p>这种情况一般是本地仓储和远程仓储的提交历史不一致，git 需要确认是否合并<br>
+解决：<code>git pull origin master --allow-unrelated-histories</code></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/02/03/git%E6%89%8B%E5%86%8C/" data-id="cmbyuj883000oduji6yzugshs" class="article-share-link">
+        分享
+      </a>
+      
+    </footer>
+
+  </div>
+
+  
+  
+<nav class="article-nav">
+  
+  <a href="/2023/02/03/docker%E5%90%AF%E5%8A%A8%E5%B8%B8%E7%94%A8%E9%95%9C%E5%83%8F/" class="article-nav-link">
+    <strong class="article-nav-caption">前一篇</strong>
+    <div class="article-nav-title">
+      
+      Docker 常用镜像启动模版
+      
+    </div>
+  </a>
+  
+  
+  <a href="/2023/02/01/mongodb%E6%89%8B%E5%86%8C/" class="article-nav-link">
+    <strong class="article-nav-caption">后一篇</strong>
+    <div class="article-nav-title">Mongodb 常用 API</div>
+  </a>
+  
+</nav>
+
+  
+
+  
+  
+  
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: 'd194952437b67371b253',
+    clientSecret: 'ee8127b1392f7840a0bcded24bd677566b86cbb2',
+    repo: 'comment',
+    owner: 'aaaaaajie',
+    admin: ['aaaaaajie'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last',
+    proxy: 'https://strong-caramel-969805.netlify.app/github_access_token',
+    createIssueManually: 'false'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+</article>
+</section>
+    <footer class="footer">
+  <div class="outer">
+    <!-- <ul class="list-inline">
+      <li>阿杰 &copy; 2025</li>
+      
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank"></a>
+            
+        </li>
+      
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul> -->
+    <!-- 
+      © 2018 ~ 2022-11-11 xxx. All rights reserved.
+      contact email: xxxs@foxmail.com
+     -->
+     
+    <!-- <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p> -->
+    <p>Contact Email: m18210870360@163.com</p>
+    <p>&copy; 2023 A Jie. All rights reserved.</p>
+  </div>
+</footer>
+  </main>
+  <aside class="sidebar">
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img style="border-radius: 50%;" src="/images/avatar.JPG" alt="阿杰"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/gallery">相册</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/favorites">收藏</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        搜索
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="fe fe-feed"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="输入关键字...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+  });
+</script>
+
+
+
+  <script src='/js/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+
+</html>

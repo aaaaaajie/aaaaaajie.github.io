@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <title>
+    
+    阿杰
+  </title>
+  <!-- Icon -->
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  
+  <section class="jumbotron">
+    <div class="video">
+      
+      <div class="video-frame">
+        <img src="/images/ocean/overlay-hero.png" alt="Decorative image frame">
+      </div>
+      
+      <div class="video-media">
+        <video playsinline="" autoplay="" loop="" muted="" data-autoplay="" poster="/images/ocean/ocean.png"
+          x5-video-player-type="h5">
+          <source src="/images/ocean/ocean.mp4" type="video/mp4">
+          <source src="/images/ocean/ocean.ogv" type="video/ogg">
+          <source src="/images/ocean/ocean.webm" type="video/webm">
+          <p>Your user agent does not support the HTML5 Video element.</p>
+        </video>
+        <div class="video-overlay"></div>
+      </div>
+      <div class="video-inner text-center text-white">
+        <h1><a href="/">阿杰</a></h1>
+        <p>爱生活｜爱编程｜爱书法</p>
+        <!-- <div><img src="/images/hexo-inverted.svg" class="brand" alt="阿杰"></div> -->
+      </div>
+      <div class="video-learn-more">
+        <a class="anchor" href="#landingpage"><i class="fe fe-mouse"></i></a>
+      </div>
+    </div>
+  </section>
+  
+  <main class="content">
+    
+<div id="landingpage" class="page-content">
+  <aside class="aside-categories">
+    <div class="category-title">分类</div>
+    <ul class="category-list-box">
+      
+      
+        
+          <li class="category-name"> <a class="category-link" href="/categories/Angular/">Angular</a></li> 
+        
+      
+        
+          <li class="category-name"> <a class="category-link" href="/categories/RxJS/">RxJS</a></li> 
+        
+      
+        
+          <li class="category-name"> <a class="category-link" href="/categories/Git/">Git</a></li> 
+        
+      
+        
+          <li class="category-name"> <a class="category-link" href="/categories/Linux/">Linux</a></li> 
+        
+      
+        
+          <li class="category-name"> <a class="category-link" href="/categories/Linux/Mac/">Mac</a></li> 
+        
+      
+        
+          <li class="category-name"> <a class="category-link" href="/categories/VSCode/">VSCode</a></li> 
+        
+      
+        
+          <li class="category-name"> <a class="category-link" href="/categories/%E7%BC%96%E8%BE%91%E5%99%A8/">编辑器</a></li> 
+        
+      
+        
+          <li class="category-name"> <a class="category-link" href="/categories/%E6%80%9D%E6%BA%90%E5%9C%B0/">思源地</a></li> 
+        
+      
+        
+          <li class="category-name"> <a class="category-link" href="/categories/%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/">编程思想</a></li> 
+        
+      
+        
+          <li class="category-name"> <a class="category-link" href="/categories/%E8%AF%BB%E4%B9%A6%E6%84%9F%E6%82%9F/">读书感悟</a></li> 
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+      
+       <li> <a class="category-link" href="/categories">更多分类...</a></li> 
+      
+    </ul>
+  </aside>
+  <section class="outer">
+  <article class="articles">
+    
+    <!-- <h1 class="page-type-title"></h1> -->
+    
+    
+    <article id="post-angular动态创建组件" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h2 class="article-title" itemprop="name">
+    <a href="/2023/03/22/angular%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BA%E7%BB%84%E4%BB%B6/">Angular 动态创建组件</a>
+  </h2>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/03/22/angular%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BA%E7%BB%84%E4%BB%B6/" class="article-date">
+  <time datetime="2023-03-22T13:52:23.000Z" itemprop="datePublished">2023-03-22</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/Angular/">Angular</a>
+</div>
+
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+        
+      
+      
+        <p>有两种方式：视图动态渲染和组件动态创建（笔者拟自己拟的概念），  <strong>区别是前者的重心是使用 NgComponentOutlet 指令在视图模板中，后者的重心是使用 createComponent API 在组件内创建的</strong>  。</p>
+        
+          <p>
+            <a class="article-more-link" href="/2023/03/22/angular%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BA%E7%BB%84%E4%BB%B6/">
+              阅读全文...
+            </a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/03/22/angular%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BA%E7%BB%84%E4%BB%B6/" data-id="cmbyuj882000bdujiazc9elsb" class="article-share-link">
+        分享
+      </a>
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Angular/" rel="tag">Angular</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+    
+    <article id="post-js设置伪类元素" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h2 class="article-title" itemprop="name">
+    <a href="/2023/03/15/js%E8%AE%BE%E7%BD%AE%E4%BC%AA%E7%B1%BB%E5%85%83%E7%B4%A0/">js 修改伪类元素的样式</a>
+  </h2>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/03/15/js%E8%AE%BE%E7%BD%AE%E4%BC%AA%E7%B1%BB%E5%85%83%E7%B4%A0/" class="article-date">
+  <time datetime="2023-03-15T12:22:35.000Z" itemprop="datePublished">2023-03-15</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/js-%E6%93%8D%E4%BD%9C%E6%A0%B7%E5%BC%8F/">js 操作样式</a>
+</div>
+
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+        
+      
+      
+        <blockquote>
+<p>这是一个骚操作…因为目前为止 js 还没有提供可以直接设置伪类的 API，但是程序界流传着这样一句话：<strong>任何解决不了的问题都可以引入一个第三方去解决</strong></p>
+</blockquote>
+<p>有一种思路是：</p>
+<ol>
+<li>js 添加自定义 style 属性</li>
+<li>css 中读取并使用该属性的值</li>
+</ol>
+        
+          <p>
+            <a class="article-more-link" href="/2023/03/15/js%E8%AE%BE%E7%BD%AE%E4%BC%AA%E7%B1%BB%E5%85%83%E7%B4%A0/">
+              阅读全文...
+            </a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/03/15/js%E8%AE%BE%E7%BD%AE%E4%BC%AA%E7%B1%BB%E5%85%83%E7%B4%A0/" data-id="cmbyuj883000yduji2qd2btdy" class="article-share-link">
+        分享
+      </a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+    
+    <article id="post-directive-composition-api" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h2 class="article-title" itemprop="name">
+    <a href="/2023/03/10/directive-composition-api/">Angular 指令组合 API—hostDirectives</a>
+  </h2>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/03/10/directive-composition-api/" class="article-date">
+  <time datetime="2023-03-10T06:09:39.000Z" itemprop="datePublished">2023-03-10</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/Angular/">Angular</a>
+</div>
+
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+        
+      
+      
+        <blockquote>
+<p>原文在我的知乎：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/612817008">Angular hostDirective 详解</a></p>
+</blockquote>
+<h2 id="前言">前言</h2>
+<p>最近有一个需求是动态创建组件，然后给其组件添加指令，当时可难坏了，因为 createComponent API 不支持绑定指令，所以我当时猜想是否可以在 @Component 注入或 @HostBindingDirective 绑定实现呢？找了很久，最终发现官方支持了这种，选择的是前者，Feature Issue 如下：</p>
+        
+          <p>
+            <a class="article-more-link" href="/2023/03/10/directive-composition-api/">
+              阅读全文...
+            </a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/03/10/directive-composition-api/" data-id="cmbyuj882000kdujid0b9g49a" class="article-share-link">
+        分享
+      </a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+    
+    <article id="post-使用google矢量图" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h2 class="article-title" itemprop="name">
+    <a href="/2023/03/05/%E4%BD%BF%E7%94%A8google%E7%9F%A2%E9%87%8F%E5%9B%BE/">Sass 中使用 Google icons 和 字体</a>
+  </h2>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/03/05/%E4%BD%BF%E7%94%A8google%E7%9F%A2%E9%87%8F%E5%9B%BE/" class="article-date">
+  <time datetime="2023-03-05T02:55:50.000Z" itemprop="datePublished">2023-03-05</time>
+</a>
+      
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+        
+      
+      
+        <h2 id="1-导入-icon">1. 导入 icon</h2>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@import</span> <span class="string">&quot;https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&amp;display=swap&quot;</span>;</span><br></pre></td></tr></table></figure>
+        
+          <p>
+            <a class="article-more-link" href="/2023/03/05/%E4%BD%BF%E7%94%A8google%E7%9F%A2%E9%87%8F%E5%9B%BE/">
+              阅读全文...
+            </a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/03/05/%E4%BD%BF%E7%94%A8google%E7%9F%A2%E9%87%8F%E5%9B%BE/" data-id="cmbyuj888002vduji5k5zbt8k" class="article-share-link">
+        分享
+      </a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+    
+    <article id="post-linux语法手册" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h2 class="article-title" itemprop="name">
+    <a href="/2023/03/03/linux%E8%AF%AD%E6%B3%95%E6%89%8B%E5%86%8C/">Linux/Mac 语法手册</a>
+  </h2>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/03/03/linux%E8%AF%AD%E6%B3%95%E6%89%8B%E5%86%8C/" class="article-date">
+  <time datetime="2023-03-03T08:13:20.000Z" itemprop="datePublished">2023-03-03</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/Linux/">Linux</a> / <a class="article-category-link" href="/categories/Linux/Mac/">Mac</a>
+</div>
+
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+        
+      
+      
+        <h2 id="查看端口占用">查看端口占用</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsof -i:端口号</span><br></pre></td></tr></table></figure>
+<h2 id="杀死进程">杀死进程</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -9 PID</span><br></pre></td></tr></table></figure>
+<h2 id="查看内存占用情况-前10位">查看内存占用情况(前10位)</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps aux --<span class="built_in">sort</span> -rss | <span class="built_in">head</span> -n 10</span><br></pre></td></tr></table></figure>
+        
+          <p>
+            <a class="article-more-link" href="/2023/03/03/linux%E8%AF%AD%E6%B3%95%E6%89%8B%E5%86%8C/">
+              阅读全文...
+            </a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/03/03/linux%E8%AF%AD%E6%B3%95%E6%89%8B%E5%86%8C/" data-id="cmbyuj8840011duji1aep0jcb" class="article-share-link">
+        分享
+      </a>
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mac/" rel="tag">Mac</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+    
+    <article id="post-vscode镜像下载" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h2 class="article-title" itemprop="name">
+    <a href="/2023/03/03/vscode%E9%95%9C%E5%83%8F%E4%B8%8B%E8%BD%BD/">使用镜像下载 vscode</a>
+  </h2>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/03/03/vscode%E9%95%9C%E5%83%8F%E4%B8%8B%E8%BD%BD/" class="article-date">
+  <time datetime="2023-03-03T07:16:10.000Z" itemprop="datePublished">2023-03-03</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/VSCode/">VSCode</a>
+</div>
+
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+        
+      
+      
+        <p>从官网下载 vscode 会特别的慢，所以利用镜像可以提高下载速度。</p>
+<h2 id="1-打开vscode官网">1. 打开vscode官网</h2>
+<p>打开官网： <a target="_blank" rel="noopener" href="https://code.visualstudio.com/Download/">https://code.visualstudio.com/Download/</a></p>
+        
+          <p>
+            <a class="article-more-link" href="/2023/03/03/vscode%E9%95%9C%E5%83%8F%E4%B8%8B%E8%BD%BD/">
+              阅读全文...
+            </a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/03/03/vscode%E9%95%9C%E5%83%8F%E4%B8%8B%E8%BD%BD/" data-id="cmbyuj885001kdujib1q7f3sn" class="article-share-link">
+        分享
+      </a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+    
+    <article id="post-npm legacy-peer-deps 参数标识" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h2 class="article-title" itemprop="name">
+    <a href="/2023/02/22/npm%20legacy-peer-deps%20%E5%8F%82%E6%95%B0%E6%A0%87%E8%AF%86/">理解npm legacy-peer-deps 参数标识</a>
+  </h2>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/02/22/npm%20legacy-peer-deps%20%E5%8F%82%E6%95%B0%E6%A0%87%E8%AF%86/" class="article-date">
+  <time datetime="2023-02-22T12:24:57.000Z" itemprop="datePublished">2023-02-22</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/NPM/">NPM</a>
+</div>
+
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+        
+      
+      
+        <p>大家应该都遇到过这样的错误：  <strong>unable to resolve dependency tree</strong>  <strong>。</strong></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/63f5a12ea299063b352a91dd/origin-url" alt="image.png"></p>
+<p>刚开始是根据报错提示给出的解决方案：  <code>npm install --legacy-peer-deps</code>  ，这个用过很多次了，也解决过大多数场景，但最近一次却栽到了这上面。</p>
+        
+          <p>
+            <a class="article-more-link" href="/2023/02/22/npm%20legacy-peer-deps%20%E5%8F%82%E6%95%B0%E6%A0%87%E8%AF%86/">
+              阅读全文...
+            </a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/02/22/npm%20legacy-peer-deps%20%E5%8F%82%E6%95%B0%E6%A0%87%E8%AF%86/" data-id="cmbyuj885001ddujiey08hkck" class="article-share-link">
+        分享
+      </a>
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NPM/" rel="tag">NPM</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+    
+    <article id="post-mermaid" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h2 class="article-title" itemprop="name">
+    <a href="/2023/02/08/mermaid/">hexo ocean 主题集成 mermaid</a>
+  </h2>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/02/08/mermaid/" class="article-date">
+  <time datetime="2023-02-08T08:14:18.000Z" itemprop="datePublished">2023-02-08</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/Hexo/">Hexo</a>
+</div>
+
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+        
+      
+      
+        <p>mermaid 是一款可以使用文本来绘图的工具，支持流程图、时序图、类图、饼状图等等，更多看<a target="_blank" rel="noopener" href="https://mermaid.js.org/intro/">这里</a>。它可以支持在 markdown 中使用，这对于我这种程序员非常的好用，可以代替一些插图，hexo 对插图是一大痛点（上传图片，然后在 markdown 中插入链接，重要的是要考虑储存位置、空间和后期的维护），本人习惯使用代码块或文字的方式代替，所以这是一篇 hexo ocean 集成 mermaid 的文档。</p>
+        
+          <p>
+            <a class="article-more-link" href="/2023/02/08/mermaid/">
+              阅读全文...
+            </a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/02/08/mermaid/" data-id="cmbyuj8840013dujifkbzaydi" class="article-share-link">
+        分享
+      </a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+    
+    <article id="post-切面编程" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h2 class="article-title" itemprop="name">
+    <a href="/2023/02/07/%E5%88%87%E9%9D%A2%E7%BC%96%E7%A8%8B/">谈面向切面编程—AOP</a>
+  </h2>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/02/07/%E5%88%87%E9%9D%A2%E7%BC%96%E7%A8%8B/" class="article-date">
+  <time datetime="2023-02-07T03:43:30.000Z" itemprop="datePublished">2023-02-07</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/">编程思想</a>
+</div>
+
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+        
+      
+      
+        <p>第一次听说 AOP 这个概念大概还是在 5 年前，那时还是一个 Java 小白，只赚了个耳熟，这些年倒比较理解了，但并没有好好总结一篇，最近又看到相关话题，大家存在分歧有些争论，都多少有些片面，这里个人也大言不惭，谈一下 AOP。</p>
+        
+          <p>
+            <a class="article-more-link" href="/2023/02/07/%E5%88%87%E9%9D%A2%E7%BC%96%E7%A8%8B/">
+              阅读全文...
+            </a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/02/07/%E5%88%87%E9%9D%A2%E7%BC%96%E7%A8%8B/" data-id="cmbyuj886001wduji2n6u3iz9" class="article-share-link">
+        分享
+      </a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+    
+    <article id="post-怎么才算一本好书" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h2 class="article-title" itemprop="name">
+    <a href="/2023/02/06/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/">论读书</a>
+  </h2>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/02/06/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/" class="article-date">
+  <time datetime="2023-02-06T15:20:00.000Z" itemprop="datePublished">2023-02-06</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/%E8%AF%BB%E4%B9%A6%E6%84%9F%E6%82%9F/">读书感悟</a>
+</div>
+
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+        
+      
+      
+        长路漫漫，唯剑作伴
+        
+          <p>
+            <a class="article-more-link" href="/2023/02/06/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/">
+              阅读全文...
+            </a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/02/06/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/" data-id="cmbyuj8870027duji6akqgwp9" class="article-share-link">
+        分享
+      </a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+    
+  </article>
+  
+
+  
+  <nav class="page-nav">
+    <a class="extend prev" rel="prev" href="/page/2/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/">下一页</a>
+  </nav>
+  
+</section>
+</div>
+    <footer class="footer">
+  <div class="outer">
+    <!-- <ul class="list-inline">
+      <li>阿杰 &copy; 2025</li>
+      
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank"></a>
+            
+        </li>
+      
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul> -->
+    <!-- 
+      © 2018 ~ 2022-11-11 xxx. All rights reserved.
+      contact email: xxxs@foxmail.com
+     -->
+     
+    <!-- <p><ul class="list-inline">
+  
+  <li><i class="fe fe-bar-chart tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_site_pv"></span></li>
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul></p> -->
+    <p>Contact Email: m18210870360@163.com</p>
+    <p>&copy; 2023 A Jie. All rights reserved.</p>
+  </div>
+</footer>
+  </main>
+  <aside class="sidebar">
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img style="border-radius: 50%;" src="/images/avatar.JPG" alt="阿杰"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/gallery">相册</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/favorites">收藏</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        搜索
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="fe fe-feed"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="输入关键字...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+  <script src='/js/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <title>
+    编辑器系列—插件注册流程 |
+    
+    阿杰
+  </title>
+  <!-- Icon -->
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  
+  <main class="content">
+    <section class="outer">
+  <article id="post-编辑器系列（二）" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h1 class="article-title" itemprop="name">
+    编辑器系列—插件注册流程
+  </h1>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/05/16/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%BA%8C%EF%BC%89/" class="article-date">
+  <time datetime="2023-05-16T10:25:00.000Z" itemprop="datePublished">2023-05-16</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/%E7%BC%96%E8%BE%91%E5%99%A8/">编辑器</a>
+</div>
+
+    </div>
+    
+
+    
+    
+<div class="tocbot"></div>
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+      
+        <h2 id="概览">概览</h2>
+<p><img src="https://atlas-rc.pingcode.com/files/public/646353137083dd5ecd38a0d5/origin-url" alt="image.png"></p>
+<span id="more"></span>
+<h2 id="创建编辑器">创建编辑器</h2>
+<h3 id="Slate-createEditor">Slate createEditor</h3>
+<p>createEditor 是 Slate 提供的创建编辑器对象的函数，编辑器对象的重要性相当于一个系统的核心，后面所有的插件注册/声明部分也都必须返回该对象，插件在运行过程中执行完当前插件的逻辑，最终也需要流转到该对象提供的核心函数上。</p>
+<h4 id="核心能力">核心能力</h4>
+<ol>
+<li>数据操作：
+<ol>
+<li>插入节点/文本（insertNode、insertText）</li>
+<li>删除（delete）</li>
+<li>文本数据操作（apply）</li>
+<li>插入或替换文本、节点（insertFragment）</li>
+<li>装饰文本（addMark）</li>
+</ol>
+</li>
+<li>数据变化：onChange</li>
+<li>检查元素类型：空元素（isVoid）、行内元素（isInline）</li>
+<li>属性：选区（selection）、动作/操作（operations）、子数据（children）</li>
+</ol>
+<h4 id="源码预览">源码预览</h4>
+<p><img src="https://atlas-rc.pingcode.com/files/public/646349d97083dd5ecd38a0b9/origin-url" alt="image.png"></p>
+<h4 id="使用">使用</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import &#123; createEditor &#125; from &#x27;slate&#x27;;</span><br><span class="line">const editor = createEditor();</span><br><span class="line">editor.insertText(&#x27;哈哈哈&#x27;);</span><br></pre></td></tr></table></figure>
+<h3 id="Slate-angular-withAngular">Slate-angular withAngular</h3>
+<blockquote>
+<ol>
+<li>以 withXxx 命名的一般为插件</li>
+</ol>
+</blockquote>
+<ol>
+<li>withAngular 本身也是一个插件</li>
+</ol>
+<p>withAngular 是 Slate-angular 内置插件，介于框架的限制，该插件大致上做了两件事：</p>
+<ol>
+<li>对于 Slate 部分函数进行了重写（比如 onChange）</li>
+<li>扩展额外的一些能力</li>
+</ol>
+<h4 id="核心能力-2">核心能力</h4>
+<ol>
+<li>重写数据操作函数：插入、删除、复制/粘贴板（insertFragment、setFragment）</li>
+<li>数据变化通知（onChange）</li>
+<li>基础 DOM 事件：onkeydown、onclick</li>
+<li>检查元素类型（isBlockCard）</li>
+<li>错误处理（onError）</li>
+</ol>
+<h4 id="源码预览-2">源码预览</h4>
+<p><img src="https://atlas-rc.pingcode.com/files/public/64634a287083dd5ecd38a0bc/origin-url" alt="image.png"></p>
+<h4 id="使用-2">使用</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">import &#123; createEditor &#125; from &#x27;slate&#x27;;</span><br><span class="line">import &#123; withAngular &#125; from &#x27;slate-angular&#x27;;</span><br><span class="line"></span><br><span class="line">const editor = withAngular(createEditor());</span><br></pre></td></tr></table></figure>
+<h3 id="Theia-withTheia">Theia withTheia</h3>
+<p>基于 Slate-angular 进行扩展和复写 editor 对象，提供了更多的特性，同时基于 Worktile 和 PingCode 业务封装了一些更复杂的逻辑。</p>
+<h4 id="核心能力-3">核心能力</h4>
+<ol>
+<li>多插件自动组合注册（combinePlugins）</li>
+<li>支持插件的渲染自定义组件（renderElement）</li>
+<li>更多的事件：globalMousedown</li>
+</ol>
+<h4 id="源码预览-3">源码预览</h4>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6463519e7083dd5ecd38a0d0/origin-url" alt="image.png"></p>
+<h2 id="构建-声明插件">构建/声明插件</h2>
+<p>上面 withTheia 和 withAngular 已经展示了一个插件的声明流程，那么插件需要到底做了什么事：</p>
+<ol>
+<li>重写和拦截编辑器对象（editor）提供的能力</li>
+<li>返回编辑器对象，供下一个插件使用继续流转</li>
+</ol>
+<h3 id="示例">示例</h3>
+<p><img src="https://atlas-rc.pingcode.com/files/public/646350e97083dd5ecd38a0ce/origin-url" alt="image.png"></p>
+<h2 id="组合-装载插件">组合/装载插件</h2>
+<p>方式：js 高阶函数～</p>
+<p>如：  <code>withInlines(withHistory(withAngular(createEditor())))</code></p>
+<p>theia 中组合插件</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/646351457083dd5ecd38a0cf/origin-url" alt="image.png"></p>
+<h3 id="示例-2">示例</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">this.editor = withTheia(</span><br><span class="line">  withHistory(</span><br><span class="line">    withAngular(</span><br><span class="line">      createEditor(),</span><br><span class="line">      CLIPBOARD_FORMAT_KEY)</span><br><span class="line">  ), plugins</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/05/16/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%BA%8C%EF%BC%89/" data-id="cmbyuj889002ydujifh41fz08" class="article-share-link">
+        分享
+      </a>
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AF%8C%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/" rel="tag">富文本编辑器</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+  
+<nav class="article-nav">
+  
+  <a href="/2023/05/18/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89/" class="article-nav-link">
+    <strong class="article-nav-caption">前一篇</strong>
+    <div class="article-nav-title">
+      
+      编辑器系列—插件渲染机制
+      
+    </div>
+  </a>
+  
+  
+  <a href="/2023/05/16/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/" class="article-nav-link">
+    <strong class="article-nav-caption">后一篇</strong>
+    <div class="article-nav-title">编辑器系列—什么是插件</div>
+  </a>
+  
+</nav>
+
+  
+
+  
+  
+  
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: 'd194952437b67371b253',
+    clientSecret: 'ee8127b1392f7840a0bcded24bd677566b86cbb2',
+    repo: 'comment',
+    owner: 'aaaaaajie',
+    admin: ['aaaaaajie'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last',
+    proxy: 'https://strong-caramel-969805.netlify.app/github_access_token',
+    createIssueManually: 'false'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+</article>
+</section>
+    <footer class="footer">
+  <div class="outer">
+    <!-- <ul class="list-inline">
+      <li>阿杰 &copy; 2025</li>
+      
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank"></a>
+            
+        </li>
+      
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul> -->
+    <!-- 
+      © 2018 ~ 2022-11-11 xxx. All rights reserved.
+      contact email: xxxs@foxmail.com
+     -->
+     
+    <!-- <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p> -->
+    <p>Contact Email: m18210870360@163.com</p>
+    <p>&copy; 2023 A Jie. All rights reserved.</p>
+  </div>
+</footer>
+  </main>
+  <aside class="sidebar">
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img style="border-radius: 50%;" src="/images/avatar.JPG" alt="阿杰"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/gallery">相册</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/favorites">收藏</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        搜索
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="fe fe-feed"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="输入关键字...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+  });
+</script>
+
+
+
+  <script src='/js/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+
+</html>

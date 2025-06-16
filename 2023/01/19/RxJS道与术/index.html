@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <title>
+    RxJS “道” 与 “术” |
+    
+    阿杰
+  </title>
+  <!-- Icon -->
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  
+  <main class="content">
+    <section class="outer">
+  <article id="post-RxJS道与术" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+  
+  <h1 class="article-title" itemprop="name">
+    RxJS “道” 与 “术”
+  </h1>
+  
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2023/01/19/RxJS%E9%81%93%E4%B8%8E%E6%9C%AF/" class="article-date">
+  <time datetime="2023-01-19T04:10:04.000Z" itemprop="datePublished">2023-01-19</time>
+</a>
+      
+<div class="article-category">
+  <a class="article-category-link" href="/categories/RxJS/">RxJS</a>
+</div>
+
+    </div>
+    
+
+    
+    
+<div class="tocbot"></div>
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+      
+        <blockquote>
+<p>首发于<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/583539989">知乎 PingCode 专栏</a>。</p>
+</blockquote>
+<h1>前言</h1>
+<p>打开此文的小伙伴想必对 RxJS 已经有了或多或少的了解，如果没有倒也无妨，因为下面会从零开始讲起；如果你带着几个问题来翻阅，本人也希望此文可以带你找到答案。</p>
+<p>温馨提示：文章内容较长，建议收藏反复观看。</p>
+<span id="more"></span>
+<h1>概览</h1>
+<p>从我个人的学习 RxJS 的历程来看，最开始是“照猫画虎”能够基本使用，随后是研究部分操作符和使用场景，最后了解产生背景、设计思想以及实现原理。在这期间有过很多疑问，也曾从不同角度理解 RxJS，最终总结了认为比较系统的知识图谱（下图）。</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6334fa685a7447c844d806c4/origin-url" alt="image.png"></p>
+<h1>深入理解 RxJS</h1>
+<h2 id="大“道”——响应式编程">大“道”——响应式编程</h2>
+<p>全面理解一个事物，追溯其历史是一种好的方式，RxJS 的起源需要追溯到  <strong>响应式编程（RP）</strong>  ，后续发展了一系列基于响应式编程范式的语言扩展（Rx，RxJS 就是其中之一），请看历史简谱（左向右延续）。</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/631a8fa22ce1c1a732e1147d/origin-url" alt="image.png"></p>
+<h3 id="何为响应式">何为响应式</h3>
+<blockquote>
+<p>响应式是学习 RxJS 必须要理解的概念，本人用了大量的文字来解释，如果您已经深刻理解，可直接跳过。如果您是第一次接触这个名词，也不要先给自己心里暗示它有多么的高深和难以理解，也许你天天在使用。</p>
+</blockquote>
+<h4 id="一个例子">一个例子</h4>
+<p>为了避免上来就接触晦涩的概念，先来举个例子：  <strong>博客平台关注功能</strong>  。话说你偶然浏览到阿杰的文章，觉得写的很赞，于是你  <strong>关注</strong>  了他的博客账号，以便不会错过之后的干货，在以后的日子里阿杰  <strong>每发布一篇文章博客平台都会给你推送一条消息</strong>  ，提醒你来给他点点赞，假设博客平台没有关注的功能，那么你需要想知道他的最新动态就只能打开他的个人主页查看文章列表来确认，也许稍不留意就会错过他的文章。这个例子出现了  <strong>粉丝关注博主、博主发布博客、平台自动推送给粉丝消息、给文章点赞</strong>  ，这就形成了响应式闭环，平台在观察到博主粉丝只需要关注一下就能收到博主以后的动态，这就是响应式带来的好处。</p>
+<h4 id="另一个例子">另一个例子</h4>
+<p>再举一个贴近我们开发的例子：假设有一个更新某用户密码的需求，A 同事负责调用更新逻辑并在更新后执行其他任务（比如提醒用户更新成功或失败），B 同事负责具体更新密码的逻辑，下图描述了完成整个任务的流程：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6309ab9951ba5c30098e82c6/origin-url" alt="image.png"></p>
+<p>实际情况更新逻辑比较复杂，有以下逻辑：</p>
+<ol>
+<li>验证一下用户信息的真实性</li>
+<li>验证密码是否合法</li>
+<li>最终把新的密码入库</li>
+</ol>
+<p>上述的每个环节都有可能是异步耗时任务，比如用户的真实性是第三方平台验证的，入库的过程中网络非常慢，再比如…等等，诸如此类的各种不确定性，这对于 B 同事做后续任务就有了一个关键性条件，  <strong>确定/等待更新结果</strong>  ，这种情况有一种做法是：定期轮询重试，B 每隔一段时间执行一次，直到确定 A 已经修改成功，再去执行后续操作。逻辑中定时 A 逻辑结束这种做法明显有一个弊端是执行多次，对于 B 显然不是好的做法，好的做法是：  <strong>B 的更新逻辑执行完后通知 A，</strong>  甚至 B 可以先把更新后的事准备好，让 A 决定后续逻辑的执行时机。</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6309ac7651ba5c30098e82c7/origin-url" alt="image.png"></p>
+<p>流程如图示：  <strong>订阅/执行更新逻辑、更新逻辑结束、将结果通知调用者、执行后续逻辑</strong>  。这就是响应式的做法，它带来的好处是  <strong>：当更新结果发生变化时自动通知调用者，而不用轮询重试</strong>  。</p>
+<h3 id="了解响应式宣言">了解响应式宣言</h3>
+<p>相信你已经明白了响应式，并能发现生活/工作中到处可见，下面了解一下设计响应式模块/系统遵循的原则：</p>
+<ul>
+<li>即时响应性：只要有可能，就要及时地做出响应。</li>
+<li>回弹性  <strong>：</strong>  执行过程中在出现失败时依然保持即时响应性。</li>
+<li>弹性  <strong>：</strong>   在不断变化的工作负载之下依然保持即时响应性。</li>
+<li>消息驱动  <strong>：</strong>  反应式依赖异步的消息传递，从而确保了松耦合、隔离、位置透明的组件之间有着明确边界。</li>
+</ul>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6332abe95a7447c844d804b3/origin-url" alt="image.png"></p>
+<h3 id="响应式编程">响应式编程</h3>
+<p>下面我们正式的介绍响应式编程：</p>
+<p><strong>响应式编程，</strong>  Reactive Programing，又称反应式编程  <strong>，</strong>  简称 RP，是一种以传播数据流（数据流概念戳  <a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%95%B0%E6%8D%AE%E6%B5%81/3002243">这里</a>   ）的编程范式。</p>
+<blockquote>
+<p><strong>响应式编程</strong>  或  <strong>反应式编程</strong>  （英语：Reactive programming）是一种面向数据流和变化传播的声明式编程范式。这意味着可以在编程语言中很方便地表达静态或动态的数据流，而相关的计算模型会自动将变化的值通过数据流进行传播。                                                                                                                 —— 维基百科</p>
+</blockquote>
+<p>优势：</p>
+<ol>
+<li><strong>声明式</strong>  ，方便地表达静态或动态的数据流</li>
+<li><strong>自动化</strong>  ，自动将变化的值通过数据流进行传播</li>
+</ol>
+<p><strong>核心思想：</strong>  从传统的调用方“拉”数据的思维模式转变为被调用方“推”数据的思维模式。</p>
+<h3 id="JS-异步编程史">JS 异步编程史</h3>
+<blockquote>
+<p>众所周知，JS 执行环境是单线程的，在事件监听，异步的处理，响应式编程毋庸置疑是其中一大主力。</p>
+</blockquote>
+<h4 id="Callback-时代">Callback 时代</h4>
+<p>回调函数延续至今，JS 的运用高阶函数巧妙地将异步后的逻辑进行托管，以  <strong>事件驱动</strong>  的方式来解决异步编程，但它有一个“臭名昭著”的问题：  <strong>回调嵌套</strong>  ，耦合度高。本来很简单的逻辑但为了控制执行流程却不得不写大量的代码，当时产生了一些知名的库：async、bluebrid，它们封装和处理了嵌套问题，暴露出更为简单好用的 API，额外还可以优雅地处理流程控制相关场景，但所做的只是划分了逻辑，依旧没有解决代码臃肿的问题。</p>
+<h4 id="Promise-时代">Promise 时代</h4>
+<p>ES6 纳入 Promise 之后可谓一大喜讯，因为它解决了回调嵌套的问题，虽然它只是回调的语法糖，但在处理流程和捕获错误（外层处理）已经非常的优雅了，但它的弊端是：  <strong>无法监听和打断 Promise 的状态</strong>  。这意味着一旦声明它会立即执行并修改它的执行状态，这源于它的实现。</p>
+<h4 id="Generator">Generator</h4>
+<p>Generator 是处于 Promise 和 Async/await 之间的产物，它给我们带来了写异步语法像写同步一般，只需在函数前加  <code>*</code>  修饰，这样就可以在函数内部使用一个   <code>yield</code>  关键字返回结果，类似于   <code>await</code>  ，但它也并非完美，不然也不会有后面的 Async/await 了，它的主要问题是  <strong>流程管理不方便（迭代器模式实现，主动调 next 执行器流转游标）。</strong></p>
+<h4 id="Async-await">Async/await</h4>
+<p>Async/await 是 Generator 语法糖，既保留了语法上的优势，也解决了 Generator 每步要调一下 next 执行器的弊端，是现阶段的最佳方案，就是得吐槽一下 Top-level await 到 ES2022  才出现。</p>
+<p><strong>其中 Generator 和 Async/await 在异步编程是以等待的方式处理。</strong></p>
+<h3 id="ReactiveX">ReactiveX</h3>
+<blockquote>
+<p>业界一致认为正统的响应式实现/扩展是 ReactiveX 系列。</p>
+</blockquote>
+<p>ReactiveX，简称 Rx，是基于响应式的扩展，是各种语言实现的一个统称，除了我们所知道的 RxJS，还有 RxJava、<a target="_blank" rel="noopener" href="http://Rx.NET">Rx.NET</a>、RxKotlin、RxPHP…它最早是由微软提出并引入到 .NET 平台中，随后 ES6 也引入了类似的技术。</p>
+<p>它扩展了观察者模式，以支持数据序列和/或事件，并添加了操作符，允许您以声明的方式将序列组合在一起，同时  <strong>抽象出诸如低级线程、同步、线程安全、并发数据结构和非阻塞I/O等问题。</strong></p>
+<h3 id="RxJS">RxJS</h3>
+<p>RxJS 全称 Reactive Extensions for JavaScript，翻译过来是 Javascript 的响应式扩展，它是一个采用流来处理异步和事件的工具库，简单来说   <strong>Rx(JS) = Observables + Operator + Scheduler</strong>  。</p>
+<h4 id="擅长做的事">擅长做的事</h4>
+<ul>
+<li>UI 事件：例如鼠标移动、按钮单击…</li>
+<li>状态管理：例如属性更改、集合更新等事件</li>
+<li>IO 消息事件：服务监听</li>
+<li>广播/通知：消息总线（Event bus）</li>
+<li>网络消息/事件：例如 HTTP、WebSockets API 或其他低延迟中间件</li>
+</ul>
+<p>最大的优势：  异步事件的抽象，这意味着可以把很多事统一起来当作一种方式处理，从而让问题变得更简单，同时也降低了学习成本。</p>
+<p>注意：RxJS 擅长做异步的事，不代表不可以做同步或不擅长同步的事。</p>
+<h3 id="RxJS-在-Angular-中的应用">RxJS 在 Angular 中的应用</h3>
+<p>RxJS 在 Angular 中及其重要，很多核心模块都是由 RxJS 实现的，比如：</p>
+<ul>
+<li>响应式表单</li>
+<li>路由</li>
+<li>HttpClient（封装的 ajax，类似于 axios）</li>
+<li>async 管道符</li>
+<li>状态管理</li>
+</ul>
+<p>更多：  <a target="_blank" rel="noopener" href="https://angular.io/guide/observables-in-angular">https://angular.io/guide/observables-in-angular</a></p>
+<h1>RxJS 核心概念—— Observables</h1>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6332cf215a7447c844d8051c/origin-url" alt="image.png"></p>
+<p>RxJS 中的 Observables 系列是围绕观察者模式来实现的，基本角色：</p>
+<ol>
+<li>Observable：被观察者，用来产生消息/数据。</li>
+<li>Observer：观察者，用来消费消息/数据。</li>
+</ol>
+<h2 id="Observable">Observable</h2>
+<p>Observeable 是观察者模式中的被观察者，它维护一段执行函数，提供了  <strong>惰性执行的能力</strong>  （subscribe）。</p>
+<h3 id="核心函数"><strong>核心函数</strong></h3>
+<ul>
+<li>constructor(_subscribe) : 创建 Observeable</li>
+<li>static create(_subscribe)：静态函数创建 Observeable</li>
+<li>pipe()：管道</li>
+<li>subscribe()：执行初始化传入的 _subscribe</li>
+</ul>
+<blockquote>
+<p>RxJS 中 Observeable 是一等公民，将一切问题都转化为 Observable 去处理。转换的操作符有   <code>from</code>  、  <code>fromEvent</code>  、  <code>of</code>  、  <code>timer</code>  等等，更多戳  <a target="_blank" rel="noopener" href="https://cn.rx.js.org/manual/overview.html#h39">这里。</a>    注意的是：只有   <a target="_blank" rel="noopener" href="https://cn.rx.js.org/class/es6/MiscJSDoc.js~ObservableInputDoc.html">ObservableInput</a>   或   <a target="_blank" rel="noopener" href="https://cn.rx.js.org/class/es6/MiscJSDoc.js~SubscribableOrPromiseDoc.html">SubscribableOrPromise</a>   类型的值才可以转化为 Observable。</p>
+</blockquote>
+<h3 id="基本使用">基本使用</h3>
+<p><img src="https://atlas-rc.pingcode.com/files/public/631ad4c12ce1c1a732e114df/origin-url" alt="image.png"></p>
+<h3 id="源码实现">源码实现</h3>
+<p>本人写（抽取）了一套 RxJS Observable 源码中的核心实现</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/631af91f2ce1c1a732e11520/origin-url" alt="image.png"></p>
+<h2 id="Observable-与-Promise">Observable 与 Promise</h2>
+<blockquote>
+<p>用过两者的同学可能会有疑问为什么采用 Observable 而不直接用 Promise 或 Async/await，这两者在业界也常常用来做对比。</p>
+</blockquote>
+<p>它们关键性的不同点：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Observable</th>
+<th>Promise</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>使用场景</td>
+<td>同步、异步均可使用</td>
+<td>用 Promise 包裹的多数是异步场景</td>
+</tr>
+<tr>
+<td>执行时机</td>
+<td>声明式惰性执行，只有在订阅后才会执行</td>
+<td>创建时就立即执行</td>
+</tr>
+<tr>
+<td>执行次数</td>
+<td>多次调用 subscribe 函数会执行多次</td>
+<td>只有第一次执行，后续都是取值</td>
+</tr>
+<tr>
+<td>流程控制</td>
+<td>相较于 Promise 有更为全面的操作符</td>
+<td>提供串行、并行的函数</td>
+</tr>
+<tr>
+<td>错误处理</td>
+<td>subscribe 函数捕获错误</td>
+<td>.catch 捕获</td>
+</tr>
+</tbody>
+</table>
+<p>总的来说，  <strong>Promise 可读性更优，Observable 从使用场景更为全面</strong>  。</p>
+<h3 id="两者的相互转换">两者的相互转换</h3>
+<p>在既使用了 RxJS 又引用了用 Promise 封装的库时，两者相互转换是容易碰到的问题，RxJS 提供了两者转换的函数。</p>
+<h4 id="Promise-转-Observable"><strong>Promise 转 Observable</strong></h4>
+<p>from 或 fromPromise（弃用） 操作符</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const observable$ = from(fetch(&#x27;http://xxx.com/&#x27;));</span><br></pre></td></tr></table></figure>
+<h4 id="Observable-转-Promise"><strong>Observable 转 Promise</strong></h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">const promise = of(42).toPromise();</span><br><span class="line">const errorPromise = throw(new Error(&#x27;woops&#x27;)).toPromise();</span><br><span class="line">errorPromise.catch(err=&gt; console.error);</span><br></pre></td></tr></table></figure>
+<h2 id="Subscriber-Observer">Subscriber/Observer</h2>
+<p>Subscriber/Observer 是观察者模式中的观察者/消费者，它用来消费/执行 Observable 创建的函数。</p>
+<h3 id="核心能力"><strong>核心能力</strong></h3>
+<ol>
+<li><code>next</code>  （传值）</li>
+<li><code>error</code>  （错误处理）</li>
+<li><code>complete</code>  （完成/终止）</li>
+<li><img src="https://atlas-rc.pingcode.com/files/public/631b066a2ce1c1a732e1158f/origin-url" alt="image.png"></li>
+</ol>
+<h3 id="实现">实现</h3>
+<p><img src="https://atlas-rc.pingcode.com/files/public/631b065a2ce1c1a732e1158e/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/631b07082ce1c1a732e11590/origin-url" alt="image.png"></p>
+<p>白话描述：</p>
+<ol>
+<li>将 subscribe 传进去一个 next 函数赋给 Observer 的 next 函数。</li>
+<li>将 Observer 传给 Observable 初始化的预加载函数 _subscribe。</li>
+<li>执行 Observable 初始化的预加载函数</li>
+</ol>
+<h3 id="工作流程">工作流程</h3>
+<p><img src="https://atlas-rc.pingcode.com/files/public/630364d1aae45a607c402e62/origin-url" alt="image.png"></p>
+<h2 id="Subscription">Subscription</h2>
+<p>上面的 Observable 和 Observer 已经完成了观察者模式的核心能力，但是引发的一个问题是，每次执行一个流创建一个 Observable，这可能会创建多个对象（尤其是大量使用操作符时，会创建多个 Observable 对象，这个我们后面再说），此时需要外部去销毁此对象，不然会造成内存泄露。</p>
+<p>为了解决这个问题，所以产生了一个   <strong>Subscription</strong>   的对象，Subscription 是表示可清理资源的对象，它是由 Observable 执行之后产生的。</p>
+<h3 id="核心能力-2">核心能力</h3>
+<ol>
+<li><code>unsubcribe</code>  （取消订阅）</li>
+<li><code>add</code>  （分组或在取消订阅之前插入一段逻辑）</li>
+</ol>
+<p><img src="https://atlas-rc.pingcode.com/files/public/631b0bd12ce1c1a732e115b4/origin-url" alt="image.png"></p>
+<p>注意：调用  <code>unsubcribe</code>  后（包含  <code>add</code>  传入的其它 Subscription）不会再接收到它们的数据。</p>
+<h3 id="使用">使用</h3>
+<p><img src="https://atlas-rc.pingcode.com/files/public/631b0b9c2ce1c1a732e115b3/origin-url" alt="image.png"></p>
+<h3 id="实现-2">实现</h3>
+<p><img src="https://atlas-rc.pingcode.com/files/public/631b0c332ce1c1a732e115b7/origin-url" alt="image.png"></p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/631b0c0e2ce1c1a732e115b6/origin-url" alt="image.png"></p>
+<p>白话描述：</p>
+<ol>
+<li>调用 Observable 的 subscribe 后会添加（add 方法）到 Subscription（这里有个关系 Subscriber 继承了 Subscription） 中，并把 Subscriber（也是 Subscription）返出去。</li>
+<li>调用 Subscription 的 unsubscribe 方法。</li>
+<li>unsubscribe 把该对象置空回收。</li>
+</ol>
+<h3 id="完整工作流程">完整工作流程</h3>
+<p><img src="https://atlas-rc.pingcode.com/files/public/63036b23aae45a607c402e67/origin-url" alt="image.png"></p>
+<h2 id="Subject">Subject</h2>
+<p>上述的 Observable 归根到底就是一个惰性执行的过程，当遇到以下两种情况就显得偏弱：</p>
+<ol>
+<li><strong>推送多条数据时，需要就要创建多个对象。</strong></li>
+<li><strong>做状态管理或消息通讯，监听数据变化并实时推送。</strong></li>
+</ol>
+<p>基于这两个方面，所以产生了 Subject，Subject 是一个特殊的 Observable，更像一个 EventEmitter，它既可以是被观察者/生产者也可以是观察者/消费者。</p>
+<h3 id="优势"><strong>优势</strong></h3>
+<ol>
+<li>减少开销和提高性能</li>
+<li>数据实时推送</li>
+</ol>
+<h3 id="场景"><strong>场景</strong></h3>
+<p>消息传递或广播。</p>
+<h3 id="与-Observable-的区别">与 Observable 的区别</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Observable</th>
+<th>Subject</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>角色</td>
+<td>生产者（单向）</td>
+<td>生产者、消费者（双向）</td>
+</tr>
+<tr>
+<td>消费策略</td>
+<td>单播</td>
+<td>多播</td>
+</tr>
+<tr>
+<td>流转方式</td>
+<td>内部发送/接收数据</td>
+<td>外部发送/接收数据</td>
+</tr>
+<tr>
+<td>数据特性</td>
+<td>冷数据流</td>
+<td>热数据流</td>
+</tr>
+<tr>
+<td>消费时机</td>
+<td>调用 subscribe</td>
+<td>调用 next</td>
+</tr>
+</tbody>
+</table>
+<p>重点解释一下消费策略和消费时机两块：</p>
+<p><strong>冷数据流：</strong>  可以订阅任意时间的数据流。</p>
+<p><strong>热数据流</strong>  ：只给已订阅的消费者发送消息，定阅之前的消费者，不会收到消息。</p>
+<p>用一个示例来演示：</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/631b19f42ce1c1a732e115cc/origin-url" alt="image.png"></p>
+<h3 id="工作原理">工作原理</h3>
+<p><img src="https://atlas-rc.pingcode.com/files/public/62e9e3d394d1376ff02bb5c7/origin-url" alt="image.png"></p>
+<p>PS：忘记了该图出自哪篇文章，画的挺不错的，这里直接引用了，如有侵权，还望联系作者。</p>
+<h3 id="源码实现-2">源码实现</h3>
+<ul>
+<li>observers 订阅者集合</li>
+<li>_subscribe 添加订阅者</li>
+<li>next 函数将所有订阅者推送相同的数据</li>
+</ul>
+<p><img src="https://atlas-rc.pingcode.com/files/public/63317ad05a7447c844d803d6/origin-url" alt="image.png"></p>
+<h3 id="其他-Subject">其他 Subject</h3>
+<table>
+<thead>
+<tr>
+<th>种类</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BehaviorSubject</code></td>
+<td>回放数据，如果是订阅前推送的数据，只回放最新的值</td>
+</tr>
+<tr>
+<td><code>ReplaySubject</code></td>
+<td>回放数据，初始化设定要缓存多少次的值，然后将这批消息推送</td>
+</tr>
+<tr>
+<td><code>AsyncSubject</code></td>
+<td>只有调用 complete 后才会推送数据</td>
+</tr>
+</tbody>
+</table>
+<h1>操作符（Operator）</h1>
+<blockquote>
+<p>由于篇幅问题，本节并不会细化到讲每个操作符</p>
+</blockquote>
+<h2 id="理解操作符">理解操作符</h2>
+<p>Operator 本质上是一个纯函数 (pure function)，  <strong>它接收一个 Observable 作为输入，并生成一个新的 Observable 作为输出。</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">export interface Operator&lt;T, R&gt; &#123;</span><br><span class="line">  call(subscriber: Subscriber&lt;R&gt;, source: any): TeardownLogic;</span><br><span class="line">&#125;</span><br><span class="line">// 等价于</span><br><span class="line">function Operator(subscriber: Subscriber&lt;R&gt;, source: any)&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="遵循的小道">遵循的小道</h2>
+<p>迭代器模式和集合的函数式编程模式以及管道思想（pipeable）</p>
+<h3 id="函数式编程">函数式编程</h3>
+<p>操作符的实现以及使用均依照函数式的编程范式，Functional Programing，简称 FP，函数式编程范式，它的思维就是一切用函数表达和解决问题，避免用命令式。</p>
+<p>优点：</p>
+<ul>
+<li>链式调用/组合开发</li>
+<li>简单易写易读（声明式）</li>
+<li>可靠性（纯函数不存在依赖）</li>
+<li>惰性求值（高阶函数）</li>
+<li>易于测试</li>
+</ul>
+<p>更多详细看这篇  <a target="_blank" rel="noopener" href="https://pingcode.com/pages/taOxc8Afhg#%20%E3%80%8A%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%E3%80%8B">不完全指南🧭</a></p>
+<h3 id="pipe">pipe</h3>
+<p>管道，用来承载数据流的容器，相信大家一定用过 Lodash 的chain，原生 js 数组，NodeJS 开发者 也许还知道 async/bluebird 的 waterfall，Mongodb 的 pipe，它们都遵循管道思想，最直接的好处是  链式调用  ，还可以用来  划分逻辑  ，在异步的场景中还可以做流程控制（串行、并行、竞速等等）。</p>
+<h2 id="为什么要有操作符？">为什么要有操作符？</h2>
+<p>遵循符合响应式宣言，单向线性的通讯或传输数据，pipe 可以  降低耦合度以便于阅读和维护  ，把复杂的问题分解成多个简单的问题，最后在组合起来。</p>
+<h2 id="操作符与数据流">操作符与数据流</h2>
+<p>在 RxJS 的世界解决问题的方式是抽象为数据流，整个闭环是围绕数据流进行的，所以我们再来理解一下数据流：流，可以把数据可以想像成现实中的水流，河流，流有上游、下游每个阶段处理不同的事情，在这过程避免不了要操作流，比如合并、流程控制、频率控制等等，所以操作符就扮演了此角色。</p>
+<p>生命周期：创建流（create、new、创建类操作符）——&gt; 执行流（subscribe） ——&gt; 销毁流（unsubscribe）</p>
+<h2 id=""></h2>
+<h2 id="分类">分类</h2>
+<p><img src="https://atlas-rc.pingcode.com/files/public/62ff2e90da981d95b9627cd4/origin-url" alt="image.png"></p>
+<h2 id="工作原理-2">工作原理</h2>
+<p>迭代器模式：当多个操作符时，组合成多个可迭代对象的集合，执行时依次调用 next 函数。</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/630488acaae45a607c402f2b/origin-url" alt="image.png"></p>
+<h2 id="源码实现-3">源码实现</h2>
+<ol>
+<li>操作符传入 pipe</li>
+<li>pipe 将操作符转换成可迭代的 Array</li>
+<li>subscribe（执行流）时消费操作符逻辑</li>
+</ol>
+<p>如图</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/633172935a7447c844d803c7/origin-url" alt="image.png"></p>
+<p>操作符转换 Array 源码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">export function pipeFromArray(fns: Array&lt;Function&gt;): Function &#123;</span><br><span class="line">    if (fns.length === 0) &#123;</span><br><span class="line">        return (x: any) =&gt; x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (fns.length === 1) &#123;</span><br><span class="line">        return fns[0];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return (input: any) =&gt; &#123;</span><br><span class="line">        return fns.reduce((prev: any, fn: Function) =&gt; fn(prev), input);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="创建自定义操作符">创建自定义操作符</h2>
+<h3 id="方式一">方式一</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">const isEven = () =&gt; &#123;</span><br><span class="line">    return (source: Observable&lt;any&gt;) =&gt; &#123;</span><br><span class="line">        return new Observable&lt;any&gt;(observer =&gt; &#123;</span><br><span class="line">            const subscription = source.subscribe((x) =&gt; &#123;</span><br><span class="line">                observer.next(x % 2 === 0);</span><br><span class="line">                observer.complete();</span><br><span class="line">            &#125;)</span><br><span class="line">            return () =&gt; subscription.unsubscribe();</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">new Observable(observer =&gt; &#123;</span><br><span class="line">    observer.next(7);</span><br><span class="line">&#125;)</span><br><span class="line">    .pipe(isEven())</span><br><span class="line">    .subscribe(console.log);</span><br><span class="line">// 执行结果：false</span><br></pre></td></tr></table></figure>
+<h3 id="方式二：基于-lift">方式二：基于 lift</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">const odd = () =&gt; &#123;</span><br><span class="line">    const operator: Operator&lt;any, any&gt; = &#123;</span><br><span class="line">        call(subscriber: Subscriber&lt;any&gt;, source: any) &#123;</span><br><span class="line">            const subscription = source.subscribe((x: any) =&gt; subscriber.next(x % 2 !== 0));</span><br><span class="line">            return () =&gt; &#123;</span><br><span class="line">                subscription.unsubscribe();</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;</span><br><span class="line">    return operator;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">new Observable(observer =&gt; &#123;</span><br><span class="line">    observer.next(7);</span><br><span class="line">&#125;)</span><br><span class="line">    .lift(odd())</span><br><span class="line">    .subscribe(console.log)</span><br><span class="line">// 执行结果 true</span><br></pre></td></tr></table></figure>
+<h4 id="lift-源码">lift 源码</h4>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6331747e5a7447c844d803cb/origin-url" alt="image.png"></p>
+<h2 id="阅读弹珠-大理石图">阅读弹珠/大理石图</h2>
+<p>学会阅读弹珠图是快速理解 Rx 操作符的手段之一，有些操作符需要描述时间流逝以及序列，所以弹珠图有很多的标识和符号，如下图。</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6333b44c5a7447c844d805a9/origin-url" alt="image.png"></p>
+<p>这里有几个用来理解大理石图的网站：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://rxviz.com/">https://rxviz.com/</a></li>
+<li><a target="_blank" rel="noopener" href="https://rxmarbles.com/">https://rxmarbles.com/</a></li>
+</ul>
+<h2 id="学习参考">学习参考</h2>
+<ul>
+<li>Async.js</li>
+<li>Lodash</li>
+</ul>
+<h1>调度器（Scheduler）</h1>
+<h2 id="何为调度器">何为调度器</h2>
+<blockquote>
+<p>也许你在使用操作符的过程中从未在意过它，但它在 Rx 起着至关重要的作用，在异步中如何调度异步任务是很复杂的事情（尤其是以线程为核心处理异步任务的语言），很庆幸的是我们用使用的 JS ，所以不需要过多的关注线程问题，更友好的是大多数操作符默认帮开发者选中了合适的调度模式（下文会讲到），以至于我们从忽略了它，但无论如何我们都应该对调度器有基本的了解。</p>
+</blockquote>
+<p>调度器，  <code>**Scheduler**</code>  ** 用来控制数据推送节奏的**  ，RxJS 有自己的基准时钟和一套的执行规则，来安排多个任务/数据该如何执行  。</p>
+<p>官方定义：</p>
+<ul>
+<li>Scheduler 是一种数据结构</li>
+<li>Scheduler 是一个执行环境</li>
+<li>Scheduler 是一个虚拟时钟</li>
+</ul>
+<h2 id="种类-模式">种类/模式</h2>
+<table>
+<thead>
+<tr>
+<th>种类</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>null</code></td>
+<td>不传递或 null 或 undefined，表示同步执行</td>
+</tr>
+<tr>
+<td><code>queue</code></td>
+<td>使用队列的方式执行</td>
+</tr>
+<tr>
+<td><code>asap</code></td>
+<td>全称：as soon as possible ，表示尽快执行</td>
+</tr>
+<tr>
+<td><code>async</code></td>
+<td>使用   <code>setInterval</code>   的调度。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="示例">示例</h2>
+<p>下面我们举例略窥一下各个模式的表现。</p>
+<h3 id="null-undefined-sync">null/undefined/sync</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import &#123; asapScheduler, asyncScheduler, from &#125; from &#x27;rxjs&#x27;;</span><br><span class="line">function syncSchedulerMain() &#123;</span><br><span class="line">    console.log(&#x27;before&#x27;);</span><br><span class="line">    from([1, 2, 3]).subscribe(console.log)</span><br><span class="line">    console.log(&#x27;after&#x27;);</span><br><span class="line">&#125;</span><br><span class="line">syncSchedulerMain();</span><br><span class="line">// 执行结果：</span><br><span class="line">// before</span><br><span class="line">// 1</span><br><span class="line">// 2</span><br><span class="line">// 3</span><br><span class="line">// after</span><br></pre></td></tr></table></figure>
+<h3 id="asap">asap</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">function asyncSchedulerMain() &#123;</span><br><span class="line">    console.log(&#x27;asyncScheduler: before&#x27;);</span><br><span class="line">    from([1, 2], asyncScheduler).subscribe(console.log)</span><br><span class="line">    Promise.resolve(&#x27;asyncScheduler: promise&#x27;).then(console.log);</span><br><span class="line">    console.log(&#x27;asyncScheduler: after&#x27;);</span><br><span class="line">&#125;</span><br><span class="line">// 执行结果：</span><br><span class="line">// asapScheduler: before</span><br><span class="line">// asapScheduler: after</span><br><span class="line">// 1</span><br><span class="line">// 2</span><br><span class="line">// asapScheduler: promise</span><br></pre></td></tr></table></figure>
+<p>从结果示，from 的数据的输出顺序是  <strong>在 console.log（同步代码）之后，promise.then 之前的</strong>  。</p>
+<h3 id="async">async</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">function asapSchedulerMain() &#123;</span><br><span class="line">    console.log(&#x27;asapScheduler: before&#x27;);</span><br><span class="line">    from([1, 2, 3], asapScheduler).subscribe(console.log)</span><br><span class="line">    Promise.resolve(&#x27;asapScheduler: promise&#x27;).then(console.log);</span><br><span class="line">    console.log(&#x27;asapScheduler: after&#x27;);</span><br><span class="line">&#125;</span><br><span class="line">// 执行结果：</span><br><span class="line">// asyncScheduler: before</span><br><span class="line">// asyncScheduler: after</span><br><span class="line">// asyncScheduler: promise</span><br><span class="line">// 1</span><br><span class="line">// 2</span><br></pre></td></tr></table></figure>
+<p>结果示，  <strong>from 数据输出顺序是在 console.log（同步代码）和 Promise.then 之后的</strong>  。</p>
+<h2 id="工作原理-3">工作原理</h2>
+<p>Scheduler 工作原理可以类比 JS 中的调用栈和事件循环，从实现上   <code>aspa</code>  和   <code>async</code>  也的确交给事件循环来处理。  <code>null /undefined</code>  相当于调用栈，  <code>aspa</code>  相当于事件循环中的微任务，  <code>async</code>  相当于宏任务，可以肯定的是微任务执行时机的优先级比宏任务要高，所以从执行时机来看 null &gt; aspa &gt; async。  <code>queue</code>  运行模式根据 delay 的参数来决定，如果是 0，那么就用同步的方式执行，如果大于 0，就以 async 模式执行。</p>
+<p><img src="https://atlas-rc.pingcode.com/files/public/6305a0fbaae45a607c40301b/origin-url" alt="image.png"></p>
+<h2 id="使用原则-策略">使用原则/策略</h2>
+<p>RxJS Scheduler 的原则是：尽量减少并发运行。</p>
+<ol>
+<li>对于返回有限和少量消息的 observable 的操作符，RxJS 不使用调度器，即   <code>null</code>   或   <code>undefined</code>   。</li>
+<li>对于返回潜在大量的或无限数量的消息的操作符，使用   <code>queue</code>   调度器。</li>
+<li>对于使用定时器的操作符，使用   <code>aysnc</code>   调度器。</li>
+</ol>
+<h2 id="支持调度器的操作符">支持调度器的操作符</h2>
+<p><code>of</code>  、  <code>from</code>  、  <code>timer</code>  、  <code>interval</code>  、  <code>concat</code>  、  <code>merge</code>  、  <code>combineLatest</code>  ，更多戳  <a target="_blank" rel="noopener" href="https://cn.rx.js.org/manual/overview.html#h17">这里。</a></p>
+<p><code>bufferTime</code>  、  <code>debounceTime</code>  、  <code>delay</code>  、  <code>auditTime</code>  、  <code>sampleTime</code>  、  <code>throttleTime</code>  、  <code>timeInterval</code>  、  <code>timeout</code>  、  <code>timeoutWith</code>  、  <code>windowTime</code>   这样时间相关的操作符全部接收调度器作为最后的参数，并且默认的操作是在   <code>Scheduler.async</code>   调度器上。</p>
+<p>OK，关于调度器我们先了解到这里。</p>
+<h1>最后</h1>
+<p>至此，RxJS 内容已经讲解完毕，文中概念较多，若大家都能够理解，就可以对 RxJS 的认知拉到同一个维度，后续需要做的就是玩转各种操作符，解决实际问题，学以致用才可达到真正的精通。</p>
+<p>最后如果觉得文章不错，点个赞再走吧！</p>
+<p>附文中完整代码与示例：  <a target="_blank" rel="noopener" href="https://github.com/aaaaaajie/simple-rxjs">https://github.com/aaaaaajie/simple-rxjs</a></p>
+<h1>推荐阅读</h1>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/543483225">玩转 RxJS 操作符 ——流程控制篇</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/553188292">玩转 RxJS 操作符——回压控制篇</a></li>
+</ul>
+<h1>参考</h1>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.reactivemanifesto.org/zh-CN">反应式宣言</a></li>
+<li><a target="_blank" rel="noopener" href="https://cn.rx.js.org/">RxJS 中文文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://reactivex.io/intro.html">Reactive X 文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://robin-front.github.io/RxJS-doc-chinese/">RxJS 入门指南</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6910943445569765384">RxJS 给你丝滑般的编程体验</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/47537934/what-is-the-difference-between-observable-and-a-subject-in-rxjs">Observable vs Subject</a></li>
+<li>《RxJS 深入浅出》——程墨</li>
+</ul>
+<h2 id="-2"></h2>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://aaaaaajie.github.io/2023/01/19/RxJS%E9%81%93%E4%B8%8E%E6%9C%AF/" data-id="cmbyuj8810006duji6t8egqli" class="article-share-link">
+        分享
+      </a>
+      
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RxJS/" rel="tag">RxJS</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+  
+<nav class="article-nav">
+  
+  <a href="/2023/02/01/mongodb%E6%89%8B%E5%86%8C/" class="article-nav-link">
+    <strong class="article-nav-caption">前一篇</strong>
+    <div class="article-nav-title">
+      
+      Mongodb 常用 API
+      
+    </div>
+  </a>
+  
+  
+  <a href="/2023/01/19/2022%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" class="article-nav-link">
+    <strong class="article-nav-caption">后一篇</strong>
+    <div class="article-nav-title">2022年终总结</div>
+  </a>
+  
+</nav>
+
+  
+
+  
+  
+  
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: 'd194952437b67371b253',
+    clientSecret: 'ee8127b1392f7840a0bcded24bd677566b86cbb2',
+    repo: 'comment',
+    owner: 'aaaaaajie',
+    admin: ['aaaaaajie'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last',
+    proxy: 'https://strong-caramel-969805.netlify.app/github_access_token',
+    createIssueManually: 'false'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+</article>
+</section>
+    <footer class="footer">
+  <div class="outer">
+    <!-- <ul class="list-inline">
+      <li>阿杰 &copy; 2025</li>
+      
+        <li>
+          
+            <a href="https://beian.miit.gov.cn/" target="_blank"></a>
+            
+        </li>
+      
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul> -->
+    <!-- 
+      © 2018 ~ 2022-11-11 xxx. All rights reserved.
+      contact email: xxxs@foxmail.com
+     -->
+     
+    <!-- <p><ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul></p> -->
+    <p>Contact Email: m18210870360@163.com</p>
+    <p>&copy; 2023 A Jie. All rights reserved.</p>
+  </div>
+</footer>
+  </main>
+  <aside class="sidebar">
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img style="border-radius: 50%;" src="/images/avatar.JPG" alt="阿杰"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/gallery">相册</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/favorites">收藏</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        搜索
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="fe fe-feed"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="输入关键字...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+  });
+</script>
+
+
+
+  <script src='/js/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+
+</html>
