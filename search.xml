@@ -1,6 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>AI 时代，还有必要写博客吗？</title>
+    <url>/2025/05/12/ai-replace-blog/</url>
+    <content><![CDATA[<blockquote>
+<p>一边是 ChatGPT 秒出技术文，一边是我们苦哈哈敲字几小时。AI 时代，写博客还有意义吗？</p>
+</blockquote>
+<h2 id="🤖-AI-的优势，不服不行">🤖 AI 的优势，不服不行</h2>
+<p>AI 大模型这几年真的是爆发式进步，它的能力已经不止是“辅助”，而是真正能替你“代劳”很多工作。</p>
+<h3 id="🚀-效率提升，飞一般的感觉">🚀 效率提升，飞一般的感觉</h3>
+<p>本来一篇博客你得写两个小时，AI 只要你一个标题，就能几秒钟生成：</p>
+<ul>
+<li>有结构</li>
+<li>有逻辑</li>
+<li>语句还通顺</li>
+</ul>
+<h3 id="🧠-专业程度越来越高">🧠 专业程度越来越高</h3>
+<p>AI 不再是“听起来很懂但其实在胡扯”。现在的模型很多时候比搜索更直接、更清晰，能：</p>
+<ul>
+<li>引用专业术语</li>
+<li>解释底层原理</li>
+<li>举例说明问题</li>
+</ul>
+<h3 id="🎯-准确性也在提升">🎯 准确性也在提升</h3>
+<p>有时候我们自己写东西会漏掉细节，而 AI 还能提示你：</p>
+<ul>
+<li>异常情况</li>
+<li>边界处理</li>
+<li>性能注意点</li>
+</ul>
+<p>说实话，这已经是一个很强的“技术拍档”了，就像此文也经过了大模型的润色。</p>
+<h2 id="✍️-但我们还要自己写博客吗？">✍️ 但我们还要自己写博客吗？</h2>
+<p>答案是：<strong>要写，但方式可以变了。</strong></p>
+<span id="more"></span>
+<h3 id="✅-写博客其实是写给“自己”的">✅ 写博客其实是写给“自己”的</h3>
+<ul>
+<li>帮你理清知识点</li>
+<li>强化记忆</li>
+<li>记录成长路径</li>
+</ul>
+<p>过去的博客，就是你自己的“技术足迹”。</p>
+<h3 id="📘-它更像是自己的技术手册">📘 它更像是自己的技术手册</h3>
+<ul>
+<li>项目可以结束，但思考方式不会过时</li>
+<li>写下来，是你对问题的真正理解</li>
+<li>以后出问题，自己查也方便</li>
+</ul>
+<h2 id="🧭-我的观点：AI-帮写，博客还得自己动手">🧭 我的观点：AI 帮写，博客还得自己动手</h2>
+<p>AI 的确可以生成内容，但它不能替你：</p>
+<ul>
+<li>理解技术的来龙去脉</li>
+<li>记录你的试错过程</li>
+<li>总结你在项目中的思考方式</li>
+</ul>
+<p>所以我会继续写博客，只是会：</p>
+<ul>
+<li>利用 AI 快速起草</li>
+<li>用它帮我检查逻辑</li>
+<li>有时让它润色语言</li>
+</ul>
+<p>但核心内容、结构和理解，<strong>一定是我自己做主</strong>。</p>
+<h2 id="🧩-最后">🧩 最后</h2>
+<p>你可以不写“给别人看的博客”，但至少要写一个“给自己看的技术笔记”。</p>
+<ul>
+<li>写，是最好的思考方式</li>
+<li>记，是最靠谱的成长路径</li>
+<li>有 AI，不代表不动手</li>
+</ul>
+<p><strong>写给未来的自己，不为流量，只为成长。</strong></p>
+<p>🧠 + ✍️ = 🚀</p>
+]]></content>
+      <categories>
+        <category>随笔</category>
+      </categories>
+      <tags>
+        <tag>随笔</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>RxJS “道” 与 “术”</title>
     <url>/2023/01/19/RxJS%E9%81%93%E4%B8%8E%E6%9C%AF/</url>
     <content><![CDATA[<blockquote>
@@ -473,71 +550,6 @@ SELECT pg_terminate_backend(pid)<br>
 FROM pg_stat_activity<br>
 WHERE datname = ‘test’<br>
 AND pid &lt;&gt; pg_backend_pid();</p>
-]]></content>
-  </entry>
-  <entry>
-    <title></title>
-    <url>/2025/03/28/typescript%E7%B1%BB%E5%9E%8B%E5%B7%A5%E5%85%B7/</url>
-    <content><![CDATA[<p>title: TypeScript常用类型工具包<br>
-tags:</p>
-<ul>
-<li>TypeScript<br>
-categories:</li>
-<li>TypeScript<br>
-date: 2025-03-28 17:30</li>
-</ul>
-<h2 id="推导所有Object的可选值">推导所有Object的可选值</h2>
-<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">Fruits</span> = &#123;</span><br><span class="line">    <span class="variable constant_">APPLE</span> = <span class="string">&#x27;apple&#x27;</span>,</span><br><span class="line">    <span class="variable constant_">ORANGE</span> = <span class="string">&#x27;orange&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> <span class="title class_">Fruits</span> = <span class="keyword">typeof</span> <span class="title class_">Fruits</span>[keyof <span class="keyword">typeof</span> <span class="title class_">Fruits</span>]; <span class="comment">// apple, orange</span></span><br></pre></td></tr></table></figure>]]></content>
-  </entry>
-  <entry>
-    <title></title>
-    <url>/2025/03/26/mssql%E4%BD%BF%E7%94%A8%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<p>title: SQL Server(MSSQL)踩坑记录<br>
-tags:</p>
-<ul>
-<li>MSSQL</li>
-<li>SQL Server<br>
-categories:</li>
-<li>MSSQL</li>
-<li>SQL Server<br>
-date: 2025-03-26 16:30</li>
-</ul>
-<blockquote>
-<p>MSSQL 出的比较早，遵循严格的 SQL 语法，并不像 MySQL 和 PostgreSQL 那样宽松，也不支持存储 JSON 字段，里面有坑。</p>
-</blockquote>
-<blockquote>
-<p>别名提示： SQL Server = MSSQL = mssql, MySQL = mysql, PostgreSQL = pg</p>
-</blockquote>
-<h1>索引</h1>
-<h2 id="NULL-是有效值">NULL 是有效值</h2>
-<p>mssql 中 NULL 是有效值，设置唯一索引的字段只能有一个 NULL。但在 pg 和 mysql 中，多个 NULL 视为不同的值。</p>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Email</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>NULL（插入成功）</td>
-</tr>
-<tr>
-<td>2</td>
-<td>NULL (插入失败，重复)</td>
-</tr>
-</tbody>
-</table>
-<h2 id="删除索引">删除索引</h2>
-<p>在 MSSQL 中，UNIQUE 约束会自动创建一个唯一索引，索引不能直接通过 DROP INDEX 删除，需要先删除 UNIQUE 约束。</p>
-<h1>视图</h1>
-<h2 id="创建视图">创建视图</h2>
-<p>注意：必须得有指定列名</p>
-<ul>
-<li>CREATE VIEW test1 AS SELECT 1 ❌</li>
-<li>CREATE VIEW test1 AS SELECT 1 as value ✅</li>
-</ul>
 ]]></content>
   </entry>
   <entry>
@@ -1945,21 +1957,6 @@ table th:last-of-type {
 ]]></content>
       <categories>
         <category>Linux</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Docker 常用镜像启动模版</title>
-    <url>/2023/02/03/docker%E5%90%AF%E5%8A%A8%E5%B8%B8%E7%94%A8%E9%95%9C%E5%83%8F/</url>
-    <content><![CDATA[<blockquote>
-<p>docker 映射端口 -p &lt;主机端口&gt;:&lt;容器端口&gt;</p>
-</blockquote>
-<h1>MySQL</h1>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  --name mysql-container \</span><br><span class="line">  -p 3306:3306 \</span><br><span class="line">  -e MYSQL_ROOT_PASSWORD=123456 \            </span><br><span class="line">  mysql:latest</span><br></pre></td></tr></table></figure>
-<h1>SQL Server</h1>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  --name mssql-container \</span><br><span class="line">  -p 1433:1433 \</span><br><span class="line">  -e &quot;ACCEPT_EULA=Y&quot; \</span><br><span class="line">  -e &quot;SA_PASSWORD=StrongPassw0rd@&quot; \</span><br><span class="line">  --platform linux/amd64 \</span><br><span class="line">  mcr.microsoft.com/mssql/server:latest</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>docker</category>
       </categories>
   </entry>
   <entry>
