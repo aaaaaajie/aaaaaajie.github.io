@@ -52,47 +52,9 @@
       <article class="archive-article archive-type-post">
   
   
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-  
-  <h2 class="archive-article-title" itemprop="name">
-    <a href="/2023/06/07/%E5%86%8D%E8%B0%88%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">再谈单元测试</a>
-  </h2>
-  
-  
-
-      <a href="/2023/06/07/%E5%86%8D%E8%B0%88%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/" class="archive-article-date">
-  <time datetime="2023-06-07T14:26:01.000Z" itemprop="datePublished">06/07</time>
-</a>
-    </header>
-    
-      <p>曾写过多篇测试相关的文章，都源于每次测试给我带来的触动，这次也不例外，最近在重构复杂逻辑时，再次感谢它为我保驾护航，同时也发现了历史测试中存在的一些问题。</p>
-<h3 id="测试的意义">测试的意义</h3>
-<blockquote>
-<p>这是一个认知问题，如果不清楚为何要写测试，那么最终产生的测试大概率是腐烂、或无意义的。</p>
-</blockquote>
-<ol>
-<li>保证代码的正确性，提升代码质量是它最高的使命。</li>
-<li>保证代码的安全性/稳定性，当对某段代码改动后，测试会告诉哪些代码受到了潜在的问题。</li>
-<li>可以指导写代码的思路，在测试驱动开发（TDD）体现尤为明显。</li>
-<li>更能透彻的理解代码，很多情况下，写代码时常常会陷入自己的世界，从测试相当于站在旁观者的角度审视代码，从而提升可读性和扩展性。</li>
-</ol>
-    
-    
-    
-  </div>
-
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  
-  
     <div class="archive-article-gallery">
       
-        <a class="article-gallery-img" href="/2023/06/04/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%89%AA%E8%B4%B4%E6%9D%BF/" rel="gallery_cmbyveoig002ltkjihexj05xv">
+        <a class="article-gallery-img" href="/2023/06/04/%E7%BC%96%E8%BE%91%E5%99%A8%E7%B3%BB%E5%88%97-%E5%89%AA%E8%B4%B4%E6%9D%BF/" rel="gallery_cmbyvgisx002lhljih8ajdeh4">
           <img src="https://atlas-rc.pingcode.com/files/public/647b02e1e468e3b3652fa6da/origin-url" itemprop="image">
         </a>
       
@@ -354,6 +316,38 @@
 <li>js 添加自定义 style 属性</li>
 <li>css 中读取并使用该属性的值</li>
 </ol>
+    
+    
+    
+  </div>
+
+</article>
+      
+  
+  
+      <article class="archive-article archive-type-post">
+  
+  
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      
+  
+  <h2 class="archive-article-title" itemprop="name">
+    <a href="/2023/03/10/directive-composition-api/">Angular 指令组合 API—hostDirectives</a>
+  </h2>
+  
+  
+
+      <a href="/2023/03/10/directive-composition-api/" class="archive-article-date">
+  <time datetime="2023-03-10T06:09:39.000Z" itemprop="datePublished">03/10</time>
+</a>
+    </header>
+    
+      <blockquote>
+<p>原文在我的知乎：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/612817008">Angular hostDirective 详解</a></p>
+</blockquote>
+<h2 id="前言">前言</h2>
+<p>最近有一个需求是动态创建组件，然后给其组件添加指令，当时可难坏了，因为 createComponent API 不支持绑定指令，所以我当时猜想是否可以在 @Component 注入或 @HostBindingDirective 绑定实现呢？找了很久，最终发现官方支持了这种，选择的是前者，Feature Issue 如下：</p>
     
     
     

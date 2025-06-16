@@ -111,27 +111,6 @@
   <div class="archive-article-inner">
     <header class="archive-article-header">
       
-      <a href="/2025/04/14/postgres%20%E6%95%B0%E6%8D%AE%E5%BA%93/" class="archive-article-date">
-  <time datetime="2025-04-14T06:11:49.626Z" itemprop="datePublished">04/14</time>
-</a>
-    </header>
-    
-      
-    
-    
-    
-  </div>
-
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  
-  
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
   
   <h2 class="archive-article-title" itemprop="name">
     <a href="/2025/01/24/Stripe-%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97/">Stripe 接入指南</a>
@@ -385,6 +364,44 @@
     </header>
     
       <p>在权限设计中有一种非常独特、有意思方案叫  <strong>位掩码权限设计</strong>  ，它在应对一些局部数据权限（权限点不多）的场景下，非常的犀利，比如 PingCode 知识管理页面权限就结合 ACL 对特定人群（用户、用户组、部门）做权限分配，由于权限点只有两个，开发中体现不是非常突出，也没有把这个思维贯彻到底，不过在最近做的一个小项目（业余时间的玩具）中表现比较明显，这篇文章一直是处于未完成的状态 ，做完这个需求后，有触动把它好好写完，分享下。</p>
+    
+    
+    
+  </div>
+
+</article>
+      
+  
+  
+      <article class="archive-article archive-type-post">
+  
+  
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      
+  
+  <h2 class="archive-article-title" itemprop="name">
+    <a href="/2023/06/07/%E5%86%8D%E8%B0%88%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">再谈单元测试</a>
+  </h2>
+  
+  
+
+      <a href="/2023/06/07/%E5%86%8D%E8%B0%88%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/" class="archive-article-date">
+  <time datetime="2023-06-07T14:26:01.000Z" itemprop="datePublished">06/07</time>
+</a>
+    </header>
+    
+      <p>曾写过多篇测试相关的文章，都源于每次测试给我带来的触动，这次也不例外，最近在重构复杂逻辑时，再次感谢它为我保驾护航，同时也发现了历史测试中存在的一些问题。</p>
+<h3 id="测试的意义">测试的意义</h3>
+<blockquote>
+<p>这是一个认知问题，如果不清楚为何要写测试，那么最终产生的测试大概率是腐烂、或无意义的。</p>
+</blockquote>
+<ol>
+<li>保证代码的正确性，提升代码质量是它最高的使命。</li>
+<li>保证代码的安全性/稳定性，当对某段代码改动后，测试会告诉哪些代码受到了潜在的问题。</li>
+<li>可以指导写代码的思路，在测试驱动开发（TDD）体现尤为明显。</li>
+<li>更能透彻的理解代码，很多情况下，写代码时常常会陷入自己的世界，从测试相当于站在旁观者的角度审视代码，从而提升可读性和扩展性。</li>
+</ol>
     
     
     
