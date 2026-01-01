@@ -80,11 +80,14 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  --name mysql-container \</span><br><span class="line">  -p 3306:3306 \</span><br><span class="line">  -e MYSQL_ROOT_PASSWORD=123456 \            </span><br><span class="line">  mysql:latest</span><br></pre></td></tr></table></figure>
 <h1>SQL Server</h1>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  --name mssql-container \</span><br><span class="line">  -p 1433:1433 \</span><br><span class="line">  -e &quot;ACCEPT_EULA=Y&quot; \</span><br><span class="line">  -e &quot;SA_PASSWORD=StrongPassw0rd@&quot; \</span><br><span class="line">  --platform linux/amd64 \</span><br><span class="line">  mcr.microsoft.com/mssql/server:latest</span><br></pre></td></tr></table></figure>
-<!-- flag of hidden posts -->
+<h1>Oracle</h1>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \        </span><br><span class="line">  --name oracle23 \</span><br><span class="line">  --platform linux/arm64 \</span><br><span class="line">  -p 1521:1521 \</span><br><span class="line">  -p 5500:5500 \</span><br><span class="line">  -e ORACLE_PASSWORD=Oracle123 \</span><br><span class="line">  -v $HOME/docker/oracle-data:/opt/oracle/oradata \</span><br><span class="line">  gvenzl/oracle-free:latest</span><br></pre></td></tr></table></figure>
+<h1>Postgresql</h1>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  --name postgres \</span><br><span class="line">  -e POSTGRES_USER=myuser \</span><br><span class="line">  -e POSTGRES_PASSWORD=123456 \</span><br><span class="line">  -e POSTGRES_DB=auth \</span><br><span class="line">  -p 5432:5432 \</span><br><span class="line">  -v pgdata:/var/lib/postgresql/data \</span><br><span class="line">  postgres:16</span><br></pre></td></tr></table></figure><!-- flag of hidden posts -->
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/02/03/docker%E5%90%AF%E5%8A%A8%E5%B8%B8%E7%94%A8%E9%95%9C%E5%83%8F/" data-id="cmbyvgiss000khlji5hrt9dr0" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/02/03/docker%E5%90%AF%E5%8A%A8%E5%B8%B8%E7%94%A8%E9%95%9C%E5%83%8F/" data-id="cmjvhvdsi000omejhaq2ddo4b" class="article-share-link">
         分享
       </a>
       
@@ -134,7 +137,7 @@
     <footer class="footer">
   <div class="outer">
     <!-- <ul class="list-inline">
-      <li>阿杰 &copy; 2025</li>
+      <li>阿杰 &copy; 2026</li>
       
         <li>
           
