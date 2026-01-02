@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Docker 常用镜像启动模版</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="outer">
+    <div id="container">
+      <div class="wrap">
+        <main id="main">
+<article class="article">
+  <header class="article-header">
+    <h1 class="article-title">Docker 常用镜像启动模版</h1>
+  </header>
+  <div class="article-entry"><blockquote>
+<p>docker 映射端口 -p &lt;主机端口&gt;:&lt;容器端口&gt;</p>
+</blockquote>
+<h1>MySQL</h1>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  --name mysql-container \</span><br><span class="line">  -p 3306:3306 \</span><br><span class="line">  -e MYSQL_ROOT_PASSWORD=123456 \            </span><br><span class="line">  mysql:latest</span><br></pre></td></tr></table></figure>
+<h1>SQL Server</h1>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  --name mssql-container \</span><br><span class="line">  -p 1433:1433 \</span><br><span class="line">  -e &quot;ACCEPT_EULA=Y&quot; \</span><br><span class="line">  -e &quot;SA_PASSWORD=StrongPassw0rd@&quot; \</span><br><span class="line">  --platform linux/amd64 \</span><br><span class="line">  mcr.microsoft.com/mssql/server:latest</span><br></pre></td></tr></table></figure>
+<h1>Oracle</h1>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \        </span><br><span class="line">  --name oracle23 \</span><br><span class="line">  --platform linux/arm64 \</span><br><span class="line">  -p 1521:1521 \</span><br><span class="line">  -p 5500:5500 \</span><br><span class="line">  -e ORACLE_PASSWORD=Oracle123 \</span><br><span class="line">  -v $HOME/docker/oracle-data:/opt/oracle/oradata \</span><br><span class="line">  gvenzl/oracle-free:latest</span><br></pre></td></tr></table></figure>
+<h1>Postgresql</h1>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  --name postgres \</span><br><span class="line">  -e POSTGRES_USER=myuser \</span><br><span class="line">  -e POSTGRES_PASSWORD=123456 \</span><br><span class="line">  -e POSTGRES_DB=auth \</span><br><span class="line">  -p 5432:5432 \</span><br><span class="line">  -v pgdata:/var/lib/postgresql/data \</span><br><span class="line">  postgres:16</span><br></pre></td></tr></table></figure><!-- flag of hidden posts --></div>
+</article></main>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

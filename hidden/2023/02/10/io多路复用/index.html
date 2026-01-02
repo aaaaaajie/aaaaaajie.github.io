@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>IO 多路复用</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="outer">
+    <div id="container">
+      <div class="wrap">
+        <main id="main">
+<article class="article">
+  <header class="article-header">
+    <h1 class="article-title">IO 多路复用</h1>
+  </header>
+  <div class="article-entry"><h2 id="什么是-IO-多路复用">什么是 IO 多路复用</h2>
+<p>IO 多路复用指的是<strong>一个线程去监听和管理多个文件句柄</strong>的同步 IO 模型。一旦有其中一个文件句柄完成就绪，就会通知应用程序进行相应的读写操作，如果没有任何文件句柄就会阻塞应用程序，交出 CPU。</p>
+<blockquote>
+<p>文件句柄：在文件I/O中，要从一个文件读取数据，应用程序首先要调用操作系统函数并传送文件名，并选一个到该文件的路径来打开文件。该函数取回一个顺序号，即文件句柄（file handle），该文件句柄对于打开的文件是唯一的识别依据。<a href="https://baike.baidu.com/item/%E6%96%87%E4%BB%B6%E5%8F%A5%E6%9F%84/3978023">更多点这里</a></p>
+</blockquote>
+<h2 id="IO-多路复用的三种实现">IO 多路复用的三种实现</h2>
+<ul>
+<li>select</li>
+<li>poll</li>
+<li>epoll</li>
+</ul>
+<!-- flag of hidden posts --></div>
+</article></main>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

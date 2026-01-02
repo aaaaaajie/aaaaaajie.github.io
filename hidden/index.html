@@ -1,331 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-
+<!doctype html>
+<html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  
-  
-
-  
-    
-    <script>window.__HIDDEN_PAGE__=window.__HIDDEN_PAGE__||{};window.__HIDDEN_PAGE__.passHash="b9df4f1a209cd78e2de39136ce8baca1334a27f8271c5c901f06d9d4a1fa58b2";</script>
-  
-
-  <title>
-    隐藏文章 |
-    
-    阿杰
-  </title>
-  <!-- Icon -->
-  
-    <link rel="shortcut icon" href="/favicon.ico">
-    
-  
-<link rel="stylesheet" href="/css/style.css">
-
-  
-  
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
-
-  
-
-  
-  <style>
-    .hidden-auth{max-width:640px;margin:0 auto;padding:24px;border:1px solid rgba(0,0,0,.08);border-radius:12px;background:#fff}
-    .hidden-auth__row{display:flex;gap:12px;margin-top:12px}
-    .hidden-auth__input{flex:1;padding:10px 12px;border:1px solid rgba(0,0,0,.15);border-radius:8px}
-    .hidden-auth__btn{padding:10px 14px;border:0;border-radius:8px;background:#222;color:#fff;cursor:pointer}
-    .hidden-auth__msg{margin-top:10px;color:#c0392b}
-    .hidden-list{max-width:800px;margin:0 auto}
-    .hidden-list__ul{list-style:disc;padding-left:20px}
-    .hidden-list__ul li{margin:6px 0}
-  </style>
-  
-
-  
-<script src="/js/pace.min.js"></script>
-
-<meta name="generator" content="Hexo 6.3.0"></head>
-
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>隐藏文章</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
 <body>
-  
-  <main class="content">
-    <section class="outer">
-  <article id="page-" class="article article-type-page" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-      
-  
-  <h1 class="article-title" itemprop="name">
-    隐藏文章
-  </h1>
-  
-  
-
-    </header>
-    
-
-    
-
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-      
-      
-        <div id="hidden-auth" class="hidden-auth">
-  <h2>隐藏文章</h2>
-  <p>请输入访问口令后查看。</p>
-  <div class="hidden-auth__row">
-    <input id="hidden-pass" class="hidden-auth__input" type="password" placeholder="口令" autocomplete="current-password" />
-    <button id="hidden-submit" class="hidden-auth__btn" type="button">解锁</button>
-  </div>
-  <p id="hidden-auth-msg" class="hidden-auth__msg" style="display:none"></p>
-</div>
-<div id="hidden-list" class="hidden-list" style="display:none">
-  <p>暂无隐藏文章</p>
-</div>
-<script>
-(function () {
-  var STORAGE_KEY = 'hexo_hidden_authed_v1';
-
-  function $(id) { return document.getElementById(id); }
-
-  function showMsg(text) {
-    var el = $('hidden-auth-msg');
-    if (!el) return;
-    el.style.display = 'block';
-    el.textContent = text;
-  }
-
-  function setAuthed() {
-    try { localStorage.setItem(STORAGE_KEY, '1'); } catch (e) {}
-  }
-
-  function isAuthed() {
-    try { return localStorage.getItem(STORAGE_KEY) === '1'; } catch (e) { return false; }
-  }
-
-  function unlockUI() {
-    var auth = $('hidden-auth');
-    var list = $('hidden-list');
-    if (auth) auth.style.display = 'none';
-    if (list) list.style.display = 'block';
-  }
-
-  async function sha256Hex(text) {
-    // WebCrypto 在 https 或 localhost 下可用
-    var enc = new TextEncoder();
-    var buf = await crypto.subtle.digest('SHA-256', enc.encode(text));
-    return Array.from(new Uint8Array(buf))
-      .map(function (b) { return b.toString(16).padStart(2, '0'); })
-      .join('');
-  }
-
-  async function checkPassword(pass) {
-    var expected = (window.__HIDDEN_PAGE__ && window.__HIDDEN_PAGE__.passHash) || '';
-    if (!expected) return false;
-    var hex = await sha256Hex(pass);
-    return hex === expected;
-  }
-
-  async function submit() {
-    var input = $('hidden-pass');
-    if (!input) return;
-
-    var pass = (input.value || '').trim();
-    if (!pass) {
-      showMsg('请输入口令');
-      return;
-    }
-
-    if (!window.crypto || !crypto.subtle) {
-      showMsg('当前环境不支持加密校验（需要 https 或 localhost）。');
-      return;
-    }
-
-    try {
-      var ok = await checkPassword(pass);
-      if (ok) {
-        setAuthed();
-        unlockUI();
-      } else {
-        showMsg('口令错误');
-      }
-    } catch (e) {
-      showMsg('校验失败');
-    }
-  }
-
-  // 初始化
-  if (isAuthed()) {
-    unlockUI();
-    return;
-  }
-
-  var btn = $('hidden-submit');
-  var input = $('hidden-pass');
-  if (btn) btn.addEventListener('click', submit);
-  if (input) input.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') submit();
-  });
-})();
-</script>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/hidden/index.html" data-id="cmjwq29n6000attjhcwizhvc7" class="article-share-link">
-        分享
-      </a>
-      
-    </footer>
-
-  </div>
-
-  
-  
-  
-
-  
-
-</article>
-</section>
-    <footer class="footer">
   <div class="outer">
-    <!-- <ul class="list-inline">
-      <li>阿杰 &copy; 2026</li>
-      
-        <li>
-          
-            <a href="https://beian.miit.gov.cn/" target="_blank"></a>
-            
-        </li>
-      
-      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
-      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
-    </ul> -->
-    <!-- 
-      © 2018 ~ 2022-11-11 xxx. All rights reserved.
-      contact email: xxxs@foxmail.com
-     -->
-     
-    <!-- <p><ul class="list-inline">
-  
-  <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
-  
-</ul></p> -->
-    <p>Contact Email: m18210870360@163.com</p>
-    <p>&copy; 2023 A Jie. All rights reserved.</p>
+    <div id="container">
+      <div class="wrap">
+        <main id="main">
+<section class="article">
+  <header class="article-header">
+    <h1 class="article-title">隐藏文章</h1>
+    
+  </header>
+  <div class="article-body">
+    <ul class="archive-article-list"><li class="archive-article">
+  <a class="archive-article-link" href="./2025/04/14/postgres 数据库/">Postgres 数据库</a>
+</li>
+<li class="archive-article">
+  <a class="archive-article-link" href="./2025/03/28/typescript类型工具/">TypeScript常用类型工具包</a>
+</li>
+<li class="archive-article">
+  <a class="archive-article-link" href="./2025/03/26/mssql使用中遇到的问题/">SQL Server(MSSQL)踩坑记录</a>
+</li>
+<li class="archive-article">
+  <a class="archive-article-link" href="./2023/02/10/io多路复用/">IO 多路复用</a>
+</li>
+<li class="archive-article">
+  <a class="archive-article-link" href="./2023/02/03/docker启动常用镜像/">Docker 常用镜像启动模版</a>
+</li></ul>
   </div>
-</footer>
-  </main>
-  <aside class="sidebar">
-    <button class="navbar-toggle"></button>
-<nav class="navbar">
-  
-  <div class="logo">
-    <a href="/"><img style="border-radius: 50%;" src="/images/avatar.JPG" alt="阿杰"></a>
+</section></main>
+      </div>
+    </div>
   </div>
-  
-  <ul class="nav nav-main">
-    
-    <li class="nav-item">
-      <a class="nav-item-link" href="/">主页</a>
-    </li>
-    
-    <li class="nav-item">
-      <a class="nav-item-link" href="/archives">归档</a>
-    </li>
-    
-    <li class="nav-item">
-      <a class="nav-item-link" href="/gallery">相册</a>
-    </li>
-    
-    <li class="nav-item">
-      <a class="nav-item-link" href="/favorites">收藏</a>
-    </li>
-    
-    <li class="nav-item">
-      <a class="nav-item-link" href="/categories">分类</a>
-    </li>
-    
-    <li class="nav-item">
-      <a class="nav-item-link" href="/about">关于</a>
-    </li>
-    
-    <li class="nav-item">
-      <a class="nav-item-link" href="/hidden/">隐藏</a>
-    </li>
-    
-    <li class="nav-item">
-      <a class="nav-item-link nav-item-search" title="搜索">
-        <i class="fe fe-search"></i>
-        搜索
-      </a>
-    </li>
-  </ul>
-</nav>
-<nav class="navbar navbar-bottom">
-  <ul class="nav">
-    <li class="nav-item">
-      <div class="totop" id="totop">
-  <i class="fe fe-rocket"></i>
-</div>
-    </li>
-    <li class="nav-item">
-      
-      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
-        <i class="fe fe-feed"></i>
-      </a>
-      
-    </li>
-  </ul>
-</nav>
-<div class="search-form-wrap">
-  <div class="local-search local-search-plugin">
-  <input type="search" id="local-search-input" class="local-search-input" placeholder="输入关键字...">
-  <div id="local-search-result" class="local-search-result"></div>
-</div>
-</div>
-  </aside>
-  
-<script src="/js/jquery-2.0.3.min.js"></script>
-
-
-<script src="/js/jquery.justifiedGallery.min.js"></script>
-
-
-<script src="/js/lazyload.min.js"></script>
-
-
-<script src="/js/busuanzi-2.3.pure.min.js"></script>
-
-
-
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-
-
-  <script src='/js/mermaid.min.js'></script>
-  <script>
-    if (window.mermaid) {
-      mermaid.initialize({theme: 'forest'});
-    }
-  </script>
-
-
-
-<script src="/js/ocean.js"></script>
-
 </body>
-
 </html>

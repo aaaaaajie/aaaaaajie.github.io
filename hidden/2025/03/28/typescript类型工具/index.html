@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>TypeScript常用类型工具包</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="outer">
+    <div id="container">
+      <div class="wrap">
+        <main id="main">
+<article class="article">
+  <header class="article-header">
+    <h1 class="article-title">TypeScript常用类型工具包</h1>
+  </header>
+  <div class="article-entry"><h2 id="推导所有Object的可选值">推导所有Object的可选值</h2>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">Fruits</span> = &#123;</span><br><span class="line">    <span class="variable constant_">APPLE</span> = <span class="string">&#x27;apple&#x27;</span>,</span><br><span class="line">    <span class="variable constant_">ORANGE</span> = <span class="string">&#x27;orange&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> <span class="title class_">Fruits</span> = <span class="keyword">typeof</span> <span class="title class_">Fruits</span>[keyof <span class="keyword">typeof</span> <span class="title class_">Fruits</span>]; <span class="comment">// apple, orange</span></span><br></pre></td></tr></table></figure><!-- flag of hidden posts --></div>
+</article></main>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
