@@ -9,10 +9,10 @@
   
 
   <title>
-    IO 多路复用 |
+    归档: 2023/11 |
     
     阿杰
-  </title><meta name="robots" content="noindex">
+  </title>
   <!-- Icon -->
   
     <link rel="shortcut icon" href="/favicon.ico">
@@ -34,107 +34,67 @@
   
   <main class="content">
     <section class="outer">
-  <article id="post-io多路复用" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
+  <article class="articles">
     
-    <header class="article-header">
+    <!-- <h1 class="page-type-title">2023/11</h1> -->
+    
+  
+  
+  
+  
+  
+  
+  <div class="archives-wrap">
+    <div class="archive-year-wrap">
+      <a href="/archives/2023" class="archive-year">2023</a>
+    </div>
+    <div class="archives">
+      
+      <article class="archive-article archive-type-post">
+  
+  
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
       
   
-  <h1 class="article-title" itemprop="name">
-    IO 多路复用
-  </h1>
+  <h2 class="archive-article-title" itemprop="name">
+    <a href="/2023/11/04/npm-%E5%8F%91%E5%8C%85%E6%B5%81%E7%A8%8B/">npm 发包流程</a>
+  </h2>
   
   
 
+      <a href="/2023/11/04/npm-%E5%8F%91%E5%8C%85%E6%B5%81%E7%A8%8B/" class="archive-article-date">
+  <time datetime="2023-11-04T02:00:00.000Z" itemprop="datePublished">11/04</time>
+</a>
     </header>
     
-
-    
-    <div class="article-meta">
-      <a href="/2023/02/10/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/" class="article-date">
-  <time datetime="2023-02-10T07:23:55.000Z" itemprop="datePublished">2023-02-10</time>
-</a>
-      
-<div class="article-category">
-  
-</div>
-
-    </div>
-    
-
-    
-    
-<div class="tocbot"></div>
-
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-      
-      
-        <h2 id="什么是-IO-多路复用">什么是 IO 多路复用</h2>
-<p>IO 多路复用指的是<strong>一个线程去监听和管理多个文件句柄</strong>的同步 IO 模型。一旦有其中一个文件句柄完成就绪，就会通知应用程序进行相应的读写操作，如果没有任何文件句柄就会阻塞应用程序，交出 CPU。</p>
+      <h3 id="一、你真的需要发包吗？">一、你真的需要发包吗？</h3>
 <blockquote>
-<p>文件句柄：在文件I/O中，要从一个文件读取数据，应用程序首先要调用操作系统函数并传送文件名，并选一个到该文件的路径来打开文件。该函数取回一个顺序号，即文件句柄（file handle），该文件句柄对于打开的文件是唯一的识别依据。<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%96%87%E4%BB%B6%E5%8F%A5%E6%9F%84/3978023">更多点这里</a></p>
+<p>不是所有代码都值得发 npm。</p>
 </blockquote>
-<h2 id="IO-多路复用的三种实现">IO 多路复用的三种实现</h2>
+<p>一般适合发包的情况是：</p>
 <ul>
-<li>select</li>
-<li>poll</li>
-<li>epoll</li>
+<li>通用工具函数 / SDK</li>
+<li>多个项目都会用到的逻辑</li>
+<li>希望别人能直接 <code>npm install</code> 用</li>
+<li>公司内部的私有包</li>
 </ul>
-<!-- flag of hidden posts -->
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/02/10/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/" data-id="cmjzxk6to000wpnjh8v4ygei8" class="article-share-link">
-        分享
-      </a>
-      
-    </footer>
-
+<p>如果只是单项目用的小工具，放在仓库里反而更省事。</p>
+<hr>
+    
+    
+    
   </div>
 
-  
-  
-  
-
-  
-  
-  
-<div class="gitalk" id="gitalk-container"></div>
-
-<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-
-
-<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-
-
-<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
-
-<script type="text/javascript">
-  var gitalk = new Gitalk({
-    clientID: 'd194952437b67371b253',
-    clientSecret: 'ee8127b1392f7840a0bcded24bd677566b86cbb2',
-    repo: 'comment',
-    owner: 'aaaaaajie',
-    admin: ['aaaaaajie'],
-    // id: location.pathname,      // Ensure uniqueness and length less than 50
-    id: md5(location.pathname),
-    distractionFreeMode: false,  // Facebook-like distraction free mode
-    pagerDirection: 'last',
-    proxy: 'https://strong-caramel-969805.netlify.app/github_access_token',
-    createIssueManually: 'false'
-  })
-
-  gitalk.render('gitalk-container')
-</script>
-
-  
-
 </article>
+      
+      
+    </div>
+  </div>
+  
+  
+
+  
 </section>
     <footer class="footer">
   <div class="outer">
@@ -158,8 +118,6 @@
     <!-- <p><ul class="list-inline">
   
   <li><i class="fe fe-smile-alt tooltip" data-tooltip="UV"></i> <span id="busuanzi_value_site_uv"></span></li>
-  
-  <li><i class="fe fe-bookmark tooltip" data-tooltip="PV"></i> <span id="busuanzi_value_page_pv"></span></li>
   
 </ul></p> -->
     <p>Contact Email: m18210870360@163.com</p>
@@ -254,24 +212,6 @@
 
 
 
-
-
-<script src="/js/tocbot.min.js"></script>
-
-
-<script>
-  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
-  tocbot.init({
-    tocSelector: '.tocbot',
-    contentSelector: '.article-entry',
-    headingSelector: 'h1, h2, h3, h4, h5, h6',
-    hasInnerContainers: true,
-    scrollSmooth: true,
-    positionFixedSelector: '.tocbot',
-    positionFixedClass: 'is-position-fixed',
-    fixedSidebarOffset: 'auto',
-  });
-</script>
 
 
 

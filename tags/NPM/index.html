@@ -46,7 +46,7 @@
   
   <div class="archives-wrap">
     <div class="archive-year-wrap">
-      <a href="/archives/2024" class="archive-year">2024</a>
+      <a href="/archives/2023" class="archive-year">2023</a>
     </div>
     <div class="archives">
       
@@ -58,17 +58,29 @@
       
   
   <h2 class="archive-article-title" itemprop="name">
-    <a href="/2024/11/04/npm-%E5%8F%91%E5%8C%85%E6%B5%81%E7%A8%8B/">npm 发包流程</a>
+    <a href="/2023/11/04/npm-%E5%8F%91%E5%8C%85%E6%B5%81%E7%A8%8B/">npm 发包流程</a>
   </h2>
   
   
 
-      <a href="/2024/11/04/npm-%E5%8F%91%E5%8C%85%E6%B5%81%E7%A8%8B/" class="archive-article-date">
-  <time datetime="2024-11-04T02:00:00.000Z" itemprop="datePublished">11/04</time>
+      <a href="/2023/11/04/npm-%E5%8F%91%E5%8C%85%E6%B5%81%E7%A8%8B/" class="archive-article-date">
+  <time datetime="2023-11-04T02:00:00.000Z" itemprop="datePublished">11/04</time>
 </a>
     </header>
     
-      
+      <h3 id="一、你真的需要发包吗？">一、你真的需要发包吗？</h3>
+<blockquote>
+<p>不是所有代码都值得发 npm。</p>
+</blockquote>
+<p>一般适合发包的情况是：</p>
+<ul>
+<li>通用工具函数 / SDK</li>
+<li>多个项目都会用到的逻辑</li>
+<li>希望别人能直接 <code>npm install</code> 用</li>
+<li>公司内部的私有包</li>
+</ul>
+<p>如果只是单项目用的小工具，放在仓库里反而更省事。</p>
+<hr>
     
     
     
@@ -82,17 +94,6 @@
       
   
   
-  
-  </div>
-  </div>
-  
-  
-  <div class="archives-wrap">
-    <div class="archive-year-wrap">
-      <a href="/archives/2023" class="archive-year">2023</a>
-    </div>
-    <div class="archives">
-      
       <article class="archive-article archive-type-post">
   
   
