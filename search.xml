@@ -692,6 +692,193 @@
       </categories>
   </entry>
   <entry>
+    <title>npm 发包流程</title>
+    <url>/2024/11/04/npm-%E5%8F%91%E5%8C%85%E6%B5%81%E7%A8%8B/</url>
+    <content><![CDATA[<h2 id="一、你真的需要发包吗？">一、你真的需要发包吗？</h2>
+<blockquote>
+<p>不是所有代码都值得发 npm。</p>
+</blockquote>
+<p>一般适合发包的情况是：</p>
+<ul>
+<li>通用工具函数 / SDK</li>
+<li>多个项目都会用到的逻辑</li>
+<li>希望别人能直接 <code>npm install</code> 用</li>
+<li>公司内部的私有包</li>
+</ul>
+<p>如果只是单项目用的小工具，放在仓库里反而更省事。</p>
+<hr>
+<h2 id="二、npm-账号">二、npm 账号</h2>
+<p>如果你已经有账号，可以直接跳过。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm login</span><br></pre></td></tr></table></figure>
+<p>按提示输入：</p>
+<ul>
+<li>username</li>
+<li>password</li>
+<li>email</li>
+</ul>
+<p>登录成功后确认一下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm <span class="built_in">whoami</span></span><br></pre></td></tr></table></figure>
+<p>能看到用户名，说明 OK。</p>
+<hr>
+<h2 id="三、项目配置">三、项目配置</h2>
+<p>重点关注 <code>package.json</code>，字段说明：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;@your-scope/your-package&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1.0.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;main&quot;</span><span class="punctuation">:</span> <span class="string">&quot;dist/index.js&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;types&quot;</span><span class="punctuation">:</span> <span class="string">&quot;dist/index.d.ts&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;files&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;dist&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;scripts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;build&quot;</span><span class="punctuation">:</span> <span class="string">&quot;xxx&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<h3 id="坑点一：name">坑点一：name</h3>
+<ul>
+<li>不能有大写字母</li>
+<li>不能和 npm 上已有的包重名</li>
+<li>强烈建议使用 scope：<code>@scope/name</code></li>
+</ul>
+<blockquote>
+<p>scope 不只是“高级”，而是<strong>防撞名神器</strong>。</p>
+</blockquote>
+<hr>
+<h3 id="坑点二：version">坑点二：version</h3>
+<p>npm 的规则很简单粗暴：</p>
+<blockquote>
+<p><strong>版本号不变，绝对发不了包</strong></p>
+</blockquote>
+<p>推荐用 npm 自带命令管理版本：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm version patch   <span class="comment"># 修 bug</span></span><br><span class="line">npm version minor   <span class="comment"># 加功能</span></span><br><span class="line">npm version major   <span class="comment"># 破坏性变更</span></span><br></pre></td></tr></table></figure>
+<p>它会自动：</p>
+<ul>
+<li>修改 <code>package.json</code></li>
+<li>打 git tag（如果是 git 仓库）</li>
+</ul>
+<hr>
+<h2 id="四、控制发布内容">四、控制发布内容</h2>
+<p>npm 默认会把<strong>几乎所有文件</strong>都发上去。</p>
+<p>如果你不控制，可能会把这些一起发布：</p>
+<ul>
+<li>src</li>
+<li>test</li>
+<li>各种配置文件</li>
+<li>本地脚本</li>
+</ul>
+<h3 id="推荐方式：使用-files">推荐方式：使用 <code>files</code></h3>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="attr">&quot;files&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;dist&quot;</span><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+<p>这是<strong>白名单机制</strong>，最安全、最直观。</p>
+<h3 id="发布前一定做的一步">发布前一定做的一步</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm pack</span><br></pre></td></tr></table></figure>
+<p>它会生成一个 <code>.tgz</code> 文件，相当于<strong>发布预览</strong>。<br>
+解压看一眼，确认里面真的是你想让别人安装的内容。</p>
+<hr>
+<h2 id="五、构建">五、构建</h2>
+<p>如果你用的是：</p>
+<ul>
+<li>TypeScript</li>
+<li>Babel</li>
+<li>打包工具</li>
+</ul>
+<p>那基本流程一定是：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm run build</span><br></pre></td></tr></table></figure>
+<p>确保：</p>
+<ul>
+<li><code>dist/</code> 真实存在</li>
+<li><code>main / types</code> 指向的文件真的在包里</li>
+</ul>
+<blockquote>
+<p>npm 不会自动 build，你不 build，它就发“空气”。</p>
+</blockquote>
+<hr>
+<h2 id="六、发布">六、发布</h2>
+<h3 id="普通包">普通包</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm publish</span><br></pre></td></tr></table></figure>
+<h3 id="scope-包">scope 包</h3>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm publish --access public</span><br></pre></td></tr></table></figure>
+<p>如果不加这个参数，十有八九会遇到权限或 private 相关报错。</p>
+<hr>
+<h2 id="七、验证">七、验证</h2>
+<p>别半场开香槟，验证下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm view your-package-name</span><br></pre></td></tr></table></figure>
+<p>或者新建目录测试安装：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install your-package-name</span><br></pre></td></tr></table></figure>
+<p>能装、能用，才算真的完成。</p>
+<hr>
+<h2 id="八、坑点回顾">八、坑点回顾</h2>
+<h3 id="❌-忘了改-version">❌ 忘了改 version</h3>
+<p>解决方案只有一个：<br>
+<strong>改版本号，再发。</strong></p>
+<hr>
+<h3 id="❌-main-types-写对了，但文件不存在">❌ main / types 写对了，但文件不存在</h3>
+<p>表现是：安装成功，一 import 就炸。</p>
+<p>排查思路：</p>
+<ul>
+<li>文件路径是否真实存在</li>
+<li><code>npm pack</code> 后包里有没有这个文件</li>
+</ul>
+<hr>
+<h3 id="❌-不该发布的文件被发上去了">❌ 不该发布的文件被发上去了</h3>
+<p>解决方案：</p>
+<ul>
+<li>用 <code>files</code> 控制范围</li>
+<li>每次发包前 <code>npm pack</code></li>
+</ul>
+<hr>
+<h3 id="❌-二级认证（2FA）导致发布失败-CI-发不了包">❌ 二级认证（2FA）导致发布失败 / CI 发不了包</h3>
+<p>很多人第一次开 2FA，是在“安全感”里翻车的。</p>
+<p>常见报错/表现：</p>
+<ul>
+<li>本地 <code>npm publish</code> 要求输入一次性验证码（OTP）</li>
+<li>CI 里 <code>npm publish</code> 直接失败（因为没人能交互式输入 OTP）</li>
+<li><code>npm login</code>/<code>npm publish</code> 提示你需要 <code>--otp=xxxxxx</code></li>
+<li>使用了 token 但仍然提示 2FA 或权限不足</li>
+</ul>
+<p>排查与解决思路：</p>
+<ol>
+<li><strong>先确认你账号的 2FA 策略</strong><br>
+在 npm 官网的账户安全设置里，2FA 常见有两种：</li>
+</ol>
+<ul>
+<li><strong>仅对“发布/修改包”启用 2FA</strong>（推荐，且对自动化更友好）</li>
+<li><strong>对“登录”也启用 2FA</strong>（更严格，但会让 CI/脚本更麻烦）</li>
+</ul>
+<p>如果你把 2FA 开在“登录”，那 CI 里用用户名密码登录基本走不通。</p>
+<ol start="2">
+<li><strong>本地发布：按需加 <code>--otp</code></strong><br>
+当提示 OTP 时，直接带上：</li>
+</ol>
+<ul>
+<li><code>npm publish --otp=123456</code></li>
+</ul>
+<p>OTP 有时间窗口，输慢了就会失效。</p>
+<ol start="3">
+<li><strong>CI/自动化发布：不要用交互式登录，改用 Token</strong><br>
+正确姿势是：</li>
+</ol>
+<ul>
+<li>在 npm 创建 <strong>Automation Token</strong>（或者至少是 Publish 权限的 token）</li>
+<li>在 CI 里写入 <code>NPM_TOKEN</code>，通过 <code>.npmrc</code> 使用 token</li>
+</ul>
+<blockquote>
+<p>关键点：CI 需要的是“非交互式凭证”，而不是 OTP。</p>
+</blockquote>
+<ol start="4">
+<li><strong>注意：2FA + Token 不是“随便一配就行”</strong></li>
+</ol>
+<ul>
+<li>如果你启用了“对登录也 2FA”，某些流程下 token 仍可能被限制/需要额外配置</li>
+<li>确保 token 具备发布范围（scope）的权限</li>
+<li>scope 包发布仍可能需要 <code>--access public</code></li>
+</ul>
+<ol start="5">
+<li><strong>强烈建议保存 Recovery Codes（恢复码）</strong><br>
+手机丢了/验证器没了，恢复码是你找回发布权限的最后一根绳。</li>
+</ol>
+<blockquote>
+<p>总结：本地发布可以 <code>--otp</code>，自动化发布要用 token；2FA 开在“发布”通常比开在“登录”更符合实际工程流程。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>npm</category>
+      </categories>
+      <tags>
+        <tag>NPM</tag>
+        <tag>工程化</tag>
+        <tag>发布</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>免密登录</title>
     <url>/2024/08/08/%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/</url>
     <content><![CDATA[<ol>
@@ -1848,25 +2035,6 @@ table th:last-of-type {
       </categories>
   </entry>
   <entry>
-    <title>论读书</title>
-    <url>/2023/02/06/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/</url>
-    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
-  <script id="hbeData" type="hbeData" data-hmacdigest="ca1bbab990e4a14253d7855c191e1a7881898678c38b838375a7e9124ac15863">5b45b2886d298a7453f8a0d9655aadb337598089fa8910e517b17d73c71d66cb4b9ce5ad4700d7dfccb36d1c5d376e956999d471ed83f6dd4df27501f8af0bad12e95b95b79816f7faec9b985192382a4ff4e09f3d2a22c2366470fa827794b527c1e2e23c6532933faad6bfc4376c03a91067841e67b69f70c72dd4213c6107a369d85cc6ac0ef9d96f165f55c2ac037adb456f73b634c3ff7abe50556cd63ba12cde3494d0c37bada8b1bfd436db190ebd43f6834fc7d5450017701e9e78a60cc530c71f7eec81b6903bfea797db9114e7438371e26913f1a1feee9f130eecff3d3e1c9d95a7bf453fa4989c98e41dd18c24af438130152d674965d190ddca1300bff8ac5c3abc9b78cf682169e99f90dd9f564cb56bff9d143634bbf31ab3db62c6ebff71e3394072c21c644125563b28202a87e5c029224a5ef9dc41adb1d0241aad1f1d0f92263b18cd794a6342338e6ef2227f5b9abac7b640889def282ed4670a040ee6d10caa18da432ab9223bc9c22eb23e5430557326d2a317cde5cecf6ecbfba6add36297bfc1fdd38c3a437db9a1976e3bc1c458e5375eb01bffe744b0f0e489e1ae2d40c8a966fb4c96c85b102955181bdb76a50468945971180ed4f56af74491c66ff57474b11c8e607dab93d77820bd45af5681a6922e01aafde4e522b0685300c3d758265c57cdd2261556d2cb21104bf47029bf215b4f093665286b51b98818bbc1fe384ec63f873b4000c0f4d09954248a4b2ed0a5dc230796655466302fb81d72a8a850e06619a7e3005c23b99524f5747240f7b4633c672a422a2d24d4ec16852578cac8d9fa5f00f02979b28ef0087d8bf2daf89936877c79f1082e7b1fdece753bcd06eec0d33c2d45c07f3b1a57ba80fb5504b154d477604bfe6ddddc894cc51d81e45382b40167c1cc2c9cc4fe16155742f7cb54b6eedf4e076efdc278707e9ae8b5c11e4901638798a9cc1d9d75c2bb67fa953e92f44cb7e219a0ec34ed91e7bf9701704f84ee125a9454e8411c1209703eab488fbfc4c8722e6aa2f7f7f2b34226418777a0a9f2b9975229ad327dd38d8c0679ad470a961706aa0baceebb32568e6afa4946a92f223a3a1c06efadecfa07af5e30b4996e762c0eb24f464349a6b28ed9f44dd583ec4f6f62b222c3e77d025bcd29c4e7d6a08e1329e0c6fd7366dcb8213a18db9b494fd0f07d50ee78bdd68ce867c39f69822affe15505f5fe980d477721d69d581d34cca6a828846ff96135a1b8c0fd6e32331095bd354e77ebf0a47eb06cbb1bff880f66bc716704c6b35f12886d10d0839aeb8ccc919725fc9ecce63b2f08740b66bf6e2e1b9cbcb252c89337e32b09b71ee196fcf9477f0e11dd71ae8a1c041a6e126f95ca7ab15ce30785342469e64ae4ceac592b2fa189dc38032d357b604fb5bd5caca3f0ce68f7a0ffdfdc1fc10e881352fdb3720b8360f793acab151cfc93ae8f69600d71ea6616774df0e09e25f3cb1ef9001544b5eedd22d09030c342569f8626e48941f07a8813387612e664e138558f78302f9f4073db433dad7550acc0436b06730901be9c0b28b687ea78900b810a81616fa105103bd000b14385d85185b4011d7baedfad96cc7f258930b12822183671dc997bda028751a41d8d29c990ad25e6767bf8a9a739e9194330f71dca68a0ce38e70e92eb75eb9dffecf93bba63f823b9cdab555be37ba208bf84071a5e34cc15cc385b0a5c5ca4463512bc41deedd8264a6b9d5866120a2dfa8e34ac442ad9d71a48f4f809bec90dab39b8e37af8d0aeafef289934d22c8f35086dac5765b03f855769de44efb3deb929638a8a42b7322a55db414507ad5abbbff151c2893c1a1e9ab1e3a04b4e6e17432a02620f5855fbf0bb62dfea2763218873f73286af9b7ef5366c24badf27ae76a38ea2cb72385e11f6285bb0c6f7f70abd28a9fd715e705cf3df46877a741f534297fb066ecce87d038c616d748346267b71142b510b69c6a157bc5186bb8ed35a28b3f9a14ddfa1d68f03e0196263b32beee7a5b3616e6c76a4aed6b092aa77308109ff7c3d1e9dd758a051fde922dc1b5b4fa9d796566d8ecbd5ea7bdea8de2df0e533faf65ef18d701bbf295e9494e6f9ad644aba271a728cbc1f5b01f442e6f9635945d088d70e21d1044d5572df2bc99caa835a2911cbe733a472c7e2fe90b8f949a2875653660d18eda2f6ef45341753982bdd1d8427a44b5a3d67e861940a0e74d71c979bdb28c0e1746d386bd9e059410267f39a94291ee14169774f28273bf7b0193c2d964cdf1407102515d6affd5c3bea888df167ade7f8861adc327a44df6c77d5b3266478374a20dae21a225ef6731e9583e89a8656dff1fe674b91e131293ea297b33f7e850c1b6162c0d5ff4c26d7954e0c449f1dc20b67cb596daf879cd99879f205366dc7bcb3689d0fb052c56e0d8af051bde4cd952cdc9b4360b2ec3593e39e0ec133546f6c6ec5d172019d4bb41b826170ecc45882db73d061a3e98b72d10c960e857aa4cbc2f45019dfd844bb9ec3421f5f5e6e798f103689b5147b39c1b760bca08e6b19f82e0de6c710f9fb688ddd9892975c56cfce7ffeaddc87b9b2dc9f557c9839ea09abbdc75b863a28159d6045345705b1ebd8b26b04e767d6daed51a853a86aeb55bec4f6ebd84bcfe340c402dff4207c3da1af1468cbbd8eb8afc703a5e1530e761c7e5be8047df93a07b4bc099194f01093773898dd6083bb14ce2ec7d9a05053c3214e91134b810210a0a51cfbf0a412bbd601852180b5df6100031338bef986b343f650c965e7b695c2be3a73d1849a2f5936d0a3ccfbd1ccb03fac42f8bce84bddd0f70d56eb2d66e19556357a4ce9e739b06b8c3f81b0b3087049ad27196cc26f75c7b7f4cfc90d8797f8815fe24a9114b5338ca6bd73f99fcea04b9d864f64b82f3658be06af86a93bd9818c60e569db1daf9629ae3e92c4d16fbe5d69b3df5885300cfdd0ed39d40ae0f7bf9826e248e53c7f9bf6b286b16048b23a4af7dc1ed27dfb1f8b2cbd2946c403020e552d5a50f415a800b606762fb51380ffd36e9a35e2e6c41d511fed71e7829a520d14ea66fc2f0da870bec55ba835dbc29a503796f4af34c2125e65f6a213f31ca989d7dc5454124c8d14f683b5165e19580e9c28f54d9bea911c995c2a013c81e48f7824eb71825ed8b0760d8a2f6c1c5b41f721bcd7f2d3a626791bdad473681aeb2af1daed9bbc4f66bd02ad18d6019b6dc6dc32a4a3eff7efab1b24556a8a736d6a14e66c7178da0a419f7efff6b7439e7a938d90cbbc4a5913dd053cef870d98096521651dd8b63586da5eed501d56a6393948a1f2fba496c7447d52b90bcefd36929d28309b115b4420b958935c73aa0863d6ec101a9b4d0b1dff636f6702e127d6bd1cb374a95c5c127803b52e9f181e75223907d41a0e5af384ddac59e47f9cf2e61795031c740b3708ce0902dd8a593d359acecff63aa600640d26ff6a9fe85d6a2743224d6de263f9f496179f8ec22fec9eac5b14cda623d01baa38ff36b29e81c11e736b869bfe2d821061f13697064c6432634caaeec00468c0d4d6dfbf5bced3895c21b67dd30b848fabd764399811e8e720f70ef6f333fe6cc80908eb4a005f62e2b26396e92ed884d6b569a21763639d18f486d6f59c10b9b13dd8e9a6fd19079008879b0656eee18e8b63c6d4a102ad3d860fda6f81a96e4de279b95c2500eff8c0c32c939c6a8387ef409f2655e9156e0adf2de9913f768a54aa02a234c447592c63f039fcdca29425d4705f8a2a34dec6c41ee7bbda843b1e817b2a5e7f131f825ac4cb1d22ddde4158964c5ca16778b0fb44ce7216364f09d682dcef59c2e8102907ef33c6c19d8fbc4aa1fee4584ae647a670d30724f72b4f3d2f082fa802f388b9f6801995bf813a3e6efdbe67524aad94d5e5c7455f87b5a4adfb0dd0f1e61c188b32ff4f0210960bd30ebdb68f507f70b57b6d5e2322c3dff6d7f0eedfa0d0752e0f5dc0f215263a0325592413854bfbb542f3c08b7c70d31b77688705bacea82e67c65ff5cb1a8ab14546ad778a360edbfcdd749c499390e3687a506577622a44d86a2f880eba722d529918edf149a41b09b82a2a03da4ab25713369525d5191d3bd5a1d154ef8d128fc8635a08986b4edd149806236541fc313a8c31793703fc4b4e0ec0add68d444233825b0f8693d812b57b2160f28c7d0a917e144af1bdd31e17e133107df470934648795115048dac52a7cff243ed5bd010fa18fcf523f88a14ef1d2d6194f5bdf0d13bb9b392ad2164213bc89b62aa6a165c6c6a1877f54a66335b340c401f8f12e0f0a304c3db55666aeb60032a7f163700d587b9a1777293af875c4e5da57d577fcf5329b82c9201e4ae2cc58ba6181ea857f78068c1f9b21f5332b6d11b63310b4263f3a959439bdd5ce54796d13b8a6a8dc93e7bf891f3ef6a615e817afa3d44aff1b39a821de5425b87c98a80b388519c282a2936f9f30d712921be7dd97def43387379a5a26c620c34669b1e0d4675201e52207e50f7c68d1d4df8492608c7dfb310bdaf6a36b08f5fec3bfa8f7632ccc971c879804cfea90de6e6f8eb2ec861f8f60cae7044ecca7d6b2849824c10b605d6653f44041bd56fac0136bafc41b515d3b248821e6f28271c2b22a911b53ffab0b3326c0e454c4291a7025ce60bba56bee935a5718b157bb988db85e08bc084b8c9</script>
-  <div class="hbe hbe-content">
-    <div class="hbe hbe-input hbe-input-default">
-      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
-      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
-        <span class="hbe hbe-input-label-content hbe-input-label-content-default">还是别出招了，反正是我赢！</span>
-      </label>
-    </div>
-  </div>
-</div>
-<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
-      <categories>
-        <category>读书感悟</category>
-      </categories>
-  </entry>
-  <entry>
     <title>编程角度谈抽象</title>
     <url>/2023/02/06/%E7%BC%96%E7%A8%8B%E8%A7%92%E5%BA%A6%E8%B0%88%E6%8A%BD%E8%B1%A1/</url>
     <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
@@ -1883,6 +2051,25 @@ table th:last-of-type {
 <script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
       <categories>
         <category>思源地</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>论读书</title>
+    <url>/2023/02/06/%E6%80%8E%E4%B9%88%E6%89%8D%E7%AE%97%E4%B8%80%E6%9C%AC%E5%A5%BD%E4%B9%A6/</url>
+    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="ca1bbab990e4a14253d7855c191e1a7881898678c38b838375a7e9124ac15863">5b45b2886d298a7453f8a0d9655aadb337598089fa8910e517b17d73c71d66cb4b9ce5ad4700d7dfccb36d1c5d376e956999d471ed83f6dd4df27501f8af0bad12e95b95b79816f7faec9b985192382a4ff4e09f3d2a22c2366470fa827794b527c1e2e23c6532933faad6bfc4376c03a91067841e67b69f70c72dd4213c6107a369d85cc6ac0ef9d96f165f55c2ac037adb456f73b634c3ff7abe50556cd63ba12cde3494d0c37bada8b1bfd436db190ebd43f6834fc7d5450017701e9e78a60cc530c71f7eec81b6903bfea797db9114e7438371e26913f1a1feee9f130eecff3d3e1c9d95a7bf453fa4989c98e41dd18c24af438130152d674965d190ddca1300bff8ac5c3abc9b78cf682169e99f90dd9f564cb56bff9d143634bbf31ab3db62c6ebff71e3394072c21c644125563b28202a87e5c029224a5ef9dc41adb1d0241aad1f1d0f92263b18cd794a6342338e6ef2227f5b9abac7b640889def282ed4670a040ee6d10caa18da432ab9223bc9c22eb23e5430557326d2a317cde5cecf6ecbfba6add36297bfc1fdd38c3a437db9a1976e3bc1c458e5375eb01bffe744b0f0e489e1ae2d40c8a966fb4c96c85b102955181bdb76a50468945971180ed4f56af74491c66ff57474b11c8e607dab93d77820bd45af5681a6922e01aafde4e522b0685300c3d758265c57cdd2261556d2cb21104bf47029bf215b4f093665286b51b98818bbc1fe384ec63f873b4000c0f4d09954248a4b2ed0a5dc230796655466302fb81d72a8a850e06619a7e3005c23b99524f5747240f7b4633c672a422a2d24d4ec16852578cac8d9fa5f00f02979b28ef0087d8bf2daf89936877c79f1082e7b1fdece753bcd06eec0d33c2d45c07f3b1a57ba80fb5504b154d477604bfe6ddddc894cc51d81e45382b40167c1cc2c9cc4fe16155742f7cb54b6eedf4e076efdc278707e9ae8b5c11e4901638798a9cc1d9d75c2bb67fa953e92f44cb7e219a0ec34ed91e7bf9701704f84ee125a9454e8411c1209703eab488fbfc4c8722e6aa2f7f7f2b34226418777a0a9f2b9975229ad327dd38d8c0679ad470a961706aa0baceebb32568e6afa4946a92f223a3a1c06efadecfa07af5e30b4996e762c0eb24f464349a6b28ed9f44dd583ec4f6f62b222c3e77d025bcd29c4e7d6a08e1329e0c6fd7366dcb8213a18db9b494fd0f07d50ee78bdd68ce867c39f69822affe15505f5fe980d477721d69d581d34cca6a828846ff96135a1b8c0fd6e32331095bd354e77ebf0a47eb06cbb1bff880f66bc716704c6b35f12886d10d0839aeb8ccc919725fc9ecce63b2f08740b66bf6e2e1b9cbcb252c89337e32b09b71ee196fcf9477f0e11dd71ae8a1c041a6e126f95ca7ab15ce30785342469e64ae4ceac592b2fa189dc38032d357b604fb5bd5caca3f0ce68f7a0ffdfdc1fc10e881352fdb3720b8360f793acab151cfc93ae8f69600d71ea6616774df0e09e25f3cb1ef9001544b5eedd22d09030c342569f8626e48941f07a8813387612e664e138558f78302f9f4073db433dad7550acc0436b06730901be9c0b28b687ea78900b810a81616fa105103bd000b14385d85185b4011d7baedfad96cc7f258930b12822183671dc997bda028751a41d8d29c990ad25e6767bf8a9a739e9194330f71dca68a0ce38e70e92eb75eb9dffecf93bba63f823b9cdab555be37ba208bf84071a5e34cc15cc385b0a5c5ca4463512bc41deedd8264a6b9d5866120a2dfa8e34ac442ad9d71a48f4f809bec90dab39b8e37af8d0aeafef289934d22c8f35086dac5765b03f855769de44efb3deb929638a8a42b7322a55db414507ad5abbbff151c2893c1a1e9ab1e3a04b4e6e17432a02620f5855fbf0bb62dfea2763218873f73286af9b7ef5366c24badf27ae76a38ea2cb72385e11f6285bb0c6f7f70abd28a9fd715e705cf3df46877a741f534297fb066ecce87d038c616d748346267b71142b510b69c6a157bc5186bb8ed35a28b3f9a14ddfa1d68f03e0196263b32beee7a5b3616e6c76a4aed6b092aa77308109ff7c3d1e9dd758a051fde922dc1b5b4fa9d796566d8ecbd5ea7bdea8de2df0e533faf65ef18d701bbf295e9494e6f9ad644aba271a728cbc1f5b01f442e6f9635945d088d70e21d1044d5572df2bc99caa835a2911cbe733a472c7e2fe90b8f949a2875653660d18eda2f6ef45341753982bdd1d8427a44b5a3d67e861940a0e74d71c979bdb28c0e1746d386bd9e059410267f39a94291ee14169774f28273bf7b0193c2d964cdf1407102515d6affd5c3bea888df167ade7f8861adc327a44df6c77d5b3266478374a20dae21a225ef6731e9583e89a8656dff1fe674b91e131293ea297b33f7e850c1b6162c0d5ff4c26d7954e0c449f1dc20b67cb596daf879cd99879f205366dc7bcb3689d0fb052c56e0d8af051bde4cd952cdc9b4360b2ec3593e39e0ec133546f6c6ec5d172019d4bb41b826170ecc45882db73d061a3e98b72d10c960e857aa4cbc2f45019dfd844bb9ec3421f5f5e6e798f103689b5147b39c1b760bca08e6b19f82e0de6c710f9fb688ddd9892975c56cfce7ffeaddc87b9b2dc9f557c9839ea09abbdc75b863a28159d6045345705b1ebd8b26b04e767d6daed51a853a86aeb55bec4f6ebd84bcfe340c402dff4207c3da1af1468cbbd8eb8afc703a5e1530e761c7e5be8047df93a07b4bc099194f01093773898dd6083bb14ce2ec7d9a05053c3214e91134b810210a0a51cfbf0a412bbd601852180b5df6100031338bef986b343f650c965e7b695c2be3a73d1849a2f5936d0a3ccfbd1ccb03fac42f8bce84bddd0f70d56eb2d66e19556357a4ce9e739b06b8c3f81b0b3087049ad27196cc26f75c7b7f4cfc90d8797f8815fe24a9114b5338ca6bd73f99fcea04b9d864f64b82f3658be06af86a93bd9818c60e569db1daf9629ae3e92c4d16fbe5d69b3df5885300cfdd0ed39d40ae0f7bf9826e248e53c7f9bf6b286b16048b23a4af7dc1ed27dfb1f8b2cbd2946c403020e552d5a50f415a800b606762fb51380ffd36e9a35e2e6c41d511fed71e7829a520d14ea66fc2f0da870bec55ba835dbc29a503796f4af34c2125e65f6a213f31ca989d7dc5454124c8d14f683b5165e19580e9c28f54d9bea911c995c2a013c81e48f7824eb71825ed8b0760d8a2f6c1c5b41f721bcd7f2d3a626791bdad473681aeb2af1daed9bbc4f66bd02ad18d6019b6dc6dc32a4a3eff7efab1b24556a8a736d6a14e66c7178da0a419f7efff6b7439e7a938d90cbbc4a5913dd053cef870d98096521651dd8b63586da5eed501d56a6393948a1f2fba496c7447d52b90bcefd36929d28309b115b4420b958935c73aa0863d6ec101a9b4d0b1dff636f6702e127d6bd1cb374a95c5c127803b52e9f181e75223907d41a0e5af384ddac59e47f9cf2e61795031c740b3708ce0902dd8a593d359acecff63aa600640d26ff6a9fe85d6a2743224d6de263f9f496179f8ec22fec9eac5b14cda623d01baa38ff36b29e81c11e736b869bfe2d821061f13697064c6432634caaeec00468c0d4d6dfbf5bced3895c21b67dd30b848fabd764399811e8e720f70ef6f333fe6cc80908eb4a005f62e2b26396e92ed884d6b569a21763639d18f486d6f59c10b9b13dd8e9a6fd19079008879b0656eee18e8b63c6d4a102ad3d860fda6f81a96e4de279b95c2500eff8c0c32c939c6a8387ef409f2655e9156e0adf2de9913f768a54aa02a234c447592c63f039fcdca29425d4705f8a2a34dec6c41ee7bbda843b1e817b2a5e7f131f825ac4cb1d22ddde4158964c5ca16778b0fb44ce7216364f09d682dcef59c2e8102907ef33c6c19d8fbc4aa1fee4584ae647a670d30724f72b4f3d2f082fa802f388b9f6801995bf813a3e6efdbe67524aad94d5e5c7455f87b5a4adfb0dd0f1e61c188b32ff4f0210960bd30ebdb68f507f70b57b6d5e2322c3dff6d7f0eedfa0d0752e0f5dc0f215263a0325592413854bfbb542f3c08b7c70d31b77688705bacea82e67c65ff5cb1a8ab14546ad778a360edbfcdd749c499390e3687a506577622a44d86a2f880eba722d529918edf149a41b09b82a2a03da4ab25713369525d5191d3bd5a1d154ef8d128fc8635a08986b4edd149806236541fc313a8c31793703fc4b4e0ec0add68d444233825b0f8693d812b57b2160f28c7d0a917e144af1bdd31e17e133107df470934648795115048dac52a7cff243ed5bd010fa18fcf523f88a14ef1d2d6194f5bdf0d13bb9b392ad2164213bc89b62aa6a165c6c6a1877f54a66335b340c401f8f12e0f0a304c3db55666aeb60032a7f163700d587b9a1777293af875c4e5da57d577fcf5329b82c9201e4ae2cc58ba6181ea857f78068c1f9b21f5332b6d11b63310b4263f3a959439bdd5ce54796d13b8a6a8dc93e7bf891f3ef6a615e817afa3d44aff1b39a821de5425b87c98a80b388519c282a2936f9f30d712921be7dd97def43387379a5a26c620c34669b1e0d4675201e52207e50f7c68d1d4df8492608c7dfb310bdaf6a36b08f5fec3bfa8f7632ccc971c879804cfea90de6e6f8eb2ec861f8f60cae7044ecca7d6b2849824c10b605d6653f44041bd56fac0136bafc41b515d3b248821e6f28271c2b22a911b53ffab0b3326c0e454c4291a7025ce60bba56bee935a5718b157bb988db85e08bc084b8c9</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">还是别出招了，反正是我赢！</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
+      <categories>
+        <category>读书感悟</category>
       </categories>
   </entry>
   <entry>
