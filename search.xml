@@ -1,77 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>AI 时代，还有必要写博客吗？</title>
-    <url>/2025/05/12/ai-replace-blog/</url>
-    <content><![CDATA[<blockquote>
-<p>一边是 ChatGPT 秒出技术文，一边是我们苦哈哈敲字几小时。AI 时代，写博客还有意义吗？</p>
-</blockquote>
-<h2 id="不服不行">不服不行</h2>
-<p>AI 大模型这几年真的是爆发式进步，它的能力已经不止是“辅助”，而是真正能替你“代劳”很多工作。</p>
-<span id="more"></span>
-<h3 id="飞一般的感觉">飞一般的感觉</h3>
-<p>本来一篇博客你得写两个小时，AI 只要你一个标题，就能几秒钟生成，有结构，有逻辑，语句还通顺。</p>
-<h3 id="高质量">高质量</h3>
-<p>AI 不再是“听起来很懂但其实在胡扯”。现在的模型很多时候比搜索更直接、更清晰，能引用专业术语，解释底层原理，举例说明问题</p>
-<h3 id="准确性">准确性</h3>
-<p>有时候我们自己写东西会漏掉细节，而 AI 还能提示你：异常情况，边界处理，性能注意点</p>
-<p>说实话，这已经是一个很强的“技术拍档”了，就像此文也经过了大模型的润色。</p>
-<h2 id="但我们还要自己写博客吗？">但我们还要自己写博客吗？</h2>
-<p>答案是：<strong>要写，但方式可以变了。</strong></p>
-<h3 id="写博客其实是写给“自己”的">写博客其实是写给“自己”的</h3>
-<ul>
-<li>帮你理清知识点</li>
-<li>强化记忆</li>
-<li>记录成长路径</li>
-</ul>
-<p>过去的博客，就是你自己的“技术足迹”。</p>
-<h3 id="它更像是自己的技术手册">它更像是自己的技术手册</h3>
-<ul>
-<li>项目可以结束，但思考方式不会过时</li>
-<li>写下来，是你对问题的真正理解</li>
-<li>以后出问题，自己查也方便</li>
-</ul>
-<h2 id="我的观点：AI-帮写，博客还得自己动手">我的观点：AI 帮写，博客还得自己动手</h2>
-<p>AI 的确可以生成内容，但它不能替你：理解技术，来龙去脉，记录你的试错过程，总结你在项目中的思考方式</p>
-<p>所以我会继续写博客，只是会：利用 AI 快速起草，用它帮我检查逻辑，有时让它润色语言</p>
-<p>但核心内容、结构和理解，<strong>一定是我自己做主</strong>。</p>
-<h2 id="最后">最后</h2>
-<p>你可以不写“给别人看的博客”，但至少要写一个“给自己看的技术笔记”。</p>
-<ul>
-<li>写，是最好的思考方式</li>
-<li>记，是最靠谱的成长路径</li>
-<li>有 AI，不代表不动手</li>
-</ul>
-<p><strong>写给未来的自己，不为流量，只为成长。</strong></p>
-]]></content>
-      <categories>
-        <category>随笔</category>
-      </categories>
-      <tags>
-        <tag>随笔</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Mac 手册</title>
-    <url>/2026/01/01/mac%20%E6%89%8B%E5%86%8C/</url>
-    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
-  <script id="hbeData" type="hbeData" data-hmacdigest="9c8f2e5f11b8beb65bc0e8df3691d3c9b3bf3c08e1d34bcf737fc8ad7265aa91">5b45b2886d298a7453f8a0d9655aadb3203769014c2692d0bdeb09b0c9d5f574ef380f15697b8b4d9235753db5e3795d3d02424ed643b9e92c57e157a7f0af9503425fa1203178792175e24d7d4c74f0f29697c20dff3af45119c9094257a74a6bcab59dd2560fcd88f1b9bd47c1fe2f8f2facfa079ac119469ce3338e3c863d</script>
-  <div class="hbe hbe-content">
-    <div class="hbe hbe-input hbe-input-default">
-      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
-      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
-        <span class="hbe hbe-input-label-content hbe-input-label-content-default">还是别出招了，反正是我赢！</span>
-      </label>
-    </div>
-  </div>
-</div>
-<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
-      <categories>
-        <category>Mac</category>
-        <category>mac</category>
-      </categories>
-  </entry>
-  <entry>
     <title>RxJS “道” 与 “术”</title>
     <url>/2023/01/19/RxJS%E9%81%93%E4%B8%8E%E6%9C%AF/</url>
     <content><![CDATA[<blockquote>
@@ -525,6 +454,57 @@
       </categories>
       <tags>
         <tag>RxJS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>AI 时代，还有必要写博客吗？</title>
+    <url>/2025/05/12/ai-replace-blog/</url>
+    <content><![CDATA[<blockquote>
+<p>一边是 ChatGPT 秒出技术文，一边是我们苦哈哈敲字几小时。AI 时代，写博客还有意义吗？</p>
+</blockquote>
+<h2 id="不服不行">不服不行</h2>
+<p>AI 大模型这几年真的是爆发式进步，它的能力已经不止是“辅助”，而是真正能替你“代劳”很多工作。</p>
+<span id="more"></span>
+<h3 id="飞一般的感觉">飞一般的感觉</h3>
+<p>本来一篇博客你得写两个小时，AI 只要你一个标题，就能几秒钟生成，有结构，有逻辑，语句还通顺。</p>
+<h3 id="高质量">高质量</h3>
+<p>AI 不再是“听起来很懂但其实在胡扯”。现在的模型很多时候比搜索更直接、更清晰，能引用专业术语，解释底层原理，举例说明问题</p>
+<h3 id="准确性">准确性</h3>
+<p>有时候我们自己写东西会漏掉细节，而 AI 还能提示你：异常情况，边界处理，性能注意点</p>
+<p>说实话，这已经是一个很强的“技术拍档”了，就像此文也经过了大模型的润色。</p>
+<h2 id="但我们还要自己写博客吗？">但我们还要自己写博客吗？</h2>
+<p>答案是：<strong>要写，但方式可以变了。</strong></p>
+<h3 id="写博客其实是写给“自己”的">写博客其实是写给“自己”的</h3>
+<ul>
+<li>帮你理清知识点</li>
+<li>强化记忆</li>
+<li>记录成长路径</li>
+</ul>
+<p>过去的博客，就是你自己的“技术足迹”。</p>
+<h3 id="它更像是自己的技术手册">它更像是自己的技术手册</h3>
+<ul>
+<li>项目可以结束，但思考方式不会过时</li>
+<li>写下来，是你对问题的真正理解</li>
+<li>以后出问题，自己查也方便</li>
+</ul>
+<h2 id="我的观点：AI-帮写，博客还得自己动手">我的观点：AI 帮写，博客还得自己动手</h2>
+<p>AI 的确可以生成内容，但它不能替你：理解技术，来龙去脉，记录你的试错过程，总结你在项目中的思考方式</p>
+<p>所以我会继续写博客，只是会：利用 AI 快速起草，用它帮我检查逻辑，有时让它润色语言</p>
+<p>但核心内容、结构和理解，<strong>一定是我自己做主</strong>。</p>
+<h2 id="最后">最后</h2>
+<p>你可以不写“给别人看的博客”，但至少要写一个“给自己看的技术笔记”。</p>
+<ul>
+<li>写，是最好的思考方式</li>
+<li>记，是最靠谱的成长路径</li>
+<li>有 AI，不代表不动手</li>
+</ul>
+<p><strong>写给未来的自己，不为流量，只为成长。</strong></p>
+]]></content>
+      <categories>
+        <category>随笔</category>
+      </categories>
+      <tags>
+        <tag>随笔</tag>
       </tags>
   </entry>
   <entry>
