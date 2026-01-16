@@ -111,6 +111,12 @@
 <h2 id="分支管理">分支管理</h2>
 <ul>
 <li>设置远程分支为默认分支：<code>git branch --set-upstream-to= origin [branchName]</code></li>
+<li>同步远程分支列表：<code>git fetch origin</code></li>
+</ul>
+<h3 id="创建分支">创建分支</h3>
+<ul>
+<li>创建本地分支：<code>git checkout -b [branchName]</code></li>
+<li>基于远程分支创建本地分支（先同步远程分支列表，见上）：<code>git checkout -b [brachName] [originBranchName]</code></li>
 </ul>
 <h3 id="删除分支">删除分支</h3>
 <ul>
@@ -133,7 +139,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://aaaaaajie.github.io/2023/02/03/git%E6%89%8B%E5%86%8C/" data-id="cmjzxruv5000sfcjhcrvm9b6c" class="article-share-link">
+      <a data-url="http://aaaaaajie.github.io/2023/02/03/git%E6%89%8B%E5%86%8C/" data-id="cmkh0nuqz000vxajkbsht3ncc" class="article-share-link">
         分享
       </a>
       
